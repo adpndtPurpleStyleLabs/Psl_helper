@@ -1,0 +1,31 @@
+name: Build Export Deploy Docker Image
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: [self-hosted, OnAutomation-label-1]
+    
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build the Docker image
+        run: |
+          rev=$(git rev-parse --short HEAD)
+          echo "rev  ${rev}"
+          echo helper/t nexus.ppustage.dev/helper}-service:latest
+          echo helper/t:latest -f PslMicroServices.${{inputs.PROJECT_NAME}}/Dockerfile
+          sudo docker build --build-arg GIT_COMMIT=${rev} -t helper/t:latest -f PslMicroServices.${{inputs.PROJECT_NAME}}/Dockerfile .
+          sudo docker image tag helper/t nexus.ppustage.dev/helper-service:${rev}
+          sudo docker image tag helper/t nexus.ppustage.dev/helper-service:latest
+
+      - name: Push Image to nexus
+        env:
+          NEXUS_USER: 'admin'
+          NEXUS_PWD: 'admin'
+        run: |
+          rev=$(git rev-parse --short HEAD)
+          echo "rev  ${rev}"
+          sudo docker login -u $NEXUS_USER -p $NEXUS_PWD nexus.ppustage.dev
+          sudo docker push nexus.ppustage.dev/helper-service:${rev}
+          sudo docker push nexus.ppustage.dev/helper-service:latest
