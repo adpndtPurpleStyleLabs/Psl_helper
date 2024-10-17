@@ -11,11 +11,14 @@ jobs:
       - uses: actions/checkout@v3
       - name: Build the Docker image
         run: |
+          
+          pwd
+          ls
           rev=$(git rev-parse --short HEAD)
           echo "rev  ${rev}"
-          echo helper/t nexus.ppustage.dev/helper}-service:latest
-          echo helper/t:latest -f PslMicroServices.${{inputs.PROJECT_NAME}}/Dockerfile
-          sudo docker build --build-arg GIT_COMMIT=${rev} -t helper/t:latest -f PslMicroServices.${{inputs.PROJECT_NAME}}/Dockerfile .
+          echo helper/t nexus.ppustage.dev/helper-service:latest
+          echo helper/t:latest -f Dockerfile
+          sudo docker build --build-arg GIT_COMMIT=${rev} -t helper/t:latest -f Dockerfile .
           sudo docker image tag helper/t nexus.ppustage.dev/helper-service:${rev}
           sudo docker image tag helper/t nexus.ppustage.dev/helper-service:latest
 
