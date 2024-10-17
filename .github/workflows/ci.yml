@@ -25,7 +25,7 @@ jobs:
       - name: Push Image to nexus
         env:
           NEXUS_USER: 'admin'
-          NEXUS_PWD: 'admin'
+          NEXUS_PWD: '1q2w3e'
         run: |
           rev=$(git rev-parse --short HEAD)
           echo "rev  ${rev}"
