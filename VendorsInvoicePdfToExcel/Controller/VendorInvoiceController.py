@@ -31,7 +31,7 @@ async def pdf_to_excel(
         template_path = "/app/VendorsInvoicePdfToExcel/TemplateVendorInvoices.xlsx"
         venforBl = VendorInvoiceBl()
         extractedInformation = venforBl.processPdf(tmp_pdf_path, vendor_name)
-        excel_path = venforBl.fillExcelAndSave(template_path, extractedInformation)
+        excel_path = venforBl.fillExcelAndSave(template_path, extractedInformation,vendor_name)
 
 
         os.remove(tmp_pdf_path)

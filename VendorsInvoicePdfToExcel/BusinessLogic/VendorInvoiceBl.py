@@ -3,6 +3,7 @@ import openpyxl
 import shutil
 from openpyxl.styles import Font
 from VendorsInvoicePdfToExcel.ImplementationFactory import ImplementationFactory
+import datetime
 
 class VendorInvoiceBl:
     def extractTextFromPdf(self, file_path):
@@ -28,8 +29,8 @@ class VendorInvoiceBl:
 
         return tables_data
 
-    def fillExcelAndSave(self, template_path, vendorInformation):
-        tempPath = "/Users/administrator/PycharmProjects/PslHelper/zz.xlsx"
+    def fillExcelAndSave(self, template_path, vendorInformation,vendor_name):
+        tempPath = f"/app/VendorsInvoicePdfToExcel/{vendor_name}"+datetime.datetime.now().strftime("%Y%m%d-%H%M%S")+".xlsx"
         shutil.copy(template_path, tempPath)
         workbook = openpyxl.load_workbook(tempPath)
         sheet = workbook.active
