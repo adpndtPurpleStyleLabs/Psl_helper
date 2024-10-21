@@ -147,7 +147,7 @@ class VendorInvoiceBl:
         vendor_bank_info = implementation.getVendorBankInfo()
         items_total_info = implementation.getItemTotalInfo()
 
-        extractedInformation ={
+        extractedInformation = {
            "vendor_info" : vendor_info,
            "invoice_info" : invoice_info,
            "receiver_info" : receiver_info,
