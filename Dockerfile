@@ -19,8 +19,4 @@ COPY . .
 # Expose the port that the app runs on
 EXPOSE 8000
 
-# Command to run the FastAPI app using Uvicorn
-#CMD ["uvicorn", "VendorsInvoicePdfToExcel.Controller.VendorInvoiceController", "--host", "0.0.0.0", "--port", "8000"]
-## Set the working directory to the desired folder
-
 CMD ["uvicorn", "VendorsInvoicePdfToExcel.Controller.VendorInvoiceController:app", "--host", "0.0.0.0", "--port", "8000"]
