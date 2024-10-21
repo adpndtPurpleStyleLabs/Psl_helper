@@ -28,8 +28,7 @@ async def pdf_to_excel(
             tmp_pdf.write(await file.read())
             tmp_pdf_path = tmp_pdf.name
 
-        print(os.path)
-        template_path = "../TemplateVendorInvoices.xlsx"
+        template_path = "/app/VendorsInvoicePdfToExcel/TemplateVendorInvoices.xlsx"
         venforBl = VendorInvoiceBl()
         extractedInformation = venforBl.processPdf(tmp_pdf_path, vendor_name)
         excel_path = venforBl.fillExcelAndSave(template_path, extractedInformation)
