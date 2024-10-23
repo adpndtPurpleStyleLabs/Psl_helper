@@ -11,7 +11,6 @@ class AmitAgarwal:
 
     def getVendorInfo(self):
         firstPageText = self.text_data[1].split("\n")
-        vendonInfo = {}
         return {
             "vendor_name": firstPageText[0],
             "vendor_address": firstPageText[1] + " " + firstPageText[2],

@@ -1,5 +1,5 @@
-from xml.dom import NotFoundErr
 from VendorsInvoicePdfToExcel.helper import get_state_using_gst_id
+from fastapi import HTTPException
 
 class SeemaGujral:
     def __init__(self, tables, text):
@@ -19,7 +19,7 @@ class SeemaGujral:
                         "vendor_gst": str(alist).split("\n")[4],
                         "vendor_email": str(alist).split("\n")[6]
                     }
-        raise NotFoundErr
+        raise HTTPException(status_code=400, detail="Error while getting Vendor Information")
 
     def getInvoiceInfo(self):
         firstPage = self.tables[1]
@@ -35,7 +35,7 @@ class SeemaGujral:
                                             self.indexOfContainsInList(self.text[1].split("\n"), "Date")].find(
                                             ":") + 1:],
                     }
-        raise NotFoundErr
+        raise HTTPException(status_code=400, detail="Error while getting Invoice Information")
 
     def getReceiverInfo(self):
         firstPage = self.tables[1]
@@ -49,7 +49,7 @@ class SeemaGujral:
                         "receiver_address": alist[alist.find("to)") + 3: alist.find("GST")].replace("\n", " "),
                         "receiver_gst": alist.split("\n")[self.indexOfContainsInList(alist.split("\n"), "GST")],
                     }
-        raise NotFoundErr
+        raise HTTPException(status_code=400, detail="Error while getting Receiver Information")
 
     def getBillingInfo(self):
         firstPage = self.tables[1]

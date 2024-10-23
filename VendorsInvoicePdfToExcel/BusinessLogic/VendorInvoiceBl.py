@@ -1,6 +1,7 @@
 import pdfplumber
 import openpyxl
 import shutil
+from fastapi import HTTPException
 from openpyxl.styles import Font
 from VendorsInvoicePdfToExcel.ImplementationFactory import ImplementationFactory
 import datetime
@@ -137,27 +138,29 @@ class VendorInvoiceBl:
         return tempPath
 
     def processPdf(self, pdfPath, vendor):
-        tables_data = self.extract_tables_from_pdf(pdfPath)
-        text_data =  self.extractTextFromPdf(pdfPath)
-        implementation_factor =  ImplementationFactory()
-        implementation = implementation_factor.getImplementation(vendor, tables_data, text_data)
-        vendor_info = implementation.getVendorInfo()
-        invoice_info = implementation.getInvoiceInfo()
-        receiver_info = implementation.getReceiverInfo()
-        receiver_billing_info = implementation.getBillingInfo()
-        items_info, total_tax = implementation.getItemInfo()
-        vendor_bank_info = implementation.getVendorBankInfo()
-        items_total_info = implementation.getItemTotalInfo()
+        try:
+            tables_data = self.extract_tables_from_pdf(pdfPath)
+            text_data =  self.extractTextFromPdf(pdfPath)
+            implementation_factor =  ImplementationFactory()
+            implementation = implementation_factor.getImplementation(vendor, tables_data, text_data)
+            vendor_info = implementation.getVendorInfo()
+            invoice_info = implementation.getInvoiceInfo()
+            receiver_info = implementation.getReceiverInfo()
+            receiver_billing_info = implementation.getBillingInfo()
+            items_info, total_tax = implementation.getItemInfo()
+            vendor_bank_info = implementation.getVendorBankInfo()
+            items_total_info = implementation.getItemTotalInfo()
 
-        extractedInformation = {
-           "vendor_info" : vendor_info,
-           "invoice_info" : invoice_info,
-           "receiver_info" : receiver_info,
-           "receiver_billing_info" : receiver_billing_info,
-           "items_info" : items_info,
-           "vendor_bank_info" : vendor_bank_info,
-           "items_total_info" : items_total_info,
-           "total_tax": total_tax
-        }
-
-        return extractedInformation
+            extractedInformation = {
+               "vendor_info" : vendor_info,
+               "invoice_info" : invoice_info,
+               "receiver_info" : receiver_info,
+               "receiver_billing_info" : receiver_billing_info,
+               "items_info" : items_info,
+               "vendor_bank_info" : vendor_bank_info,
+               "items_total_info" : items_total_info,
+               "total_tax": total_tax
+            }
+            return extractedInformation
+        except BaseException as e:
+            raise HTTPException(status_code=400, detail=str(e))
