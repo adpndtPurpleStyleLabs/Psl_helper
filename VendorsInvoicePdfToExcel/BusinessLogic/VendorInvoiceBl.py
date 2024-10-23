@@ -31,6 +31,7 @@ class VendorInvoiceBl:
 
     def fillExcelAndSave(self, template_path, vendorInformation,vendor_name):
         tempPath = f"/app/VendorsInvoicePdfToExcel/{vendor_name}"+datetime.datetime.now().strftime("%Y%m%d-%H%M%S")+".xlsx"
+        # tempPath = f"/Users/administrator/PycharmProjects/PslHelper/{vendor_name}"+datetime.datetime.now().strftime("%Y%m%d-%H%M%S")+".xlsx"
         shutil.copy(template_path, tempPath)
         workbook = openpyxl.load_workbook(tempPath)
         sheet = workbook.active
@@ -133,7 +134,7 @@ class VendorInvoiceBl:
         startIndexOfProduct += 1
 
         workbook.save(tempPath)
-        return  tempPath
+        return tempPath
 
     def processPdf(self, pdfPath, vendor):
         tables_data = self.extract_tables_from_pdf(pdfPath)

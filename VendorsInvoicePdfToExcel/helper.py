@@ -1,10 +1,22 @@
+from num2words import num2words
+
+def convert_amount_to_words(amount):
+    amount = float(amount)
+    integer_part = int(amount)
+    decimal_part = int(round((amount - integer_part) * 100))
+    words = num2words(integer_part, lang='en_IN').replace(',', '').capitalize()
+    if decimal_part > 0:
+        words += f" and {num2words(decimal_part, lang='en_IN').replace(',', '').capitalize()} paise"
+
+    return str(words + " only").upper()
+
 def indexOfContainsInList(list, word):
     count = 0
     for alist in list:
         if str(alist).__contains__(word):
             return count
         count += 1
-    return 0
+    return -1
 
 
 def substring_before_second_occurrence(s, word):

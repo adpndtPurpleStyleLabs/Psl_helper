@@ -2,11 +2,10 @@ from VendorsInvoicePdfToExcel.VendorImplementations.AmitAgarwal import AmitAgarw
 from VendorsInvoicePdfToExcel.VendorImplementations.SeemaGujral import SeemaGujral
 from fastapi import HTTPException
 
-
 class ImplementationFactory:
     def getImplementation(self, implementation, tables, text_data):
         implementation = str(implementation).lower().replace(' ',"")
-        if  implementation == "amit_garwal":
+        if  implementation == "amit_agarwal":
             return AmitAgarwal(tables, text_data)
         elif implementation == "seema_gujral":
             return SeemaGujral(tables, text_data)
