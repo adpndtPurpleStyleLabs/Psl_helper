@@ -85,13 +85,13 @@ class VendorInvoiceBl:
             sheet["H"+str(startIndexOfProduct)] = aProductInfo["mrp"]
             sheet["I"+str(startIndexOfProduct)] = aProductInfo["Rate"]
 
-            if aProductInfo["gst_type"].strip() == "CGST":
+            if aProductInfo["gst_type"].strip().__contains__("CGST"):
                 sheet["J" + str(startIndexOfProduct)] =  aProductInfo["gst_rate"]
                 sheet["K" + str(startIndexOfProduct)] =  aProductInfo["tax_applied"]
-            elif aProductInfo["gst_type"].strip() == "SGST":
+            if aProductInfo["gst_type"].strip().__contains__("SGST"):
                 sheet["L" + str(startIndexOfProduct)] =  aProductInfo["gst_rate"]
                 sheet["M" + str(startIndexOfProduct)] = aProductInfo["tax_applied"]
-            elif aProductInfo["gst_type"].strip() == "IGST":
+            if aProductInfo["gst_type"].strip() == "IGST":
                 sheet["N" + str(startIndexOfProduct)] =  aProductInfo["gst_rate"]
                 sheet["O" + str(startIndexOfProduct)] = aProductInfo["tax_applied"]
             sheet["P"+str(startIndexOfProduct)] = aProductInfo["po_cost"]
