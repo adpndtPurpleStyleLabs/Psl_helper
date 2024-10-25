@@ -5,3 +5,4 @@ pandas
 openpyxl
 python-multipart
 num2words
+tabula-py
