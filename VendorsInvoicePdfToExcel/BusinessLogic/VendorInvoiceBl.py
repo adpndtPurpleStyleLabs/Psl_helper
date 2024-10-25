@@ -5,6 +5,8 @@ from fastapi import HTTPException
 from openpyxl.styles import Font
 from VendorsInvoicePdfToExcel.ImplementationFactory import ImplementationFactory
 import datetime
+import tabula
+import io
 
 class VendorInvoiceBl:
     def extractTextFromPdf(self, file_path):
@@ -29,6 +31,22 @@ class VendorInvoiceBl:
                     tables_data[page_number + 1] = cleaned_table
 
         return tables_data
+
+    def extract_tables_from_pdf_using_tabula(self, pdfPath):
+        tables_by_page = {}
+        with pdfplumber.open(pdfPath) as pdf:
+            for page_number in range(len(pdf.pages)):
+                tables = tabula.read_pdf(pdfPath, pages=page_number, multiple_tables=True)
+                csv_list = []
+                for i, table in enumerate(tables):
+                    csv_buffer = io.StringIO()
+                    table.to_csv(csv_buffer, index=False, sep='$')
+                    csv_data = csv_buffer.getvalue()  # Get CSV data as a string
+                    csv_list.append(csv_data)  # Add CSV string to list for this page
+
+                tables_by_page[page_number+1] = csv_list
+
+        return tables_by_page
 
     def fillExcelAndSave(self, template_path, vendorInformation,vendor_name):
         tempPath = f"/app/VendorsInvoicePdfToExcel/{vendor_name}"+datetime.datetime.now().strftime("%Y%m%d-%H%M%S")+".xlsx"
@@ -66,14 +84,14 @@ class VendorInvoiceBl:
             sheet["G"+str(startIndexOfProduct)] = aProductInfo["Qty"]
             sheet["H"+str(startIndexOfProduct)] = aProductInfo["mrp"]
             sheet["I"+str(startIndexOfProduct)] = aProductInfo["Rate"]
-            if aProductInfo["gst_type"] == "CGST":
+
+            if aProductInfo["gst_type"].strip() == "CGST":
                 sheet["J" + str(startIndexOfProduct)] =  aProductInfo["gst_rate"]
                 sheet["K" + str(startIndexOfProduct)] =  aProductInfo["tax_applied"]
-
-            elif aProductInfo["gst_type"] == "SGST":
+            elif aProductInfo["gst_type"].strip() == "SGST":
                 sheet["L" + str(startIndexOfProduct)] =  aProductInfo["gst_rate"]
                 sheet["M" + str(startIndexOfProduct)] = aProductInfo["tax_applied"]
-            elif aProductInfo["gst_type"] == "IGST":
+            elif aProductInfo["gst_type"].strip() == "IGST":
                 sheet["N" + str(startIndexOfProduct)] =  aProductInfo["gst_rate"]
                 sheet["O" + str(startIndexOfProduct)] = aProductInfo["tax_applied"]
             sheet["P"+str(startIndexOfProduct)] = aProductInfo["po_cost"]
@@ -141,8 +159,9 @@ class VendorInvoiceBl:
         try:
             tables_data = self.extract_tables_from_pdf(pdfPath)
             text_data =  self.extractTextFromPdf(pdfPath)
+            tables_data_from_tabula = self.extract_tables_from_pdf_using_tabula(pdfPath)
             implementation_factor =  ImplementationFactory()
-            implementation = implementation_factor.getImplementation(vendor, tables_data, text_data)
+            implementation = implementation_factor.getImplementation(vendor, tables_data, text_data, tables_data_from_tabula)
             vendor_info = implementation.getVendorInfo()
             invoice_info = implementation.getInvoiceInfo()
             receiver_info = implementation.getReceiverInfo()
