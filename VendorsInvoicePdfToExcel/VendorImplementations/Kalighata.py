@@ -70,23 +70,21 @@ class Kalighata:
 
         indexOfGstsTotals = indexOfContainsInList(firstPageByTabula, "IGST")
         totalsAndGstheaderList = firstPageByTabula[indexOfGstsTotals].split("\n")[0].split("$")
-        totalsAndGst = firstPageByTabula[indexOfGstsTotals].split("\n")[1]
+        totalsAndGst = firstPageByTabula[indexOfGstsTotals].split("\n")[indexOfContainsInList(firstPageByTabula[indexOfGstsTotals].split("\n"), "Total")-1]
 
-        hsnCode = totalsAndGst.split("$")[indexOfContainsInList(totalsAndGstheaderList, "HSN")]
-        totalTaxablevalue = totalsAndGst.split("$")[indexOfContainsInList(totalsAndGstheaderList, "Taxable")]
-        cGSTRate = totalsAndGst.split("$")[indexOfContainsInList(totalsAndGstheaderList, "CGST\rRate")]
+        totalTaxablevalue = totalsAndGst.split("$")[indexOfContainsInList(totalsAndGstheaderList, "Taxable")].split(" ")[-1]
+        cGSTRate = totalsAndGst.split("$")[indexOfContainsInList(totalsAndGstheaderList, "CGST")]
         cGSTAmount = totalsAndGst.split("$")[indexOfContainsInList(totalsAndGstheaderList, "CGST Amount")].replace(",",
-                                                                                                                   "")
-        sGSTRate = totalsAndGst.split("$")[indexOfContainsInList(totalsAndGstheaderList, "SGST\rRate")]
+                                                                                                                   "").split(" ")[0]
+        sGSTRate = totalsAndGst.split("$")[indexOfContainsInList(totalsAndGstheaderList, "SGST")].split(" ")[-1]
         sGSTAmount = totalsAndGst.split("$")[indexOfContainsInList(totalsAndGstheaderList, "SGST Amount")].replace(",",
-                                                                                                                   "")
-        iGSTRate = totalsAndGst.split("$")[indexOfContainsInList(totalsAndGstheaderList, "IGST\rRate")]
+                                                                                                                   "").split(" ")[0]
+        iGSTRate = totalsAndGst.split("$")[indexOfContainsInList(totalsAndGstheaderList, "IGST")].split(" ")[-1]
         iGSTAmount = totalsAndGst.split("$")[indexOfContainsInList(totalsAndGstheaderList, "IGST Amount")].replace(",",
                                                                                                                    "")
         totalTaxAmount = totalsAndGst.split("$")[indexOfContainsInList(totalsAndGstheaderList, "Tax Amo")]
         self.taxableAmt = totalTaxablevalue
         self.totalTax = totalTaxAmount
-        self.taxPercentage
         typeOfGst = ""
         if float(cGSTAmount) != 0:
             typeOfGst = typeOfGst + "CGST "
@@ -142,7 +140,6 @@ class Kalighata:
                 aProductResult["gst_type"] = typeOfGst
                 aProductResult["gst_rate"] = firstTable[index][indexOfTaxRate]
                 aProductResult["tax_applied"] = firstTable[index][indexOfTaxAmount]
-                aProductResult["po_no"] = self.poNo
                 products.append(aProductResult)
 
             return products, total_tax
