@@ -159,8 +159,7 @@ class Kalighata:
         firstPageTable = self.tables[1]
 
         returnData = {}
-        returnData["tax_amount_in_words"] = firstPageByTabula[-1].split("$")[
-            indexOfContainsInList(firstPageByTabula[-1].split("$"), "Only")]
+        returnData["tax_amount_in_words"] = firstPageByTabula[-1].split("$")[indexOfContainsInList(firstPageByTabula[-1].split("$"), "Only")][firstPageByTabula[-1].split("$")[indexOfContainsInList(firstPageByTabula[-1].split("$"), "Only")].find(":")+1:].strip()
         returnData["amount_charged_in_words"] = (firstPageTable[indexOfContainsInList(firstPageTable, "Only")][0][
                                                 firstPageTable[indexOfContainsInList(firstPageTable, "Only")][0].find(
                                                     ":")+1:firstPageTable[indexOfContainsInList(firstPageTable, "Only")][
