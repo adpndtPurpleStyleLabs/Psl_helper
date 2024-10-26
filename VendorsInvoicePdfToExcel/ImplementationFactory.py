@@ -1,4 +1,5 @@
 from VendorsInvoicePdfToExcel.VendorImplementations.AmitAgarwal import AmitAgarwal
+from VendorsInvoicePdfToExcel.VendorImplementations.Lashkaraa import Lashkaraa
 from VendorsInvoicePdfToExcel.VendorImplementations.SeemaGujral import SeemaGujral
 from VendorsInvoicePdfToExcel.VendorImplementations.Kalighata import Kalighata
 from fastapi import HTTPException
@@ -16,5 +17,7 @@ class ImplementationFactory:
             return Kalighata(tables, text_data, table_by_tabula)
         elif implementation == "sheetal_batra":
             return SheetalBatra(tables, text_data, table_by_tabula)
+        elif implementation == "lashkaraa":
+            return Lashkaraa(tables, text_data, table_by_tabula)
         else:
             raise HTTPException(status_code=404, detail="Item not found")
