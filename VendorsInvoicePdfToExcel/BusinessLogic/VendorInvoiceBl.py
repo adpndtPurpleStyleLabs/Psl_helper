@@ -69,8 +69,8 @@ class VendorInvoiceBl:
         sheet["K3"] = vendorInformation["receiver_info"]["receiver_address"]
         sheet["K4"] = vendorInformation["receiver_info"]["receiver_gst"]
         sheet["K5"] = vendorInformation["receiver_billing_info"]["place_of_supply"]
-        sheet["K6"] = vendorInformation["receiver_billing_info"]["billto_address"]
-        sheet["K7"] = vendorInformation["receiver_billing_info"]["billto_name"]
+        sheet["K6"] = vendorInformation["receiver_billing_info"]["billto_name"]
+        sheet["K7"] = vendorInformation["receiver_billing_info"]["billto_address"]
         sheet["K8"] = vendorInformation["receiver_billing_info"]["billto_gst"]
 
         startIndexOfProduct = 15
