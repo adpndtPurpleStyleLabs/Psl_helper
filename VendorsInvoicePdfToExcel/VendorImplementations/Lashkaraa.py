@@ -115,7 +115,7 @@ class Lashkaraa:
 
         returnData = {}
         returnData["tax_amount_in_words"] = \
-        firstPage[indexOfContainsInList(firstPage, "Tax Amount (in")][0].split("\n")[0]
+        firstPage[indexOfContainsInList(firstPage, "Tax Amount (in")][0].split("\n")[0].split(":")[-1]
         returnData["amount_charged_in_words"] = \
         firstPage[indexOfContainsInList(firstPage, "Amount Char")][0].split("\n")[-1]
         returnData["total_pcs"] = totalList[indexOfContainsInList(totalList, "PCS")]
