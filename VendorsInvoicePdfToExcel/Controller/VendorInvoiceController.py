@@ -41,6 +41,24 @@ async def pdf_to_excel(
     except Exception as e:
         raise e
 
+@app.post("/parse-pdf/")
+async def parse_pdf(
+    file: UploadFile = File(...),
+    vendor_name: str = Form(...),
+    file_path: str = Form(None)
+):
+    try:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_pdf:
+            tmp_pdf.write(await file.read())
+            tmp_pdf_path = tmp_pdf.name
+
+        venforBl = VendorInvoiceBl()
+        extractedInformation = venforBl.processPdf(tmp_pdf_path, vendor_name)
+        os.remove(tmp_pdf_path)
+        return extractedInformation
+
+    except Exception as e:
+        raise e
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8088)
