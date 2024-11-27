@@ -39,7 +39,7 @@ class PaulmiAndHarsh:
         return {
             "receiver_name": receiverInfo[indexOfContainsInList(receiverInfo, "Ship To")+1],
             "receiver_address": receiverInfo[indexOfContainsInList(receiverInfo, "Ship To")+2] + " "+ receiverInfo[indexOfContainsInList(receiverInfo, "Ship To")+3] + " "+receiverInfo[indexOfContainsInList(receiverInfo, "Ship To")+4] + " "+ receiverInfo[indexOfContainsInList(receiverInfo, "Ship To")+5] + " "+ receiverInfo[indexOfContainsInList(receiverInfo, "Ship To")+6],
-            "receiver_gst": receiverInfo[indexOfContainsInList(receiverInfo, "Ship To"):][indexOfContainsInList(receiverInfo[indexOfContainsInList(receiverInfo, "Ship To")+6], "GST")]
+            "receiver_gst": receiverInfo[indexOfContainsInList(receiverInfo, "Ship To"):][indexOfContainsInList(receiverInfo[indexOfContainsInList(receiverInfo, "Ship To")+6], "GST")].split(":")[-1]
         }
 
     def getBillingInfo(self):
@@ -50,7 +50,7 @@ class PaulmiAndHarsh:
             "billto_name": billToInfo[1],
             "billto_address": billToInfo[2] + " " + billToInfo[3] + " " + billToInfo[4],
             "place_of_supply": billToInfo[indexOfContainsInList(billToInfo, "Place")],
-            "billto_gst": billToInfo[indexOfContainsInList(billToInfo, "GST")]
+            "billto_gst": billToInfo[indexOfContainsInList(billToInfo, "GST")].split(":")[-1]
         }
 
     def getItemInfo(self):
