@@ -126,7 +126,7 @@ class Kalighata:
                 if self.poNo.__contains__("OR"):
                     aProductResult["or_po_no"] = self.poNo
                 else :
-                    aProductResult["po_no"] = self.poNo.split(":")[-1]
+                   aProductResult["po_no"] = self.poNo.split(":")[-1].strip()
 
                 aProductResult["index"] = firstTable[index][indexOfSrNo]
                 aProductResult["vendor_code"] = firstTable[index][indexOfDescriptionOfGoods].split("\n")[-1]
