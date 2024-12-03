@@ -24,8 +24,8 @@ class Kalighata:
         firstPageText = self.text_data[1].split("\n")
         invoiceDetails = firstPageText[indexOfContainsInList(firstPageText, "INV No")]
         return {
-            "invoice_number": invoiceDetails[invoiceDetails.find("INV No"):invoiceDetails.find("Date")],
-            "invoice_date": invoiceDetails[invoiceDetails.find("Date "):-1]
+            "invoice_number": invoiceDetails[invoiceDetails.find("INV No"):invoiceDetails.find("Date")].split(":")[-1],
+            "invoice_date": invoiceDetails[invoiceDetails.find("Date "):].split(":")[-1]
         }
 
     def getReceiverInfo(self):
@@ -37,7 +37,7 @@ class Kalighata:
                                 :firstPageText[indexOfReceiver + 2].find("Vehic")] + " " + firstPageText[
                                     indexOfReceiver + 3] + " " + firstPageText[indexOfReceiver + 4][
                                                                  :firstPageText[indexOfReceiver + 4].find("Way")],
-            "receiver_gst": firstPageText[indexOfReceiver + 5][0: firstPageText[indexOfReceiver + 5].find("PO")],
+            "receiver_gst": firstPageText[indexOfReceiver + 5][0: firstPageText[indexOfReceiver + 5].find("PO")].split(":")[-1],
         }
 
     def getBillingInfo(self):
@@ -50,8 +50,8 @@ class Kalighata:
                               :firstPageText[indexOfReceiver + 2].find("Vehic")] + " " + firstPageText[
                                   indexOfReceiver + 3] + " " + firstPageText[indexOfReceiver + 4][
                                                                :firstPageText[indexOfReceiver + 4].find("Way")],
-            "billto_gst": firstPageText[indexOfReceiver + 5][0: firstPageText[indexOfReceiver + 5].find("PO")],
-            "place_of_supply": firstPageText[indexOfContainsInList(firstPageText, "State")]
+            "billto_gst": firstPageText[indexOfReceiver + 5][0: firstPageText[indexOfReceiver + 5].find("PO")].split(":")[-1],
+            "place_of_supply": firstPageText[indexOfContainsInList(firstPageText, "State")].split(":")[-1]
         }
 
     def getItemInfo(self):
@@ -126,7 +126,7 @@ class Kalighata:
                 if self.poNo.__contains__("OR"):
                     aProductResult["or_po_no"] = self.poNo
                 else :
-                    aProductResult["po_no"] = self.poNo
+                    aProductResult["po_no"] = self.poNo.split(":")[-1]
 
                 aProductResult["index"] = firstTable[index][indexOfSrNo]
                 aProductResult["vendor_code"] = firstTable[index][indexOfDescriptionOfGoods].split("\n")[-1]
@@ -169,5 +169,5 @@ class Kalighata:
         returnData["total_b4_tax"] = self.taxableAmt
         returnData["total_tax"] = firstPageTable[indexOfContainsInList(firstPageTable, "TOTAL")][-2]
         returnData["tax_rate"] = self.totalTax
-        returnData["total_tax_percentage"] = self.taxPercentage
+        returnData["total_tax_percentage"] = self.taxPercentage.split(":")[-1]
         return returnData
