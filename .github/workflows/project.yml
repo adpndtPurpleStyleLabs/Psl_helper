@@ -1,0 +1,117 @@
+name: Project Board Email
+
+on:
+  issues:
+    types: [labeled, edited, closed, reopened, unassigned, assigned]
+  issue_comment:
+    types: [created, deleted, edited]
+
+jobs:
+  send-notification:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Read template and send email
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            // Read the template file
+            const templatePath = path.join(process.env.GITHUB_WORKSPACE, '.github', 'email_templates', 'project-update.html');
+            let htmlTemplate = fs.readFileSync(templatePath, 'utf8');
+            
+            // Get event specific data
+            const eventType = context.eventName; // 'issues' or 'issue_comment'
+            const action = context.payload.action;
+            
+            // Prepare event specific data
+            let eventData = {
+              actor: context.actor,
+              timestamp: new Date().toISOString(),
+              action: action,
+              repository: `${context.repo.owner}/${context.repo.repo}`,
+              issueUrl: context.payload.issue.html_url,
+              issueTitle: context.payload.issue.title,
+              issueNumber: context.payload.issue.number
+            };
+            
+            // Add event-specific details
+            if (eventType === 'issues') {
+              // Handle different issue events
+              switch(action) {
+                case 'labeled':
+                  eventData.label = context.payload.label.name;
+                  eventData.description = `Label "${context.payload.label.name}" was added to issue #${context.payload.issue.number}`;
+                  break;
+                case 'edited':
+                  eventData.changes = context.payload.changes;
+                  eventData.description = `Issue #${context.payload.issue.number} was edited`;
+                  break;
+                case 'closed':
+                  eventData.description = `Issue #${context.payload.issue.number} was closed`;
+                  break;
+                case 'reopened':
+                  eventData.description = `Issue #${context.payload.issue.number} was reopened`;
+                  break;
+                case 'assigned':
+                  eventData.assignee = context.payload.assignee.login;
+                  eventData.description = `${context.payload.assignee.login} was assigned to issue #${context.payload.issue.number}`;
+                  break;
+                case 'unassigned':
+                  eventData.assignee = context.payload.assignee.login;
+                  eventData.description = `${context.payload.assignee.login} was unassigned from issue #${context.payload.issue.number}`;
+                  break;
+              }
+            } else if (eventType === 'issue_comment') {
+              // Handle different comment events
+              eventData.comment = context.payload.comment.body;
+              eventData.commentUrl = context.payload.comment.html_url;
+              
+              switch(action) {
+                case 'created':
+                  eventData.description = `New comment added to issue #${context.payload.issue.number}`;
+                  break;
+                case 'edited':
+                  eventData.changes = context.payload.changes;
+                  eventData.description = `Comment was edited on issue #${context.payload.issue.number}`;
+                  break;
+                case 'deleted':
+                  eventData.description = `Comment was deleted from issue #${context.payload.issue.number}`;
+                  break;
+              }
+            }
+            
+            // Replace all variables in template
+            for (const [key, value] of Object.entries(eventData)) {
+              if (typeof value === 'object') {
+                htmlTemplate = htmlTemplate.replaceAll(`\${${key}}`, JSON.stringify(value, null, 2));
+              } else {
+                htmlTemplate = htmlTemplate.replaceAll(`\${${key}}`, value?.toString() || '');
+              }
+            }
+            
+            // Send email using Postmark
+            const response = await fetch('https://api.postmarkapp.com/email', {
+              method: 'POST',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-Postmark-Server-Token': 
+              },
+              body: JSON.stringify({
+                "From": "satyamdev@purplestylelabs.com",
+                "To": "ashwin.khode@purplestylelabs.com",
+                "Subject": `[${context.repo.repo}] ${eventData.description}`,
+                "HtmlBody": htmlTemplate,
+                "MessageStream": "outbound"
+              })
+            });
+            
+            if (!response.ok) {
+              const error = await response.json();
+              core.setFailed(`Failed to send email: ${error.Message}`);
+            }
