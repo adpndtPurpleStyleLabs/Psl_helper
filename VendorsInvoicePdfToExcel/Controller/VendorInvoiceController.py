@@ -58,7 +58,12 @@ async def parse_pdf(
         return extractedInformation
 
     except Exception as e:
-        raise e
+        raise {
+            "isSuccess": False,
+            "msg": "Invalid or Wrong invoice pdf format for designer " + vendor_name,
+            "debugMsg": str(e)
+        }
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8088)

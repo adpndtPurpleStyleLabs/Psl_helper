@@ -156,7 +156,6 @@ class VendorInvoiceBl:
         return tempPath
 
     def processPdf(self, pdfPath, vendor):
-        try:
             tables_data = self.extract_tables_from_pdf(pdfPath)
             text_data =  self.extractTextFromPdf(pdfPath)
             tables_data_from_tabula = self.extract_tables_from_pdf_using_tabula(pdfPath)
@@ -181,5 +180,3 @@ class VendorInvoiceBl:
                "total_tax": total_tax
             }
             return extractedInformation
-        except BaseException as e:
-            raise HTTPException(status_code=400, detail=str(e))
