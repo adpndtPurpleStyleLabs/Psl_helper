@@ -1,0 +1,181 @@
+name: Project Board Email
+
+on:
+  issues:
+    types: [labeled, edited, closed, reopened, unassigned, assigned]
+  issue_comment:
+    types: [created, deleted, edited]
+
+jobs:
+  send-notification:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Read template and send email
+        uses: actions/github-script@v7
+        env:
+          POSTMARK_API_TOKEN: ${{ secrets.POSTMARK_API_TOKEN }}
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            try {
+              // Get repository information more reliably
+              const repoFullName = context.payload.repository.full_name;
+              const repoName = context.payload.repository.name;
+              
+              // Read the template file with error handling
+              const templatePath = path.join(process.env.GITHUB_WORKSPACE, '.github', 'email_templates', 'project-update.html');
+              let htmlTemplate;
+              try {
+                htmlTemplate = fs.readFileSync(templatePath, 'utf8');
+              } catch (error) {
+                throw new Error(`Failed to read email template: ${error.message}`);
+              }
+              
+              // Get event specific data
+              const eventType = context.eventName;
+              const action = context.payload.action;
+              
+              // Base event data
+             let eventData = {
+                actor: context.actor,
+                timestamp: new Date(context.payload.issue.updated_at).toLocaleString(),
+                action: action,
+                repository: context.repo.repo,
+                repoName: repoName,
+                issueUrl: context.payload.issue.html_url,
+                issueTitle: context.payload.issue.title,
+                issueNumber: context.payload.issue.number,
+                projectUrl: 'https://github.com/users/adpndtPurpleStyleLabs/projects/1'
+              };
+
+              // Process event-specific details
+              if (eventType === 'issues') {
+                switch(action) {
+                  case 'labeled':
+                    eventData.label = context.payload.label.name;
+                    eventData.description = `Label "${context.payload.label.name}" added to issue #${eventData.issueNumber}`;
+                    break;
+                  case 'edited':
+                    eventData.changes = context.payload.changes;
+                    eventData.description = `Issue #${eventData.issueNumber} edited`;
+                    break;
+                  case 'closed':
+                    eventData.description = `Issue #${eventData.issueNumber} closed`;
+                    break;
+                  case 'reopened':
+                    eventData.description = `Issue #${eventData.issueNumber} reopened`;
+                    break;
+                  case 'assigned':
+                    eventData.assignee = context.payload.assignee.login;
+                    eventData.description = `assigned to issue #${eventData.issueNumber}`;
+                    break;
+                  case 'unassigned':
+                    eventData.assignee = context.payload.assignee.login;
+                    eventData.description = `unassigned from issue #${eventData.issueNumber}`;
+                    break;
+                  default:
+                    eventData.description = `Issue #${eventData.issueNumber} ${action}`;
+                }
+              } else if (eventType === 'issue_comment') {
+                eventData.comment = context.payload.comment.body;
+                eventData.commentUrl = context.payload.comment.html_url;
+                
+                switch(action) {
+                  case 'created':
+                    eventData.description = `New comment on issue #${eventData.issueNumber}`;
+                    break;
+                  case 'edited':
+                    eventData.changes = context.payload.changes;
+                    eventData.description = `Comment edited on issue #${eventData.issueNumber}`;
+                    break;
+                  case 'deleted':
+                    eventData.description = `Comment deleted from issue #${eventData.issueNumber}`;
+                    break;
+                  default:
+                    eventData.description = `Comment ${action} on issue #${eventData.issueNumber}`;
+                }
+              }
+
+              // Generate HTML sections with proper escaping
+              const escapeHtml = (str) => {
+                return str
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;')
+                  .replace(/"/g, '&quot;')
+                  .replace(/'/g, '&#039;');
+              };
+
+              eventData.commentSection = eventData.comment ? `
+                <div style="background: #f6f8fa; border-radius: 6px; padding: 16px; margin-bottom: 24px;">
+                  <h3 style="margin: 0 0 12px 0; font-size: 14px; color: #24292e;">Comment</h3>
+                  <div style="font-size: 14px; color: #24292e; white-space: pre-wrap;">${escapeHtml(eventData.comment)}</div>
+                  <div style="margin-top: 8px;">
+                    <a href="${eventData.commentUrl}" style="color: #0366d6; text-decoration: none; font-size: 12px;">View on GitHub</a>
+                  </div>
+                </div>
+              ` : '';
+
+              eventData.labelSection = eventData.label ? `
+                <div style="margin-bottom: 24px;">
+                  <span style="display: inline-block; padding: 4px 8px; font-size: 12px; font-weight: 500; border-radius: 12px; background-color: #eee;">
+                    ${escapeHtml(eventData.label)}
+                  </span>
+                </div>
+              ` : '';
+
+              eventData.assigneeSection = eventData.assignee ? `
+                <div style="margin-bottom: 24px;">
+                  <h3 style="margin: 0 0 12px 0; font-size: 14px; color: #24292e;">Assignee</h3>
+                  <a href="https://github.com/${escapeHtml(eventData.assignee)}" style="color: #0366d6; text-decoration: none;">
+                    ${escapeHtml(eventData.assignee)}
+                  </a>
+                </div>
+              ` : '';
+
+              eventData.changesSection = eventData.changes ? `
+                <div style="background: #f6f8fa; border-radius: 6px; padding: 16px; margin-bottom: 24px;">
+                  <h3 style="margin: 0 0 12px 0; font-size: 14px; color: #24292e;">Changes</h3>
+                  <pre style="margin: 0; font-size: 12px; color: #24292e;">${escapeHtml(JSON.stringify(eventData.changes, null, 2))}</pre>
+                </div>
+              ` : '';
+              
+              // Replace template variables safely
+              for (const [key, value] of Object.entries(eventData)) {
+                const regex = new RegExp(`\\$\\{${key}\\}`, 'g');
+                htmlTemplate = htmlTemplate.replace(regex, value?.toString() || '');
+              }
+              
+              // Send email using Postmark with proper error handling
+              const response = await fetch('https://api.postmarkapp.com/email', {
+                method: 'POST',
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
+                  'X-Postmark-Server-Token': process.env.POSTMARK_API_TOKEN
+                },
+                body: JSON.stringify({
+                  "From": "satyamdev@purplestylelabs.com",
+                  "To": "ashwin.khode@purplestylelabs.com",
+                  "Subject": `[${eventData.repoName}] ${eventData.description}`,
+                  "HtmlBody": htmlTemplate,
+                  "MessageStream": "outbound"
+                })
+              });
+              
+              if (!response.ok) {
+                const error = await response.json();
+                throw new Error(`Failed to send email: ${error.Message || 'Unknown error'}`);
+              }
+              
+              console.log(`Successfully sent email notification for ${eventType} ${action}`);
+              
+            } catch (error) {
+              core.setFailed(`Workflow failed: ${error.message}`);
+              throw error;
+            }

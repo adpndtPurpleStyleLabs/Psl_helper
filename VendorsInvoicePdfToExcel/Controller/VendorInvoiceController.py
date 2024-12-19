@@ -1,3 +1,5 @@
+from http.client import HTTPException
+
 from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -58,7 +60,7 @@ async def parse_pdf(
         return extractedInformation
 
     except Exception as e:
-        raise {
+        return {
             "isSuccess": False,
             "msg": "Invalid or Wrong invoice pdf format for designer " + vendor_name,
             "debugMsg": str(e)
