@@ -1,0 +1,120 @@
+name: Project Board Email
+
+on:
+  issues:
+    types: [labeled, edited, closed, reopened, unassigned, assigned]
+  issue_comment:
+    types: [created, deleted, edited]
+
+jobs:
+  send-notification:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Format data
+        id: format-data
+        uses: actions/github-script@v6
+        with:
+          script: |
+              const eventPayload = context.payload;
+              const issue = eventPayload.issue || {};
+              const changes = eventPayload.changes || {};
+              
+              const formattedDate = new Date(issue.updated_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+              const repo = `${context.repo.owner}/${context.repo.repo}`;
+              const issueTitle = issue.title || '';
+              const action = eventPayload.action;
+              const comment = formatComment(eventPayload.comment?.body || '');
+
+              function formatComment(comment) {
+                if (!comment) return '';
+                
+                return comment
+                  .replace(/\r\n|\r|\n/g, '\\n')  // Convert line breaks
+                  .replace(/[\u0080-\uFFFF]/g, char => {
+                    return '\\u' + ('0000' + char.charCodeAt(0).toString(16)).slice(-4);
+                  }); // Escape Unicode
+              }
+              
+              let subject = '';
+              let formattedChanges = false;
+
+              const isComment = eventPayload.hasOwnProperty('comment');
+              
+              if (action === 'edited' && Object.keys(changes).length && !isComment) {
+                formattedChanges = JSON.stringify(Object.fromEntries(
+                  Object.entries(changes).map(([field, change]) => [
+                    field,
+                    {
+                      from: change.from || 'empty',
+                      to: issue[field] || 'empty'
+                    }
+                  ])
+                ));
+                
+                const changeDetails = Object.entries(changes)
+                  .map(([field, change]) => `${field} (from: "${change.from || 'empty'}" to: "${issue[field] || 'empty'}")`)
+                  .join(', ');
+                
+                subject = `[${repo}] ${issueTitle}: ${context.actor} edited the issue`;
+              } else {
+                switch(action) {
+                  case 'assigned':
+                  case 'unassigned':
+                    const assignee = eventPayload.assignee?.login || '';
+                    subject = `[${repo}] ${issueTitle}: ${context.actor} ${action}${assignee ? ' ' + assignee : ''}`;
+                    break;
+                  case 'labeled':
+                    subject = `[${repo}] ${issueTitle}: ${context.actor} added label "${eventPayload.label?.name || ''}"`;
+                    break;
+                  case 'closed':
+                    subject = `[${repo}] ${issueTitle}: ${context.actor} closed the issue`;
+                    break;
+                  case 'reopened':
+                    subject = `[${repo}] ${issueTitle}: ${context.actor} reopened the issue`;
+                    break;
+                  default:
+                    if (eventPayload.comment) {
+                      subject = `[${repo}] ${issueTitle}: ${context.actor} ${action} a comment`;
+                    } else {
+                      subject = `[${repo}] ${issueTitle}: ${action}`;
+                    }
+                }
+              }
+              
+              core.setOutput('formatted_time', formattedDate);
+              core.setOutput('email_subject', subject.replace(/"/g, "'"));
+              core.setOutput('formatted_description', subject.split(': ')[1]);
+              core.setOutput('formatted_changes', formattedChanges);
+              core.setOutput('formatted_comment', comment);
+
+      - name: Postmark Action
+        uses: ashwinkhode/postmark-action@v0.0.2
+        with: 
+          postmark-token: ${{ secrets.POSTMARK_API_TOKEN }}
+          from: "satyamdev@purplestylelabs.com"
+          to: "ashwin.khode@purplestylelabs.com"
+          is-html: 'true'
+          subject: ${{ steps.format-data.outputs.email_subject }}
+          template-path: "./.github/email_templates/test.html"
+          template-data: |
+            {
+              "actor": "${{ github.actor }}",
+              "timestamp": "${{ steps.format-data.outputs.formatted_time }}",
+              "action": "${{ github.event.action }}",
+              "repository": "${{ github.repository }}",
+              "repoName": "${{ github.event.repository.name }}",
+              "issueUrl": "${{ github.event.issue.html_url }}",
+              "issueTitle": "${{ github.event.issue.title }}",
+              "issueNumber": "${{ github.event.issue.number }}",
+              "projectUrl": "https://github.com/users/yourorg/projects/1",
+              "description": "${{ steps.format-data.outputs.formatted_description }}",
+              "comment": "${{ steps.format-data.outputs.formatted_comment }}",
+              "commentUrl": "${{ github.event.comment.html_url || '' }}",
+              "label": "${{ github.event.label.name || '' }}",
+              "assignee": "${{ github.event.assignee.login || '' }}",
+              "changes": ${{ steps.format-data.outputs.formatted_changes }}
+            }
+            
