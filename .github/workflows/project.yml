@@ -1,0 +1,52 @@
+name: Project Board Email
+
+on:
+  issues:
+    types: [labeled, edited, closed, reopened, unassigned, assigned]
+  issue_comment:
+    types: [created, deleted, edited]
+
+jobs:
+  send-notification:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Format data
+        id: format-data
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const date = new Date('${{ github.event.issue.updated_at }}');
+            const formattedDate = date.toLocaleString();
+            core.setOutput('formatted_time', formattedDate);
+
+      - name: Postmark Action
+        uses: ashwinkhode/postmark-action@v0.0.2
+        with: 
+          postmark-token: ${{ secrets.POSTMARK_API_TOKEN }}
+          from: "satyamdev@purplestylelabs.com"
+          to: "ashwin.khode@purplestylelabs.com"
+          is-html: 'true'
+          subject: "${{ format('[{0}] {1} - {2}', github.repository, github.event.issue.title, github.event.action) }}"
+          template-path: "./.github/email_templates/test.html"
+          template-data: |
+            {
+              "actor": "${{ github.actor }}",
+              "timestamp": "${{ steps.format-data.outputs.formatted_time }}",
+              "action": "${{ github.event.action }}",
+              "repository": "${{ github.repository }}",
+              "repoName": "${{ github.event.repository.name }}",
+              "issueUrl": "${{ github.event.issue.html_url }}",
+              "issueTitle": "${{ github.event.issue.title }}",
+              "issueNumber": "${{ github.event.issue.number }}",
+              "projectUrl": "https://github.com/users/yourorg/projects/1",
+              "description": "${{ github.event.action == 'labeled' && format('Label "{0}" added to issue #{1}', github.event.label.name, github.event.issue.number) || format('Issue #{0} {1}', github.event.issue.number, github.event.action) }}",
+              "comment": "${{ github.event.comment.body || '' }}",
+              "commentUrl": "${{ github.event.comment.html_url || '' }}",
+              "label": "${{ github.event.label.name || '' }}",
+              "assignee": "${{ github.event.assignee.login || '' }}",
+              "changes": ${{ toJSON(github.event.changes || '{}') }}
+            }
+            
