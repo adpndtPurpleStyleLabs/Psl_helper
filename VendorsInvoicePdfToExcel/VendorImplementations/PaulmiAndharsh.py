@@ -13,6 +13,7 @@ class PaulmiAndHarsh:
         self.total_amount_after_tax = ""
         self.bankDetails = []
         self.total_pcs = ""
+        self.roundOff = ""
 
     def getVendorInfo(self):
         firstPageText = self.tables[1]
@@ -75,6 +76,7 @@ class PaulmiAndHarsh:
         products = []
         totalTaxInfoList = pages[pageNoContainingTotal][indexOfContainsInList(pages[pageNoContainingTotal], "Taxable ")][-1].split("\n")
         self.total_b4_tax = totalTaxInfoList[indexOfContainsInList(totalTaxInfoList, "Taxable V")].split(" ")[-1]
+        self.roundOff = totalTaxInfoList[indexOfContainsInList(totalTaxInfoList, "Rounding Amo")].split(" ")[-1]
         self.total_tax = totalTaxInfoList[indexOfContainsInList(totalTaxInfoList, "IGST")].split(" ")[-1]
         self.total_tax_percentage = totalTaxInfoList[indexOfContainsInList(totalTaxInfoList, "IGST")].split(" ")[-2]
         self.total_amount_after_tax = totalTaxInfoList[indexOfContainsInList(totalTaxInfoList, "Net A")].split(" ")[-1]
@@ -125,6 +127,7 @@ class PaulmiAndHarsh:
         returnData["total_tax"] =  self.total_tax
         returnData["tax_rate"] =  self.total_tax_percentage
         returnData["total_tax_percentage"] = self.total_tax_percentage
+        returnData["roundOff"] = self.roundOff
         return returnData
 
     def getVendorBankInfo(self):
