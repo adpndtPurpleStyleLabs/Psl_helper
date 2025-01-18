@@ -1,4 +1,4 @@
-name: Build Export Deploy Docker Image
+name: Action runner
 
 on:
   workflow_dispatch:
