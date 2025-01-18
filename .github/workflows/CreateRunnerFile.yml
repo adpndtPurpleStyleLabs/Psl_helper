@@ -19,7 +19,7 @@ jobs:
           echo github-action-runner/t nexus.ppustage.dev/github-action-runner-service:latest
           echo github-action-runner/t:latest -f DockerFileRunner
           sudo docker build --build-arg GIT_COMMIT=${rev} -t github-action-runner/t:latest -f Dockerfile .
-          sudo docker image tag github-action-runner/t nexus.ppustage.dev/act-service:${rev}
+          sudo docker image tag github-action-runner/t nexus.ppustage.dev/github-action-runner-service:${rev}
           sudo docker image tag github-action-runner/t nexus.ppustage.dev/github-action-runner-service:latest
 
       - name: Push Image to nexus
