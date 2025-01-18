@@ -5,7 +5,7 @@ set -e
 
 
 export RUNNER_ALLOW_RUNASROOT=true
-./config.sh --url ${REPO_URL} --token ${RUNNER_TOKEN} --name $(hostname) --work ${RUNNER_WORKDIR} --unattended --replace
+./config.sh --url ${REPO_URL} --token ${RUNNER_TOKEN} --name ${RUNNER_NAME} --work ${RUNNER_WORKDIR} --unattended --replace
 
 # Start the runner
 ./run.sh
