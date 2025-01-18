@@ -1,0 +1,34 @@
+name: Build Export Deploy Docker Image
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: [self-hosted, label-4]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build the Docker image
+        run: |
+          
+          pwd
+          ls
+          rev=$(git rev-parse --short HEAD)
+          echo "rev  ${rev}"
+          echo github-action-runner/t nexus.ppustage.dev/github-action-runner-service:latest
+          echo github-action-runner/t:latest -f DockerFileRunner
+          sudo docker build --build-arg GIT_COMMIT=${rev} -t github-action-runner/t:latest -f Dockerfile .
+          sudo docker image tag github-action-runner/t nexus.ppustage.dev/act-service:${rev}
+          sudo docker image tag github-action-runner/t nexus.ppustage.dev/github-action-runner-service:latest
+
+      - name: Push Image to nexus
+        env:
+          NEXUS_USER: 'admin'
+          NEXUS_PWD: '1q2w3e'
+        run: |
+          rev=$(git rev-parse --short HEAD)
+          echo "rev  ${rev}"
+          sudo docker login -u $NEXUS_USER -p $NEXUS_PWD nexus.ppustage.dev
+          sudo docker push nexus.ppustage.dev/github-action-runner-service:${rev}
+          sudo docker push nexus.ppustage.dev/github-action-runner-service:latest
