@@ -5,6 +5,12 @@ on:
     types: [labeled, edited, closed, reopened, unassigned, assigned]
   issue_comment:
     types: [created, deleted, edited]
+  project_card:
+    types: [moved, converted]
+
+permissions:
+  issues: write
+  project: read 
 
 jobs:
   send-notification:
