@@ -21,4 +21,7 @@ else
     echo "$RUNNER_NAME" > "$RUNNER_FILE"
 fi
 
+
+sleep 2000
+
 ./run.sh
