@@ -4,8 +4,8 @@ set -e
 export RUNNER_ALLOW_RUNASROOT=1
 
 # Define persistent work directory
-RUNNER_WORKDIR="/tmp/runner-workdir"
-RUNNER_FILE="/tmp/runner-workdir/runner_name.txt"
+RUNNER_WORKDIR="/actions-runner/_work"
+RUNNER_FILE="/actions-runner/_work/runner_name.txt"
 
 # Ensure environment variables are set
 if [[ -z "$RUNNER_NAME" || -z "$RUNNER_TOKEN" || -z "$REPO_URL" ]]; then
