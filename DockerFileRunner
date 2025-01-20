@@ -6,14 +6,23 @@ RUN apt-get update && apt-get install -y curl jq git \
     && apt-get install -y libicu-dev \
     && apt-get clean
 
-ENV RUNNER_VERSION=2.310.1
+ENV RUNNER_VERSION=2.321.0
 ENV RUNNER_WORKDIR=/actions-runner/_work
 
 WORKDIR /actions-runner
 
-RUN curl -o actions-runner-linux-x64.tar.gz -L https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz && \
+RUN export RUNNER_VERSION=$(wget -qO- https://api.github.com/repos/actions/runner/releases/latest | \
+    grep '"tag_name":' | sed -E 's/.*"tag_name": "v([0-9.]+)".*/\1/') && \
+    echo "Latest Runner Version: $RUNNER_VERSION" && \
+    until wget -O actions-runner-linux-x64.tar.gz \
+    "https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz"; do \
+    echo "Waiting for the file to download..."; \
+    sleep 2; \
+    done && \
+    echo "Download completed. Extracting..." && \
     tar xzf ./actions-runner-linux-x64.tar.gz && \
-    rm ./actions-runner-linux-x64.tar.gz
+    rm ./actions-runner-linux-x64.tar.gz && \
+    echo "Runner installed successfully."
 
 RUN cd /actions-runner && bash ./bin/installdependencies.sh
 
