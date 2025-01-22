@@ -7,6 +7,7 @@ from VendorsInvoicePdfToExcel.ImplementationFactory import ImplementationFactory
 import datetime
 import tabula
 import io
+import re
 
 class VendorInvoiceBl:
     def extractTextFromPdf(self, file_path):
@@ -168,6 +169,13 @@ class VendorInvoiceBl:
             items_info, total_tax = implementation.getItemInfo()
             vendor_bank_info = implementation.getVendorBankInfo()
             items_total_info = implementation.getItemTotalInfo()
+
+            for aItems_info in items_info:
+                aItems_info['po_no'] = aItems_info['po_no'].strip()
+                if aItems_info["po_no"].startswith(("AD-","CG-", "OW-")):
+                    aItems_info["po_no"] = aItems_info["po_no"].trim()
+                    continue
+                aItems_info["po_no"] = "".join(re.findall(r'\d+', aItems_info["po_no"]))
 
             extractedInformation = {
                "vendor_info" : vendor_info,
