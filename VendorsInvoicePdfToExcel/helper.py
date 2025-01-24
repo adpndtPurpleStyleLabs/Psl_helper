@@ -18,6 +18,14 @@ def indexOfContainsInList(list, word):
         count += 1
     return -1
 
+def lastIndexOfContainsInList(list, word):
+    newList = list[::-1]
+    count = len(list)
+    for alist in newList:
+        if str(alist).__contains__(word):
+            return count
+        count -= 1
+    return -1
 
 def substring_before_second_occurrence(s, word):
     first_occurrence = s.find(word)
@@ -29,6 +37,15 @@ def substring_before_second_occurrence(s, word):
 
     return s[:second_occurrence]
 
+def substring_after_second_occurrence(s, word):
+    first_occurrence = s.find(word)
+    if first_occurrence == -1:
+        return s
+    second_occurrence = s.find(word, first_occurrence + len(word))
+    if second_occurrence == -1:
+        return s[:first_occurrence]
+
+    return s[second_occurrence:]
 
 def get_state_using_gst_id(code):
     mapping = {
@@ -77,3 +94,15 @@ def get_state_using_gst_id(code):
     except KeyError:
         print("Error while getting state for code {}".format(code))
     return state
+
+def strip_array_before_specified_word(input_array, word):
+    return input_array[indexOfContainsInList(input_array,word):]
+
+def find_nth_occurrence_of(lst, word, n):
+    count = 0
+    for index, item in enumerate(lst):
+        if item.__contains__(word):
+            count += 1
+            if count == n:
+                return index
+    return -1
