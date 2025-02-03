@@ -11,13 +11,13 @@ from VendorsInvoicePdfToExcel.BusinessLogic.VendorInvoiceBl import VendorInvoice
 
 app = FastAPI()
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=["*"],
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 
 @app.post("/pdf-to-excel/")
 async def pdf_to_excel(
@@ -30,8 +30,8 @@ async def pdf_to_excel(
             tmp_pdf.write(await file.read())
             tmp_pdf_path = tmp_pdf.name
 
-        # template_path = "/Users/administrator/PycharmProjects/PslHelper/VendorsInvoicePdfToExcel/TemplateVendorInvoices.xlsx"
-        template_path = "/app/VendorsInvoicePdfToExcel/TemplateVendorInvoices.xlsx"
+        template_path = "/Users/administrator/PycharmProjects/PslHelper/VendorsInvoicePdfToExcel/TemplateVendorInvoices.xlsx"
+        # template_path = "/app/VendorsInvoicePdfToExcel/TemplateVendorInvoices.xlsx"
         venforBl = VendorInvoiceBl()
         extractedInformation = venforBl.processPdf(tmp_pdf_path, vendor_name)
         excel_path = venforBl.fillExcelAndSave(template_path, extractedInformation,vendor_name)
