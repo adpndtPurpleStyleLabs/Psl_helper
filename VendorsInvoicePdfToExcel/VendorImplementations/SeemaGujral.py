@@ -1,5 +1,6 @@
 from VendorsInvoicePdfToExcel.helper import get_state_using_gst_id
 from fastapi import HTTPException
+from VendorsInvoicePdfToExcel.helper import indexOfContainsInList
 
 class SeemaGujral:
     def __init__(self, tables, text):
@@ -28,7 +29,7 @@ class SeemaGujral:
                 if str(alist).__contains__('Invoice No'):
                     alist.split("\n")
                     return {
-                        "invoice_number": alist.split("\n")[alist.split("\n").index("Invoice No.") + 1],
+                        "invoice_number": alist.split("\n")[indexOfContainsInList( alist.split("\n"), "Invoice")+1].split(" ")[0],
                         "invoice_date": self.text[1].split("\n")[
                                             self.indexOfContainsInList(self.text[1].split("\n"), "Date")][
                                         self.text[1].split("\n")[
@@ -60,7 +61,7 @@ class SeemaGujral:
                         "billto_name": alist.split("\n")[self.indexOfContainsInList(alist.split("\n"),"to)") + 1: self.indexOfContainsInList(alist.split("\n"), "to)") + 2][0],
                         "billto_address": alist[alist.find("to)") + 3: alist.find("GST")].replace("\n", " "),
                         "billto_gst": alist.split("\n")[self.indexOfContainsInList(alist.split("\n"), "GST")],
-                        "place_of_supply": get_state_using_gst_id(float(alist.split("\n")[self.indexOfContainsInList(alist.split("\n"), "GST")].split(": ")[1][:2]))
+                        "place_of_supply": get_state_using_gst_id(float(alist.split("\n")[self.indexOfContainsInList(alist.split("\n"), "GST")].split(":")[1][:2]))
                     }
 
     def getItemInfo(self):
