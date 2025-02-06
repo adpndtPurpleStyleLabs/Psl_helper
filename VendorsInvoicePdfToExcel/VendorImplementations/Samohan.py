@@ -55,6 +55,9 @@ class Samohan:
         }
         self.total_tax = total_tax
         indexOfHeader = indexOfContainsInList(firstPage, "Sl No")
+        indexOfPONo = indexOfContainsInList(firstPage[indexOfHeader], "PO")
+        if indexOfPONo == -1 :
+            indexOfPONo = indexOfContainsInList(firstPage, "Description")
 
         for i in range(indexOfHeader + 1, len(firstPage)):
             aProductResult = {}
@@ -72,7 +75,7 @@ class Samohan:
             aProductResult["gst_rate"] = firstPage[indexOfContainsInList(firstPage, "CGST")][3]
             aProductResult["tax_applied"] = (int(firstPage[i][9]) * 0.01 * int(firstPage[i][7].replace("%", ""))) / 2
             aProductResult["po_cost"] = int(firstPage[i][9]) + (aProductResult["tax_applied"] *2)
-            aProductResult["po_no"] = firstPage[i][1]
+            aProductResult["po_no"] = firstPage[i][indexOfPONo]
             aProductResult["or_po_no"] = ""
             aProductResult["debit_note_no"] = ""
             products.append(aProductResult)
