@@ -55,9 +55,9 @@ class Samohan:
         }
         self.total_tax = total_tax
         indexOfHeader = indexOfContainsInList(firstPage, "Sl No")
-        indexOfPONo = indexOfContainsInList(firstPage[indexOfHeader], "PO")
+        indexOfPONo = indexOfContainsInList(firstPage[indexOfHeader], "PO NO")
         if indexOfPONo == -1 :
-            indexOfPONo = indexOfContainsInList(firstPage, "Description")
+            indexOfPONo = indexOfContainsInList(firstPage[indexOfHeader], "Description")
 
         for i in range(indexOfHeader + 1, len(firstPage)):
             aProductResult = {}
