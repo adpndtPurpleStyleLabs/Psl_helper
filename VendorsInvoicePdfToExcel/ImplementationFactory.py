@@ -9,6 +9,7 @@ from VendorsInvoicePdfToExcel.VendorImplementations.Samohan import Samohan
 from VendorsInvoicePdfToExcel.VendorImplementations.Masaba import Masaba
 from VendorsInvoicePdfToExcel.VendorImplementations.Ruhaan import Ruhaan
 from VendorsInvoicePdfToExcel.VendorImplementations.Riyaasat import Riyaasat
+from VendorsInvoicePdfToExcel.VendorImplementations.MonkAndMei import MonkAndMei
 from fastapi import HTTPException
 
 from VendorsInvoicePdfToExcel.VendorImplementations.SheetalBatra import SheetalBatra
@@ -40,5 +41,7 @@ class ImplementationFactory:
             return Ruhaan(tables, text_data, table_by_tabula)
         elif implementation == "riyaasat":
             return Riyaasat(tables, text_data, table_by_tabula)
+        elif implementation == "monk_and_mei":
+            return MonkAndMei(tables, text_data, table_by_tabula)
         else:
             raise HTTPException(status_code=404, detail="Item not found")

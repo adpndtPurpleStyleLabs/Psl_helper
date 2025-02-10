@@ -11,8 +11,6 @@ class Riyaasat:
         self.text_data = text_data
         self.table_by_tabula = table_by_tabula
 
-
-
     def getVendorInfo(self):
         firstPageText = self.tables[1]
         vendorInfo = firstPageText[indexOfContainsInList(firstPageText, "RIYAA")][0].split("\n")

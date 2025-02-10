@@ -1,23 +1,21 @@
-import re
-
 from VendorsInvoicePdfToExcel.helper import indexOfContainsInList
+import re
 from fastapi import HTTPException
 
-class Ruhaan:
+class MonkAndMei:
+
     def __init__(self, tables, text_data, table_by_tabula):
         self.tables = tables
         self.text_data = text_data
         self.table_by_tabula = table_by_tabula
-        if self.text_data[len(self.tables)].find("e-Way") is not -1:
-            self.text_data.pop(len(self.tables))
-            self.tables.pop(len(self.tables))
+
 
     def getVendorInfo(self):
         firstPageText = self.tables[1]
-        vendorInfo = firstPageText[indexOfContainsInList(firstPageText, "Ruha")][0].split("\n")
+        vendorInfo = firstPageText[indexOfContainsInList(firstPageText, "MONK")][0].split("\n")
         return {
             "vendor_name": vendorInfo[0],
-            "vendor_address": ", ".join(vendorInfo[:4]),
+            "vendor_address": ", ".join(vendorInfo[:5]),
             "vendor_mob": "N/A",
             "vendor_gst": vendorInfo[indexOfContainsInList(vendorInfo, "GST")].split(":")[-1],
             "vendor_email": vendorInfo[indexOfContainsInList(vendorInfo, "Email")].split(":")[-1]
@@ -27,14 +25,13 @@ class Ruhaan:
         firstPageText = self.tables[1]
         invoiceInfo = firstPageText[indexOfContainsInList(firstPageText, "Dated")]
         return {
-            "invoice_number": invoiceInfo[indexOfContainsInList(invoiceInfo, "Invoice N")].split(" ")[-2].split("\n")[-1],
+            "invoice_number": invoiceInfo[indexOfContainsInList(invoiceInfo, "Invoice N")].split(" ")[-1].split("\n")[-1],
             "invoice_date": invoiceInfo[indexOfContainsInList(invoiceInfo, "Date")].split("\n")[-1].strip()
         }
 
     def getReceiverInfo(self):
         firstPageText = self.tables[1]
-        receiverInfo = firstPageText[indexOfContainsInList(firstPageText, "Ship to")][0].split("\n")
-        receiverInfo = receiverInfo[indexOfContainsInList(receiverInfo, "Ship") : indexOfContainsInList(receiverInfo, "Bill")]
+        receiverInfo = firstPageText[indexOfContainsInList(firstPageText, "Bill")][0].split("\n")
         return {
             "receiver_name": receiverInfo[1],
             "receiver_address": receiverInfo[2],
@@ -43,12 +40,11 @@ class Ruhaan:
 
     def getBillingInfo(self):
         firstPageText = self.tables[1]
-        billToInfo = firstPageText[indexOfContainsInList(firstPageText, "Bill to")][0].split("\n")
-        billToInfo = billToInfo[indexOfContainsInList(billToInfo, "Bill") :]
+        billToInfo =firstPageText[indexOfContainsInList(firstPageText, "Bill")][0].split("\n")
         return {
             "billto_name": billToInfo[1],
             "billto_address": billToInfo[2],
-            "place_of_supply": billToInfo[indexOfContainsInList(billToInfo, "Place")].split(":")[-1].strip(),
+            "place_of_supply": billToInfo[indexOfContainsInList(billToInfo, "State")].split(":")[1].split(",")[0],
             "billto_gst": billToInfo[indexOfContainsInList(billToInfo, "GST")].split(":")[-1].strip()
         }
 
@@ -70,50 +66,53 @@ class Ruhaan:
 
 
         products = []
-        for index, aPage in enumerate(pages.values()):
-            indexOfHeader = indexOfContainsInList(self.tables[1], "Sl")
-            indexOfSr = indexOfContainsInList(firstPage[indexOfHeader], "Sl")
-            indexOfItemname = indexOfContainsInList(firstPage[indexOfHeader], "Description")
-            indexOfHsn = indexOfContainsInList(firstPage[indexOfHeader], "HSN")
-            indexOfQty = indexOfContainsInList(firstPage[indexOfHeader], "Quantity")
-            indexOfPer = indexOfContainsInList(firstPage[indexOfHeader], "per")
-            indexOfRate = indexOfContainsInList(firstPage[indexOfHeader], "Rate")
-            indexOfAmt = indexOfContainsInList(firstPage[indexOfHeader], "Amount")
+        indexOfHeader = indexOfContainsInList(self.tables[1], "Sl")
+        indexOfSr = indexOfContainsInList(firstPage[indexOfHeader], "Sl")
+        indexOfItemname = indexOfContainsInList(firstPage[indexOfHeader], "Description")
+        indexOfHsn = indexOfContainsInList(firstPage[indexOfHeader], "HSN")
+        indexOfQty = indexOfContainsInList(firstPage[indexOfHeader], "Quantity")
+        indexOfRate = indexOfContainsInList(firstPage[indexOfHeader], "Rate")
+        indexOfAmt = indexOfContainsInList(firstPage[indexOfHeader], "Amount")
 
-            for itemIndex, item in enumerate(aPage[indexOfHeader+1:]):
-                if indexOfContainsInList(item, "Output") is not -1:
-                    break
-                if item[0].strip() == "":
-                    continue
+        for itemIndex, item in enumerate(firstPage[indexOfHeader+1:]):
+            if indexOfContainsInList(item, "OUTPUT") is not -1:
+                break
+            if item[0].strip() == "":
+                continue
 
-                aProductResult= {}
-                aProductResult["po_no"] = ""
-                aProductResult["or_po_no"] = ""
-                orPoInfo = aPage[indexOfHeader+itemIndex+2][1]
-                if indexOfContainsInList(aPage[indexOfHeader+itemIndex+2], "OR") is not -1:
-                    aProductResult["or_po_no"] = orPoInfo[orPoInfo.find("OR"):].replace(")", "").strip()
+            aProductResult= {}
+            aProductResult["po_no"] = ""
+            aProductResult["or_po_no"] = ""
+            orPoInfo = firstPage[indexOfContainsInList(firstPage, "Buyer")][0].split("\n")[-1]
+            if orPoInfo.find("OR") is not -1:
+                aProductResult["or_po_no"] = orPoInfo
+            else:
+                aProductResult["po_no"] = orPoInfo
 
-                aProductResult["debit_note_no"] = ""
-                aProductResult["index"] =  item[indexOfSr]
-                aProductResult["vendor_code"] = ""
-                aProductResult["HSN/SAC"] = item[indexOfHsn]
-                aProductResult["Qty"] = item[indexOfQty]
-                aProductResult["Rate"] = item[indexOfRate]
-                aProductResult["Per"] = item[indexOfPer]
-                aProductResult["mrp"] = item[indexOfRate]
-                aProductResult["Amount"] = item[indexOfAmt]
-                aProductResult["po_cost"] = ""
-                aProductResult["gst_rate"] =lastPage[indexOfContainsInList(lastPage, "Taxable")+1][0].split("\n")[-1].replace("%", "").strip()
-                aProductResult["gst_type"] = gstType
-                products.append(aProductResult)
+            aProductResult["debit_note_no"] = ""
+            aProductResult["index"] =  item[indexOfSr]
+            aProductResult["vendor_code"] = ""
+            aProductResult["HSN/SAC"] = item[indexOfHsn]
+            aProductResult["Qty"] = item[indexOfQty]
+            aProductResult["Rate"] = item[indexOfRate]
+            aProductResult["Per"] = ""
+            aProductResult["mrp"] = item[indexOfRate]
+            aProductResult["Amount"] = item[indexOfAmt]
+            aProductResult["po_cost"] = ""
+            aProductResult["gst_rate"] =lastPage[indexOfContainsInList(lastPage, "Taxable")+1][0].split("\n")[-1].replace("%", "").strip()
+            aProductResult["gst_type"] = gstType
+            products.append(aProductResult)
 
         return products, total_tax
 
     def getVendorBankInfo(self):
+        pages = self.tables
+        lastPage = pages[len(pages)]
+        bankInfo = lastPage[indexOfContainsInList(lastPage, "Bank")][0].split("\n")
         return {
-            "bank_name": "",
-            "account_number": "",
-            "ifs_code": "",
+            "bank_name": bankInfo[indexOfContainsInList(bankInfo, "Bank Name")].split(":")[-1],
+            "account_number": bankInfo[indexOfContainsInList(bankInfo, "A/c No")].split(":")[-1],
+            "ifs_code": bankInfo[indexOfContainsInList(bankInfo, "IFS")].split(":")[-1],
         }
 
     def getItemTotalInfo(self):
