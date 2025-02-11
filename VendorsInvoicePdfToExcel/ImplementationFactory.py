@@ -13,6 +13,7 @@ from VendorsInvoicePdfToExcel.VendorImplementations.Masaba import Masaba
 from VendorsInvoicePdfToExcel.VendorImplementations.Ruhaan import Ruhaan
 from VendorsInvoicePdfToExcel.VendorImplementations.Riyaasat import Riyaasat
 from VendorsInvoicePdfToExcel.VendorImplementations.MonkAndMei import MonkAndMei
+from VendorsInvoicePdfToExcel.VendorImplementations.Amyra import Amyra
 from fastapi import HTTPException
 
 from VendorsInvoicePdfToExcel.VendorImplementations.SheetalBatra import SheetalBatra
@@ -52,5 +53,7 @@ class ImplementationFactory:
             return KasbahClothing(tables, text_data, table_by_tabula)
         elif implementation == "fatiz":
             return Fatiz(tables, text_data, table_by_tabula)
+        elif implementation == "amyra":
+            return Amyra(tables, text_data, table_by_tabula)
         else:
             raise HTTPException(status_code=404, detail="Item not found")
