@@ -1,5 +1,6 @@
 from VendorsInvoicePdfToExcel.VendorImplementations.AmitAgarwal import AmitAgarwal
 from VendorsInvoicePdfToExcel.VendorImplementations.Espana import Espana
+from VendorsInvoicePdfToExcel.VendorImplementations.Fatiz import Fatiz
 from VendorsInvoicePdfToExcel.VendorImplementations.KasbahClothing import KasbahClothing
 from VendorsInvoicePdfToExcel.VendorImplementations.Lashkaraa import Lashkaraa
 from VendorsInvoicePdfToExcel.VendorImplementations.PaulmiAndharsh import PaulmiAndHarsh
@@ -49,5 +50,7 @@ class ImplementationFactory:
             return Espana(tables, text_data, table_by_tabula)
         elif implementation == "kasbah_clothing":
             return KasbahClothing(tables, text_data, table_by_tabula)
+        elif implementation == "fatiz":
+            return Fatiz(tables, text_data, table_by_tabula)
         else:
             raise HTTPException(status_code=404, detail="Item not found")
