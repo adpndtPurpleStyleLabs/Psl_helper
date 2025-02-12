@@ -101,7 +101,7 @@ def strip_array_before_specified_word(input_array, word):
 def find_nth_occurrence_of(lst, word, n):
     count = 0
     for index, item in enumerate(lst):
-        if item.__contains__(word):
+        if str(item).lower().__contains__(word.lower()):
             count += 1
             if count == n:
                 return index
