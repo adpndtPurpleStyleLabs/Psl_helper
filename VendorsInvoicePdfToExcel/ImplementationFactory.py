@@ -4,6 +4,7 @@ from VendorsInvoicePdfToExcel.VendorImplementations.Fatiz import Fatiz
 from VendorsInvoicePdfToExcel.VendorImplementations.KasbahClothing import KasbahClothing
 from VendorsInvoicePdfToExcel.VendorImplementations.Lashkaraa import Lashkaraa
 from VendorsInvoicePdfToExcel.VendorImplementations.PaulmiAndharsh import PaulmiAndHarsh
+from VendorsInvoicePdfToExcel.VendorImplementations.RnFashion import RnFashion
 from VendorsInvoicePdfToExcel.VendorImplementations.SaakshaAndKinni import SaakshaAndKinni
 from VendorsInvoicePdfToExcel.VendorImplementations.SeemaGujral import SeemaGujral
 from VendorsInvoicePdfToExcel.VendorImplementations.Kalighata import Kalighata
@@ -59,5 +60,7 @@ class ImplementationFactory:
             return Amyra(tables, text_data, table_by_tabula)
         elif implementation == "skb_retail_pvt_ltd":
             return SkbRetailPvtLtd(tables, text_data, table_by_tabula)
+        elif implementation == "rn_fashion":
+            return RnFashion(tables, text_data, table_by_tabula)
         else:
             raise HTTPException(status_code=404, detail="Item not found")
