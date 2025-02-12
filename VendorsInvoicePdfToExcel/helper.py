@@ -1,4 +1,6 @@
+from django.template.defaultfilters import lower
 from num2words import num2words
+from fastapi import HTTPException
 
 def convert_amount_to_words(amount):
     amount = float(amount)
@@ -13,7 +15,7 @@ def convert_amount_to_words(amount):
 def indexOfContainsInList(list, word):
     count = 0
     for alist in list:
-        if str(alist).__contains__(word):
+        if lower(str(alist)).__contains__(lower(word)):
             return count
         count += 1
     return -1

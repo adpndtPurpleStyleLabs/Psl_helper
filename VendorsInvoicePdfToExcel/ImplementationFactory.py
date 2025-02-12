@@ -17,6 +17,8 @@ from VendorsInvoicePdfToExcel.VendorImplementations.Amyra import Amyra
 from fastapi import HTTPException
 
 from VendorsInvoicePdfToExcel.VendorImplementations.SheetalBatra import SheetalBatra
+from VendorsInvoicePdfToExcel.VendorImplementations.SkbRetailPvtLtd import SkbRetailPvtLtd
+
 
 class ImplementationFactory:
     def getImplementation(self, implementation, tables, text_data, table_by_tabula):
@@ -55,5 +57,7 @@ class ImplementationFactory:
             return Fatiz(tables, text_data, table_by_tabula)
         elif implementation == "amyra":
             return Amyra(tables, text_data, table_by_tabula)
+        elif implementation == "skb_retail_pvt_ltd":
+            return SkbRetailPvtLtd(tables, text_data, table_by_tabula)
         else:
             raise HTTPException(status_code=404, detail="Item not found")
