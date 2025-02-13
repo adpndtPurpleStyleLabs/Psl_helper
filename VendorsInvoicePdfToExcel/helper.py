@@ -106,3 +106,17 @@ def find_nth_occurrence_of(lst, word, n):
             if count == n:
                 return index
     return -1
+
+
+def get_list_containing(lst, word):
+    index = indexOfContainsInList(lst, word)
+    if index == -1:
+        return None  # Return None if the word is not found
+
+    item = lst[index]
+
+    # Recursively call the function if item is a list or tuple
+    if isinstance(item, (list, tuple)):
+        return get_list_containing(item, word)
+
+    return item
