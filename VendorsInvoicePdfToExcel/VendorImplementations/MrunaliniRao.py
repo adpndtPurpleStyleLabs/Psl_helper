@@ -68,17 +68,6 @@ class MrunaliniRao:
 
         products = []
 
-
-        # poNoInfo = ""
-        # for index in range(1, len(pages) + 1):
-        #     if indexOfContainsInList(pages[index], "Po.No") is not -1:
-        #         poNoInfo = pages[index][indexOfContainsInList(pages[index], "Po.No")][
-        #             indexOfContainsInList(pages[index][indexOfContainsInList(pages[index], "Po.No")], "Po")].split(":")[
-        #             -1]
-        #
-        # if poNoInfo == "":
-        #     raise HTTPException(status_code=400, detail="Cannot found Po no in pdf ")
-
         for index in range(1, len(pages) + 1):
             page = pages[index]
 
