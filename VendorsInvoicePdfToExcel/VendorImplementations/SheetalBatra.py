@@ -58,6 +58,12 @@ class SheetalBatra:
         taxTotals = lastPage[indexOfTaxHeader + 2]
         cGSTIndex = indexOfContainsInList(taxHeader, "Central")
         sGSTIndex = indexOfContainsInList(taxHeader, "State Tax")
+
+        if cGSTIndex is -1:
+            cGSTIndex = indexOfContainsInList(taxHeader, "CGST")
+        if sGSTIndex is -1:
+            sGSTIndex = indexOfContainsInList(taxHeader, "SGST")
+
         cGstPercentage = taxTotals[cGSTIndex]
         sGstPercentage = taxTotals[sGSTIndex + 1]
         for aPage in pages.values():
