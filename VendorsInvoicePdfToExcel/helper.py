@@ -1,4 +1,5 @@
 from num2words import num2words
+import re
 
 def convert_amount_to_words(amount):
     amount = float(amount)
@@ -107,7 +108,6 @@ def find_nth_occurrence_of(lst, word, n):
                 return index
     return -1
 
-
 def get_list_containing(lst, word):
     index = indexOfContainsInList(lst, word)
     if index == -1:
@@ -120,3 +120,6 @@ def get_list_containing(lst, word):
         return get_list_containing(item, word)
 
     return item
+
+def extractNumbers(text):
+    return re.sub(r'\D', '', text)

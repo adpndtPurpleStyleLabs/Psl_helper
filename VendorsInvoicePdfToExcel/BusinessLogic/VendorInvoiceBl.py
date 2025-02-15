@@ -171,9 +171,9 @@ class VendorInvoiceBl:
             items_total_info = implementation.getItemTotalInfo()
 
             for aItems_info in items_info:
-                items_info['or_po_no'] = aItems_info['or_po_no'].replace(" ", "")
-                if items_info['or_po_no'] != '':
-                    items_info['or_po_no'] = items_info['or_po_no'].replace("OR", "OR-")
+                aItems_info['or_po_no'] = aItems_info['or_po_no'].replace(" ", "")
+                if aItems_info['or_po_no'] != '' and  aItems_info['or_po_no'].find("OR-") == -1 and aItems_info['or_po_no'].find("OR") != -1:
+                    aItems_info['or_po_no'] = aItems_info['or_po_no'].replace("OR", "OR-")
 
                 aItems_info['po_no'] = aItems_info['po_no']
                 if aItems_info["po_no"].startswith(("AD-","CG-", "OW-")):
