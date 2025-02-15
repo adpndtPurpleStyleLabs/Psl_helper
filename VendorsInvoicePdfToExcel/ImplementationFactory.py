@@ -1,5 +1,6 @@
 from VendorsInvoicePdfToExcel.VendorImplementations.AbkasaDesignerApparelsPvtLtd import AbkasaDesignerApparelsPvtLtd
 from VendorsInvoicePdfToExcel.VendorImplementations.AmitAgarwal import AmitAgarwal
+from VendorsInvoicePdfToExcel.VendorImplementations.AmitArrora import AmitArrora
 from VendorsInvoicePdfToExcel.VendorImplementations.AneeshAgarwaal import AneeshAgarwaal
 from VendorsInvoicePdfToExcel.VendorImplementations.AnushreeReddyWorld import AnushreeReddyWorld
 from VendorsInvoicePdfToExcel.VendorImplementations.CoutureByNiharika import CoutureByNiharika
@@ -9,7 +10,7 @@ from VendorsInvoicePdfToExcel.VendorImplementations.Fatiz import Fatiz
 from VendorsInvoicePdfToExcel.VendorImplementations.KasbahClothing import KasbahClothing
 from VendorsInvoicePdfToExcel.VendorImplementations.Lashkaraa import Lashkaraa
 from VendorsInvoicePdfToExcel.VendorImplementations.MrunaliniRao import MrunaliniRao
-from VendorsInvoicePdfToExcel.VendorImplementations.PaulmiAndharsh import PaulmiAndHarsh
+from VendorsInvoicePdfToExcel.VendorImplementations.PaulmiAndHarsh import PaulmiAndHarsh
 from VendorsInvoicePdfToExcel.VendorImplementations.RnFashion import RnFashion
 from VendorsInvoicePdfToExcel.VendorImplementations.SaakshaAndKinni import SaakshaAndKinni
 from VendorsInvoicePdfToExcel.VendorImplementations.SahilAnejaCouture import SahilAnejaCouture
@@ -83,5 +84,7 @@ class ImplementationFactory:
             return AbkasaDesignerApparelsPvtLtd(tables, text_data, table_by_tabula)
         elif implementation == "aneesh_agarwaal":
             return AneeshAgarwaal(tables, text_data, table_by_tabula)
+        elif implementation == "amit_arrora":
+            return AmitArrora(tables, text_data, table_by_tabula)
         else:
             raise HTTPException(status_code=404, detail="Item not found")
