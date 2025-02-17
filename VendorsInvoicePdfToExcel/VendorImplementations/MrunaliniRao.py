@@ -93,6 +93,11 @@ class MrunaliniRao:
                     poNoInfo = pages[index+1][find_nth_occurrence_of(pages[index+1], "Po.No", len(products))][indexOfContainsInList(pages[index+1][find_nth_occurrence_of(pages[index+1], "Po.No", len(products))], "Po")].split(":")[-1]
 
 
+                gstRate = float( lastPage[indexOfContainsInList(lastPage, "Taxable") + 1][0].split("\n")[
+                    -1].replace("%", "").strip())
+
+                amount = float(item[indexOfAmt].replace(",",""))
+
                 pages[index][find_nth_occurrence_of(pages[index], "Po.No", len(products))]
                 aProductResult["debit_note_no"] = ""
                 aProductResult["index"] = item[indexOfSr]
@@ -102,11 +107,11 @@ class MrunaliniRao:
                 aProductResult["Rate"] = item[indexOfRate]
                 aProductResult["Per"] = item[indexOfUnit]
                 aProductResult["mrp"] = item[indexOfRate]
-                aProductResult["Amount"] = item[indexOfAmt]
+                aProductResult["Amount"] = amount
                 aProductResult["po_cost"] = ""
-                aProductResult["gst_rate"] = lastPage[indexOfContainsInList(lastPage, "Taxable") + 1][0].split("\n")[
-                    -1].replace("%", "").strip()
+                aProductResult["gst_rate"] = gstRate
                 aProductResult["gst_type"] = gstType
+                aProductResult["tax_applied"] = (amount * gstRate)/100
 
                 aProductResult["po_no"] = ""
                 aProductResult["or_po_no"] = ""
