@@ -1,4 +1,4 @@
-from VendorsInvoicePdfToExcel.helper import get_state_using_gst_id
+from VendorsInvoicePdfToExcel.helper import get_state_using_gst_id, get_list_containing
 from fastapi import HTTPException
 from VendorsInvoicePdfToExcel.helper import indexOfContainsInList
 
@@ -170,6 +170,11 @@ class SeemaGujral:
         returnData = {}
         indexOfTotalPCS = 0
         lastPage = self.tables[len(self.tables)]
+
+        listOfTaxHeader = lastPage[indexOfContainsInList(lastPage, "tax amount")]
+        if indexOfContainsInList(listOfTaxHeader,"SGST") is not -1 or  indexOfContainsInList(listOfTaxHeader,"CGST") is not -1:
+            raise HTTPException(status_code=400, detail="For Seema gujral CGST and SGST is not implemented")
+
         for index, atable in enumerate(lastPage):
             for alist in atable:
                 if str(alist).__contains__('Company’s Bank'):
@@ -184,10 +189,11 @@ class SeemaGujral:
                 self.indexOfContainsInList(lastPage[indexOfTotalPCS], "PC")]
             returnData["total_amount_after_tax"] = lastPage[indexOfTotalPCS][-1]
             returnData["total_b4_tax"] = lastPage[indexOfTotalPCS - 1][0].split("\n")[0]
-            returnData["total_tax"] = lastPage[indexOfTotalPCS - 1][0].split("\n")[1]
-            returnData["tax_rate"] = lastPage[indexOfTotalPCS - 1][0].split("\n")[1]
-            returnData["total_tax_percentage"] = lastPage[indexOfTotalPCS + 4][
-                self.indexOfContainsInList(lastPage[indexOfTotalPCS + 4], "%")]
+            returnData["total_tax"] = lastPage[indexOfContainsInList(lastPage, "tax amount") + 3][-1]
+            returnData["tax_rate"] = get_list_containing(lastPage[indexOfContainsInList(lastPage, "tax amount") + 2],
+                                                         "%").replace("%", "")
+            returnData["total_tax_percentage"] = get_list_containing(
+                lastPage[indexOfContainsInList(lastPage, "tax amount") + 2], "%").replace("%", "")
 
         return returnData
 
