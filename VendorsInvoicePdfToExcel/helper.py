@@ -123,3 +123,8 @@ def get_list_containing(lst, word):
 
 def extractNumbers(text):
     return re.sub(r'\D', '', text)
+
+import re
+
+def split_every_second_space(s):
+    return re.split(r'((?:\S+\s+\S+)\s*)', s)[1::2]

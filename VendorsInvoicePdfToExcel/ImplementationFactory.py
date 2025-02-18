@@ -4,6 +4,7 @@ from VendorsInvoicePdfToExcel.VendorImplementations.AmitArrora import AmitArrora
 from VendorsInvoicePdfToExcel.VendorImplementations.AmrtiDawani import AmrtiDawani
 from VendorsInvoicePdfToExcel.VendorImplementations.AneeshAgarwaal import AneeshAgarwaal
 from VendorsInvoicePdfToExcel.VendorImplementations.AnushreeReddyWorld import AnushreeReddyWorld
+from VendorsInvoicePdfToExcel.VendorImplementations.Artimen import Artimen
 from VendorsInvoicePdfToExcel.VendorImplementations.ChaashniByMaansiAndKetan import ChaashniByMaansiAndKetan
 from VendorsInvoicePdfToExcel.VendorImplementations.CoutureByNiharika import CoutureByNiharika
 from VendorsInvoicePdfToExcel.VendorImplementations.DollyJ import DollyJ
@@ -92,5 +93,7 @@ class ImplementationFactory:
             return AmrtiDawani(tables, text_data, table_by_tabula)
         elif implementation == "chaashni_by_maansi_and_ketan":
             return ChaashniByMaansiAndKetan(tables, text_data, table_by_tabula)
+        elif implementation == "artimen":
+            return Artimen(tables, text_data, table_by_tabula)
         else:
             raise HTTPException(status_code=404, detail="Item not found")
