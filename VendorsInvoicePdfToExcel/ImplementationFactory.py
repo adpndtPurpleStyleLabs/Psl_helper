@@ -7,6 +7,7 @@ from VendorsInvoicePdfToExcel.VendorImplementations.AnushreeReddyWorld import An
 from VendorsInvoicePdfToExcel.VendorImplementations.Artimen import Artimen
 from VendorsInvoicePdfToExcel.VendorImplementations.BasilLeaf import BasilLeaf
 from VendorsInvoicePdfToExcel.VendorImplementations.ChaashniByMaansiAndKetan import ChaashniByMaansiAndKetan
+from VendorsInvoicePdfToExcel.VendorImplementations.CharuAndVasundhara import CharuAndVasundhara
 from VendorsInvoicePdfToExcel.VendorImplementations.CoutureByNiharika import CoutureByNiharika
 from VendorsInvoicePdfToExcel.VendorImplementations.DollyJ import DollyJ
 from VendorsInvoicePdfToExcel.VendorImplementations.Espana import Espana
@@ -98,5 +99,7 @@ class ImplementationFactory:
             return Artimen(tables, text_data, table_by_tabula)
         elif implementation == "basil_leaf":
             return BasilLeaf(tables, text_data, table_by_tabula)
+        elif implementation == "charu_and_asundhara":
+            return CharuAndVasundhara(tables, text_data, table_by_tabula)
         else:
             raise HTTPException(status_code=404, detail="Item not found")
