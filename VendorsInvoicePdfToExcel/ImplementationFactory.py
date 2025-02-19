@@ -41,80 +41,54 @@ from VendorsInvoicePdfToExcel.VendorImplementations.SkbRetailPvtLtd import SkbRe
 
 class ImplementationFactory:
     def getImplementation(self, implementation, tables, text_data, table_by_tabula):
-        implementation = str(implementation).lower().replace(' ',"")
-        if  implementation == "amit_agarwal":
-            return AmitAgarwal(tables, text_data)
-        elif implementation == "seema_gujral":
-            return SeemaGujral(tables, text_data)
-        elif implementation == "kalighata":
-            return Kalighata(tables, text_data, table_by_tabula)
-        elif implementation == "sheetal_batra":
-            return SheetalBatra(tables, text_data, table_by_tabula)
-        elif implementation == "lashkaraa":
-            return Lashkaraa(tables, text_data, table_by_tabula)
-        elif implementation == "paulmi_and_harsh":
-            return PaulmiAndHarsh(tables, text_data, table_by_tabula)
-        elif implementation == "linen_bloom_men":
-            return LinenBloomMen(tables, text_data)
-        elif implementation == "sammohan":
-            return Samohan(tables, text_data)
-        elif implementation == "masaba":
-            return Masaba(tables, text_data, table_by_tabula)
-        elif implementation == "saaksha_and_kinni":
-            return SaakshaAndKinni(tables, text_data, table_by_tabula)
-        elif implementation == "ruhaan":
-            return Ruhaan(tables, text_data, table_by_tabula)
-        elif implementation == "riyaasat":
-            return Riyaasat(tables, text_data, table_by_tabula)
-        elif implementation == "monk_and_mei":
-            return MonkAndMei(tables, text_data, table_by_tabula)
-        elif implementation == "espana":
-            return Espana(tables, text_data, table_by_tabula)
-        elif implementation == "kasbah_clothing":
-            return KasbahClothing(tables, text_data, table_by_tabula)
-        elif implementation == "fatiz":
-            return Fatiz(tables, text_data, table_by_tabula)
-        elif implementation == "amyra":
-            return Amyra(tables, text_data, table_by_tabula)
-        elif implementation == "skb_retail_pvt_ltd":
-            return SkbRetailPvtLtd(tables, text_data, table_by_tabula)
-        elif implementation == "rn_fashion":
-            return RnFashion(tables, text_data, table_by_tabula)
-        elif implementation == "mrunalini_rao":
-            return MrunaliniRao(tables, text_data, table_by_tabula)
-        elif implementation == "couture_by_niharika":
-            return CoutureByNiharika(tables, text_data, table_by_tabula)
-        elif implementation == "dolly_j":
-            return DollyJ(tables, text_data, table_by_tabula)
-        elif implementation == "anushree_reddy_world":
-            return AnushreeReddyWorld(tables, text_data, table_by_tabula)
-        elif implementation == "sahil_aneja_couture":
-            return SahilAnejaCouture(tables, text_data, table_by_tabula)
-        elif implementation == "abkasa_designer_apparels_pvt_ltd":
-            return AbkasaDesignerApparelsPvtLtd(tables, text_data, table_by_tabula)
-        elif implementation == "aneesh_agarwaal":
-            return AneeshAgarwaal(tables, text_data, table_by_tabula)
-        elif implementation == "amit_arrora":
-            return AmitArrora(tables, text_data, table_by_tabula)
-        elif implementation == "amrti_dawani":
-            return AmrtiDawani(tables, text_data, table_by_tabula)
-        elif implementation == "chaashni_by_maansi_and_ketan":
-            return ChaashniByMaansiAndKetan(tables, text_data, table_by_tabula)
-        elif implementation == "artimen":
-            return Artimen(tables, text_data, table_by_tabula)
-        elif implementation == "basil_leaf":
-            return BasilLeaf(tables, text_data, table_by_tabula)
-        elif implementation == "charu_and_asundhara":
-            return CharuAndVasundhara(tables, text_data, table_by_tabula)
-        elif implementation == "cosa_nostraa":
-            return CosaNostraa(tables, text_data, table_by_tabula)
-        elif implementation == "crimzon":
-            return Crimzon(tables, text_data, table_by_tabula)
-        elif implementation == "ikshita_choudhary":
-            return IkshitaChoudhary(tables, text_data, table_by_tabula)
-        elif implementation == "isha_gupta_tayal":
-            return IshaGuptaTayal(tables, text_data, table_by_tabula)
-        elif implementation == "joules_by_radhika":
-            return JoulesByRadhika(tables, text_data, table_by_tabula)
-        else:
-            raise HTTPException(status_code=404, detail="Item not found")
+        self.implementations = {
+            "amit_agarwal": AmitAgarwal,
+            "seema_gujral": SeemaGujral,
+            "kalighata": Kalighata,
+            "sheetal_batra": SheetalBatra,
+            "lashkaraa": Lashkaraa,
+            "paulmi_and_harsh": PaulmiAndHarsh,
+            "linen_bloom_men": LinenBloomMen,
+            "sammohan": Samohan,
+            "masaba": Masaba,
+            "saaksha_and_kinni": SaakshaAndKinni,
+            "ruhaan": Ruhaan,
+            "riyaasat": Riyaasat,
+            "monk_and_mei": MonkAndMei,
+            "espana": Espana,
+            "kasbah_clothing": KasbahClothing,
+            "fatiz": Fatiz,
+            "amyra": Amyra,
+            "skb_retail_pvt_ltd": SkbRetailPvtLtd,
+            "rn_fashion": RnFashion,
+            "mrunalini_rao": MrunaliniRao,
+            "couture_by_niharika": CoutureByNiharika,
+            "dolly_j": DollyJ,
+            "anushree_reddy_world": AnushreeReddyWorld,
+            "sahil_aneja_couture": SahilAnejaCouture,
+            "abkasa_designer_apparels_pvt_ltd": AbkasaDesignerApparelsPvtLtd,
+            "aneesh_agarwaal": AneeshAgarwaal,
+            "amit_arrora": AmitArrora,
+            "amrti_dawani": AmrtiDawani,
+            "chaashni_by_maansi_and_ketan": ChaashniByMaansiAndKetan,
+            "artimen": Artimen,
+            "basil_leaf": BasilLeaf,
+            "charu_and_asundhara": CharuAndVasundhara,
+            "cosa_nostraa": CosaNostraa,
+            "crimzon": Crimzon,
+            "ikshita_choudhary": IkshitaChoudhary,
+            "isha_gupta_tayal": IshaGuptaTayal,
+            "joules_by_radhika": JoulesByRadhika,
+        }
+
+        implementation = str(implementation).lower().replace(' ', "")
+        implementation_class = self.implementations.get(implementation)
+
+        if implementation_class:
+            # Instantiate with required arguments
+            return implementation_class(tables, text_data,
+                                        table_by_tabula) if "table_by_tabula" in implementation_class.__init__.__code__.co_varnames else implementation_class(
+                tables, text_data)
+
+        raise HTTPException(status_code=404, detail="Item not found")
+
