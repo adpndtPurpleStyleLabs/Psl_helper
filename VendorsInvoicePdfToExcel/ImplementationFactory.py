@@ -14,6 +14,7 @@ from VendorsInvoicePdfToExcel.VendorImplementations.Crimzon import Crimzon
 from VendorsInvoicePdfToExcel.VendorImplementations.DollyJ import DollyJ
 from VendorsInvoicePdfToExcel.VendorImplementations.Espana import Espana
 from VendorsInvoicePdfToExcel.VendorImplementations.Fatiz import Fatiz
+from VendorsInvoicePdfToExcel.VendorImplementations.IkshitaChoudhary import IkshitaChoudhary
 from VendorsInvoicePdfToExcel.VendorImplementations.KasbahClothing import KasbahClothing
 from VendorsInvoicePdfToExcel.VendorImplementations.Lashkaraa import Lashkaraa
 from VendorsInvoicePdfToExcel.VendorImplementations.MrunaliniRao import MrunaliniRao
@@ -107,5 +108,7 @@ class ImplementationFactory:
             return CosaNostraa(tables, text_data, table_by_tabula)
         elif implementation == "crimzon":
             return Crimzon(tables, text_data, table_by_tabula)
+        elif implementation == "ikshita_choudhary":
+            return IkshitaChoudhary(tables, text_data, table_by_tabula)
         else:
             raise HTTPException(status_code=404, detail="Item not found")
