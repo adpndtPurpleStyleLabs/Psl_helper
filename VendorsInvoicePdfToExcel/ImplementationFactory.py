@@ -1,35 +1,94 @@
+from VendorsInvoicePdfToExcel.VendorImplementations.AbkasaDesignerApparelsPvtLtd import AbkasaDesignerApparelsPvtLtd
 from VendorsInvoicePdfToExcel.VendorImplementations.AmitAgarwal import AmitAgarwal
+from VendorsInvoicePdfToExcel.VendorImplementations.AmitArrora import AmitArrora
+from VendorsInvoicePdfToExcel.VendorImplementations.AmrtiDawani import AmrtiDawani
+from VendorsInvoicePdfToExcel.VendorImplementations.AneeshAgarwaal import AneeshAgarwaal
+from VendorsInvoicePdfToExcel.VendorImplementations.AnushreeReddyWorld import AnushreeReddyWorld
+from VendorsInvoicePdfToExcel.VendorImplementations.Artimen import Artimen
+from VendorsInvoicePdfToExcel.VendorImplementations.BasilLeaf import BasilLeaf
+from VendorsInvoicePdfToExcel.VendorImplementations.ChaashniByMaansiAndKetan import ChaashniByMaansiAndKetan
+from VendorsInvoicePdfToExcel.VendorImplementations.CharuAndVasundhara import CharuAndVasundhara
+from VendorsInvoicePdfToExcel.VendorImplementations.CosaNostraa import CosaNostraa
+from VendorsInvoicePdfToExcel.VendorImplementations.CoutureByNiharika import CoutureByNiharika
+from VendorsInvoicePdfToExcel.VendorImplementations.Crimzon import Crimzon
+from VendorsInvoicePdfToExcel.VendorImplementations.DollyJ import DollyJ
+from VendorsInvoicePdfToExcel.VendorImplementations.Espana import Espana
+from VendorsInvoicePdfToExcel.VendorImplementations.Fatiz import Fatiz
+from VendorsInvoicePdfToExcel.VendorImplementations.IkshitaChoudhary import IkshitaChoudhary
+from VendorsInvoicePdfToExcel.VendorImplementations.IshaGuptaTayal import IshaGuptaTayal
+from VendorsInvoicePdfToExcel.VendorImplementations.JoulesByRadhika import JoulesByRadhika
+from VendorsInvoicePdfToExcel.VendorImplementations.KasbahClothing import KasbahClothing
 from VendorsInvoicePdfToExcel.VendorImplementations.Lashkaraa import Lashkaraa
-from VendorsInvoicePdfToExcel.VendorImplementations.PaulmiAndharsh import PaulmiAndHarsh
+from VendorsInvoicePdfToExcel.VendorImplementations.MrunaliniRao import MrunaliniRao
+from VendorsInvoicePdfToExcel.VendorImplementations.PaulmiAndHarsh import PaulmiAndHarsh
+from VendorsInvoicePdfToExcel.VendorImplementations.RnFashion import RnFashion
+from VendorsInvoicePdfToExcel.VendorImplementations.SaakshaAndKinni import SaakshaAndKinni
+from VendorsInvoicePdfToExcel.VendorImplementations.SahilAnejaCouture import SahilAnejaCouture
 from VendorsInvoicePdfToExcel.VendorImplementations.SeemaGujral import SeemaGujral
 from VendorsInvoicePdfToExcel.VendorImplementations.Kalighata import Kalighata
 from VendorsInvoicePdfToExcel.VendorImplementations.LinenBloomMen import LinenBloomMen
 from VendorsInvoicePdfToExcel.VendorImplementations.Samohan import Samohan
 from VendorsInvoicePdfToExcel.VendorImplementations.Masaba import Masaba
+from VendorsInvoicePdfToExcel.VendorImplementations.Ruhaan import Ruhaan
+from VendorsInvoicePdfToExcel.VendorImplementations.Riyaasat import Riyaasat
+from VendorsInvoicePdfToExcel.VendorImplementations.MonkAndMei import MonkAndMei
+from VendorsInvoicePdfToExcel.VendorImplementations.Amyra import Amyra
 from fastapi import HTTPException
 
 from VendorsInvoicePdfToExcel.VendorImplementations.SheetalBatra import SheetalBatra
+from VendorsInvoicePdfToExcel.VendorImplementations.SkbRetailPvtLtd import SkbRetailPvtLtd
+
 
 class ImplementationFactory:
     def getImplementation(self, implementation, tables, text_data, table_by_tabula):
-        implementation = str(implementation).lower().replace(' ',"")
-        if  implementation == "amit_agarwal":
-            return AmitAgarwal(tables, text_data)
-        elif implementation == "seema_gujral":
-            return SeemaGujral(tables, text_data)
-        elif implementation == "kalighata":
-            return Kalighata(tables, text_data, table_by_tabula)
-        elif implementation == "sheetal_batra":
-            return SheetalBatra(tables, text_data, table_by_tabula)
-        elif implementation == "lashkaraa":
-            return Lashkaraa(tables, text_data, table_by_tabula)
-        elif implementation == "paulmi_and_harsh":
-            return PaulmiAndHarsh(tables, text_data, table_by_tabula)
-        elif implementation == "linen_bloom_men":
-            return LinenBloomMen(tables, text_data)
-        elif implementation == "sammohan":
-            return Samohan(tables, text_data)
-        elif implementation == "masaba":
-            return Masaba(tables, text_data, table_by_tabula)
-        else:
-            raise HTTPException(status_code=404, detail="Item not found")
+        self.implementations = {
+            "amit_agarwal": AmitAgarwal,
+            "seema_gujral": SeemaGujral,
+            "kalighata": Kalighata,
+            "sheetal_batra": SheetalBatra,
+            "lashkaraa": Lashkaraa,
+            "paulmi_and_harsh": PaulmiAndHarsh,
+            "linen_bloom_men": LinenBloomMen,
+            "sammohan": Samohan,
+            "masaba": Masaba,
+            "saaksha_and_kinni": SaakshaAndKinni,
+            "ruhaan": Ruhaan,
+            "riyaasat": Riyaasat,
+            "monk_and_mei": MonkAndMei,
+            "espana": Espana,
+            "kasbah_clothing": KasbahClothing,
+            "fatiz": Fatiz,
+            "amyra": Amyra,
+            "skb_retail_pvt_ltd": SkbRetailPvtLtd,
+            "rn_fashion": RnFashion,
+            "mrunalini_rao": MrunaliniRao,
+            "couture_by_niharika": CoutureByNiharika,
+            "dolly_j": DollyJ,
+            "anushree_reddy_world": AnushreeReddyWorld,
+            "sahil_aneja_couture": SahilAnejaCouture,
+            "abkasa_designer_apparels_pvt_ltd": AbkasaDesignerApparelsPvtLtd,
+            "aneesh_agarwaal": AneeshAgarwaal,
+            "amit_arrora": AmitArrora,
+            "amrti_dawani": AmrtiDawani,
+            "chaashni_by_maansi_and_ketan": ChaashniByMaansiAndKetan,
+            "artimen": Artimen,
+            "basil_leaf": BasilLeaf,
+            "charu_and_asundhara": CharuAndVasundhara,
+            "cosa_nostraa": CosaNostraa,
+            "crimzon": Crimzon,
+            "ikshita_choudhary": IkshitaChoudhary,
+            "isha_gupta_tayal": IshaGuptaTayal,
+            "joules_by_radhika": JoulesByRadhika,
+        }
+
+        implementation = str(implementation).lower().replace(' ', "")
+        implementation_class = self.implementations.get(implementation)
+
+        if implementation_class:
+            # Instantiate with required arguments
+            return implementation_class(tables, text_data,
+                                        table_by_tabula) if "table_by_tabula" in implementation_class.__init__.__code__.co_varnames else implementation_class(
+                tables, text_data)
+
+        raise HTTPException(status_code=404, detail="Item not found")
+

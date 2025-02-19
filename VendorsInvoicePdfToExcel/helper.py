@@ -1,4 +1,5 @@
 from num2words import num2words
+import re
 
 def convert_amount_to_words(amount):
     amount = float(amount)
@@ -13,7 +14,7 @@ def convert_amount_to_words(amount):
 def indexOfContainsInList(list, word):
     count = 0
     for alist in list:
-        if str(alist).__contains__(word):
+        if (str(alist)).lower().__contains__(word.lower()):
             return count
         count += 1
     return -1
@@ -101,8 +102,29 @@ def strip_array_before_specified_word(input_array, word):
 def find_nth_occurrence_of(lst, word, n):
     count = 0
     for index, item in enumerate(lst):
-        if item.__contains__(word):
+        if str(item).lower().__contains__(word.lower()):
             count += 1
             if count == n:
                 return index
     return -1
+
+def get_list_containing(lst, word):
+    index = indexOfContainsInList(lst, word)
+    if index == -1:
+        return None  # Return None if the word is not found
+
+    item = lst[index]
+
+    # Recursively call the function if item is a list or tuple
+    if isinstance(item, (list, tuple)):
+        return get_list_containing(item, word)
+
+    return item
+
+def extractNumbers(text):
+    return re.sub(r'\D', '', text)
+
+import re
+
+def split_every_second_space(s):
+    return re.split(r'((?:\S+\s+\S+)\s*)', s)[1::2]
