@@ -25,6 +25,7 @@ from VendorsInvoicePdfToExcel.VendorImplementations.Lashkaraa import Lashkaraa
 from VendorsInvoicePdfToExcel.VendorImplementations.MrunaliniRao import MrunaliniRao
 from VendorsInvoicePdfToExcel.VendorImplementations.PaulmiAndHarsh import PaulmiAndHarsh
 from VendorsInvoicePdfToExcel.VendorImplementations.Prisho import Prisho
+from VendorsInvoicePdfToExcel.VendorImplementations.ReneeLabel import ReneeLabel
 from VendorsInvoicePdfToExcel.VendorImplementations.RnFashion import RnFashion
 from VendorsInvoicePdfToExcel.VendorImplementations.SaakshaAndKinni import SaakshaAndKinni
 from VendorsInvoicePdfToExcel.VendorImplementations.SahilAnejaCouture import SahilAnejaCouture
@@ -86,7 +87,8 @@ class ImplementationFactory:
             "khara_kapas": KharaKapas,
             "kalista": Kalista,
             "kkarma_accessories": KkarmaAccessories,
-            "prisho": Prisho
+            "prisho": Prisho,
+            "renee_label": ReneeLabel,
         }
 
         implementation = str(implementation).lower().replace(' ', "")

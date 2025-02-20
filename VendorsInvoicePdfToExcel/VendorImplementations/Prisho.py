@@ -111,6 +111,8 @@ class Prisho:
             aProductResult["po_cost"] = ""
             aProductResult["gst_rate"] = self.gstPercentage
             aProductResult["gst_type"] = gstType
+            aProductResult["tax_applied"] = (float(
+                item[indexOfAmt].split("\n")[0].replace(",", "")) * self.gstPercentage) / 100
             products.append(aProductResult)
 
         return products, total_tax
