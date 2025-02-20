@@ -60,7 +60,7 @@ class KasbahClothing:
         firstPage = self.tables[1]
         lastPage = pages[len(pages)]
         grandTotalList = firstPage[indexOfContainsInList(firstPage, "Grand Tota")]
-        total_tax = { "IGST": grandTotalList[indexOfContainsInList(grandTotalList, "IGST")].split("\n")[indexOfContainsInList(grandTotalList[indexOfContainsInList(grandTotalList, "IGST")].split("\n"), "IGST")+1].split(" ")[1]
+        total_tax = { "IGST": float(lastPage[indexOfContainsInList(lastPage, "Total Tax")][0].split("\n")[-2].split(" ")[-1].replace(",",""))
         ,  "SGST": 0, "CGST": 0,}
 
         gstType = ""
@@ -110,7 +110,7 @@ class KasbahClothing:
             aProductResult["mrp"] = item[indexOfRate]
             aProductResult["Amount"] = item[indexOfAmt].split("\n")[0]
             aProductResult["po_cost"] = ""
-            aProductResult["gst_rate"] = item[indexOfGstRate]
+            aProductResult["gst_rate"] = float(item[indexOfGstRate].replace("%", "").strip())
             aProductResult["gst_type"] = gstType
             products.append(aProductResult)
 
@@ -135,6 +135,6 @@ class KasbahClothing:
                                                       lastPage[indexOfContainsInList(lastPage, "Total")][-1])
         returnData["total_b4_tax"] = lastPage[indexOfContainsInList(lastPage, "Total Tax")][0].split("\n")[-2].split(" ")[2]
         returnData["total_tax"] = lastPage[indexOfContainsInList(lastPage, "Total Tax")][0].split("\n")[-2].split(" ")[-1]
-        returnData["tax_rate"] = lastPage[indexOfContainsInList(lastPage, "Total Tax")][0].split("\n")[-2].split(" ")[1]
+        returnData["tax_rate"] = float(lastPage[indexOfContainsInList(lastPage, "Total Tax")][0].split("\n")[-2].split(" ")[1].replace("%", "").strip())
         returnData["total_tax_percentage"] = returnData["tax_rate"]
         return returnData

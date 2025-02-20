@@ -79,7 +79,13 @@ class AbkasaDesignerApparelsPvtLtd:
         indexOfDiscount = indexOfContainsInList(firstPage[indexOfHeader], "Disc")
 
         listOfSrNo = firstPage[indexOfHeader + 1:][0][indexOfSr].split("\n")
-        listOfPo =self.getListOfProductDescriptions(firstPage[indexOfHeader + 1:][0][indexOfItemname])
+
+        listOfPo= []
+        listOfPoNoOnTop = get_list_containing(firstPage, "Buyer’s").split("\n")[-1].replace(" ","").split(",")
+        if len(listOfPoNoOnTop) > 0:
+            listOfPo = listOfPoNoOnTop
+        else:
+            listOfPo =self.getListOfProductDescriptions(firstPage[indexOfHeader + 1:][0][indexOfItemname])
         listofHsn = firstPage[indexOfHeader + 1:][0][indexOfHsn].split("\n")
         listOfQty = firstPage[indexOfHeader + 1:][0][indexOfQty].split("\n")
         listOfAmount = firstPage[indexOfHeader + 1:][0][indexOfAmt].split("\n")

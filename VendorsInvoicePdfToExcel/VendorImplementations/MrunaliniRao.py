@@ -92,6 +92,7 @@ class MrunaliniRao:
                 else:
                     poNoInfo = pages[index+1][find_nth_occurrence_of(pages[index+1], "Po.No", len(products))][indexOfContainsInList(pages[index+1][find_nth_occurrence_of(pages[index+1], "Po.No", len(products))], "Po")].split(":")[-1]
 
+                poNoInfo= poNoInfo.strip().split(" ")[0]
 
                 gstRate = float( lastPage[indexOfContainsInList(lastPage, "Taxable") + 1][0].split("\n")[
                     -1].replace("%", "").strip())

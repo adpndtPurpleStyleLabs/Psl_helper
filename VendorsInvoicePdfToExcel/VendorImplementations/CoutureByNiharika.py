@@ -1,6 +1,6 @@
 import re
 
-from VendorsInvoicePdfToExcel.helper import indexOfContainsInList, convert_amount_to_words
+from VendorsInvoicePdfToExcel.helper import indexOfContainsInList, convert_amount_to_words, find_nth_occurrence_of
 from fastapi import HTTPException
 
 class CoutureByNiharika:
@@ -66,7 +66,7 @@ class CoutureByNiharika:
         lastPage = pages[len(pages)]
 
         gstInfoSection = self.table_by_tabula[len(pages)][
-            indexOfContainsInList(self.table_by_tabula[len(pages)], "Total gst")].split("\n")
+            find_nth_occurrence_of(self.table_by_tabula[len(pages)], "Total gst",2)].split("\n")
         getInfoHeader = gstInfoSection[indexOfContainsInList(gstInfoSection, "GST")].split("$")
         gstValues = gstInfoSection[indexOfContainsInList(gstInfoSection, "GST") + 1].split("$")
 

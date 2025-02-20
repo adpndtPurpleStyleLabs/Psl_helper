@@ -17,7 +17,9 @@ from VendorsInvoicePdfToExcel.VendorImplementations.Fatiz import Fatiz
 from VendorsInvoicePdfToExcel.VendorImplementations.IkshitaChoudhary import IkshitaChoudhary
 from VendorsInvoicePdfToExcel.VendorImplementations.IshaGuptaTayal import IshaGuptaTayal
 from VendorsInvoicePdfToExcel.VendorImplementations.JoulesByRadhika import JoulesByRadhika
+from VendorsInvoicePdfToExcel.VendorImplementations.Kalista import Kalista
 from VendorsInvoicePdfToExcel.VendorImplementations.KasbahClothing import KasbahClothing
+from VendorsInvoicePdfToExcel.VendorImplementations.KharaKapas import KharaKapas
 from VendorsInvoicePdfToExcel.VendorImplementations.Lashkaraa import Lashkaraa
 from VendorsInvoicePdfToExcel.VendorImplementations.MrunaliniRao import MrunaliniRao
 from VendorsInvoicePdfToExcel.VendorImplementations.PaulmiAndHarsh import PaulmiAndHarsh
@@ -79,6 +81,8 @@ class ImplementationFactory:
             "ikshita_choudhary": IkshitaChoudhary,
             "isha_gupta_tayal": IshaGuptaTayal,
             "joules_by_radhika": JoulesByRadhika,
+            "khara_kapas": KharaKapas,
+            "kalista": Kalista
         }
 
         implementation = str(implementation).lower().replace(' ', "")

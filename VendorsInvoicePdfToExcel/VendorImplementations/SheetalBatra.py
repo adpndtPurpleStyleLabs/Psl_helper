@@ -97,7 +97,7 @@ class SheetalBatra:
                 aProductResult["po_no"] = ""
                 aProductResult["or_po_no"] = ""
                 if str(listOfPoOrOrPo[i]).lower().__contains__("or"):
-                    aProductResult["or_po_no"] = listOfPoOrOrPo[i]
+                    aProductResult["or_po_no"] = ("OR-"+listOfPoOrOrPo[i].split(" ")[-1]).replace(" ","")
                 else:
                     aProductResult["po_no"] = listOfPoOrOrPo[i]
 
