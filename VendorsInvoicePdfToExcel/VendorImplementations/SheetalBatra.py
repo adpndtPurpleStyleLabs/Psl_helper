@@ -118,7 +118,7 @@ class SheetalBatra:
                     gstType = gstType + " SGST " + sGstPercentage
                 self.taxRate = gstType
                 aProductResult["gst_type"] = gstType
-                aProductResult["gst_rate"] = sGstPercentage
+                aProductResult["gst_rate"] = float(cGstPercentage.replace("%", "")) + float(sGstPercentage.replace("%", ""))
                 aProductResult["tax_applied"] = productCgstAmount
                 products.append(aProductResult)
             total_tax = {
