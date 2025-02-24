@@ -116,6 +116,8 @@ class AneeshAgarwaal:
             aProductResult["mrp"] = item[indexMap["Taxable"]]
             aProductResult["Amount"] = item[indexMap["Total\nAmount"]+2]
             aProductResult["po_cost"] = ""
+            aProductResult["tax_applied"] = float(item[indexMap["CGST"] + 1].replace(",", "")) + float(
+                item[indexMap["SGST"] + 2].replace(",", ""))
             aProductResult["gst_rate"] = gstPercentage["SGST"] + gstPercentage["CGST"]
             aProductResult["gst_type"] = gstType
             products.append(aProductResult)

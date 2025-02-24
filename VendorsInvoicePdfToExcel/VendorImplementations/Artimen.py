@@ -105,7 +105,7 @@ class Artimen:
             aProductResult["HSN/SAC"] = item[indexOfHsn]
             aProductResult["Qty"] = item[indexOfQty]
             aProductResult["Rate"] = item[indexOfRate]
-            aProductResult["Per"] = ""
+            aProductResult["Per"] = item[indexOfUnit]
             aProductResult["mrp"] = item[indexOfRate]
             aProductResult["Amount"] = item[indexOfAmt]
             aProductResult["po_cost"] = ""

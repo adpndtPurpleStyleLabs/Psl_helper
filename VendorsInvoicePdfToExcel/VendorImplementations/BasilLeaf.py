@@ -94,7 +94,7 @@ class BasilLeaf:
             aProductResult = {}
             aProductResult["po_no"] = ""
             aProductResult["or_po_no"] = ""
-            orPoInfo = firstPageText[indexOfContainsInList(firstPageText, "P.O.") + 1].split(" ")[-2].strip()
+            orPoInfo = firstPageText[indexOfContainsInList(firstPageText, "P.O.") + 1].split(" ")[3].strip()
             if orPoInfo.find("OR") is not -1:
                 aProductResult["or_po_no"] = orPoInfo
             else:
@@ -106,7 +106,7 @@ class BasilLeaf:
             aProductResult["HSN/SAC"] = item[indexOfHsn]
             aProductResult["Qty"] = item[indexOfQty]
             aProductResult["Rate"] = item[indexOfRate]
-            aProductResult["Per"] = ""
+            aProductResult["Per"] = "N/A"
             aProductResult["mrp"] = item[indexOfRate]
             aProductResult["Amount"] = item[indexOfAmt]
             aProductResult["po_cost"] = ""
