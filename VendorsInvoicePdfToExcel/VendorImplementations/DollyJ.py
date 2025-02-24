@@ -89,6 +89,7 @@ class DollyJ:
         indexOfRate = indexOfContainsInList(firstPageText[indexOfHeader], "MRP")
         indexOfAmt = indexOfContainsInList(firstPageText[indexOfHeader], "Amount")
         indexOfGstRate = indexOfContainsInList(firstPageText[indexOfHeader], "GST")
+        indexOfPrice = indexOfContainsInList(firstPageText[indexOfHeader], "Price")
 
         poNoInfo = firstPageText[indexOfContainsInList(firstPageText, "Ref. No")][
             indexOfContainsInList(firstPageText[indexOfContainsInList(firstPageText, "Ref. No")], "Ref. No")].split(
@@ -105,9 +106,9 @@ class DollyJ:
             aProductResult["po_no"] = ""
             aProductResult["or_po_no"] = ""
             if poNoInfo.find("OR") is not -1:
-                aProductResult["or_po_no"] = poNoInfo
+                aProductResult["or_po_no"] = poNoInfo[poNoInfo.lower().find("or"):].replace(" ","").replace("-","").upper().replace("OR", "OR-")
             else:
-                aProductResult["po_no"] = poNoInfo
+                aProductResult["po_no"] = poNoInfo[poNoInfo.find("-")+1:]
 
             aProductResult["debit_note_no"] = ""
             aProductResult["index"] = item[indexOfSr]
@@ -115,11 +116,12 @@ class DollyJ:
             aProductResult["HSN/SAC"] = item[indexOfHsn]
             aProductResult["Qty"] = item[indexOfQty]
             aProductResult["Rate"] = item[indexOfRate]
-            aProductResult["Per"] = ""
+            aProductResult["Per"] = "N/A"
             aProductResult["mrp"] = item[indexOfRate]
             aProductResult["Amount"] = item[indexOfAmt]
             aProductResult["po_cost"] = ""
             aProductResult["gst_rate"] = item[indexOfGstRate]
+            aProductResult["tax_applied"] = (float( item[indexOfGstRate]) /100)  * float(item[indexOfPrice].replace(",",""))
             aProductResult["gst_type"] = gstType
             products.append(aProductResult)
 
