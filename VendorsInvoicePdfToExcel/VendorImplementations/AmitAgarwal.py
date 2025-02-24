@@ -22,8 +22,8 @@ class AmitAgarwal:
     def getInvoiceInfo(self):
         firstPageText = self.text_data[1].split("\n")
         return {
-            "invoice_number": firstPageText[indexOfContainsInList(firstPageText, "Invoice No")],
-            "invoice_date": firstPageText[indexOfContainsInList(firstPageText, "Invoice Date")]
+            "invoice_number": firstPageText[indexOfContainsInList(firstPageText, "Invoice No")].split(":")[-1].strip(),
+            "invoice_date":firstPageText[indexOfContainsInList(firstPageText, "Invoice Date")].split(":")[-1].strip()
         }
 
     def getReceiverInfo(self):
