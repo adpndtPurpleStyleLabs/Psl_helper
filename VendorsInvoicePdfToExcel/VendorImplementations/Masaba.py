@@ -82,7 +82,7 @@ class Masaba:
             aProductResult["or_po_no"] = ""
             if customerRef.__contains__("OR"):
                 aProductResult["or_po_no"] = customerRef
-            else:
+            else :
                 aProductResult["po_no"] = customerRef
 
             gstComponent = ""
@@ -91,8 +91,9 @@ class Masaba:
             aProductResult["vendor_code"] = ""
             aProductResult["HSN/SAC"] = firstPage[i][indexOfHSN]
             aProductResult["Qty"] = firstPage[i][indexOfQty]
-            aProductResult["Rate"] = firstPage[i][indexOfTotalTaxAmount]
+            aProductResult["Rate"] = firstPage[i][indexOfTotalAfterDiscount]
             aProductResult["Per"] = "Per Item"
+            aProductResult["Amount"] =  firstPage[i][indexOfTotalAfterDiscount]
             aProductResult["mrp"] =  firstPage[i][indexOfTotal]
 
             for gstIndex in range(i+1, i+3):
@@ -107,6 +108,8 @@ class Masaba:
 
             aProductResult["gst_rate"] = str(gstRate) + "%"
             aProductResult["gst_type"] = gstComponent
+            aProductResult["tax_applied"] = float(
+                firstPage[i][indexOfTotalAfterDiscount].replace(",", "")) * 0.01 * gstRate
             products.append(aProductResult)
 
         total_tax = {
