@@ -91,10 +91,11 @@ class CoutureByNiharika:
         indexOfRate = indexOfContainsInList(firstPageText[indexOfHeader], "MRP")
         indexOfAmt = indexOfContainsInList(firstPageText[indexOfHeader], "Amount")
         indexOfGstRate = indexOfContainsInList(firstPageText[indexOfHeader], "GST")
+        indexOfPrice = indexOfContainsInList(firstPageText[indexOfHeader], "Price")
 
         poNoInfo = firstPageText[indexOfContainsInList(firstPageText, "Ref. No")][
             indexOfContainsInList(firstPageText[indexOfContainsInList(firstPageText, "Ref. No")], "Ref. No")].split(
-            "\n")[-1].split(":")[-1].split("/")[0]
+            "\n")[-1].split(":")[-1].split("/")[0].strip()
 
         for itemIndex, item in enumerate(firstPageText[indexOfHeader+1:]):
             if indexOfContainsInList(item, "Total") is not -1:
@@ -117,12 +118,13 @@ class CoutureByNiharika:
             aProductResult["HSN/SAC"] = item[indexOfHsn]
             aProductResult["Qty"] = item[indexOfQty]
             aProductResult["Rate"] = item[indexOfRate]
-            aProductResult["Per"] = ""
+            aProductResult["Per"] = "N/A"
             aProductResult["mrp"] = item[indexOfRate]
             aProductResult["Amount"] = item[indexOfAmt]
             aProductResult["po_cost"] = ""
             aProductResult["gst_rate"] = item[indexOfGstRate]
             aProductResult["gst_type"] = gstType
+            aProductResult["tax_applied"] = float(item[indexOfPrice].replace(",","")) * (float( item[indexOfGstRate])/100)
             products.append(aProductResult)
 
         return products, total_tax
