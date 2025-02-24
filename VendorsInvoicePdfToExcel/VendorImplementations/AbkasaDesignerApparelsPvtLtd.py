@@ -82,6 +82,8 @@ class AbkasaDesignerApparelsPvtLtd:
 
         listOfPo= []
         listOfPoNoOnTop = get_list_containing(firstPage, "Buyer’s").split("\n")[-1].replace(" ","").split(",")
+        if indexOfContainsInList(listOfPoNoOnTop, "Buyer")  is not -1:
+            listOfPoNoOnTop.pop(indexOfContainsInList(listOfPoNoOnTop, "Buyer") )
         if len(listOfPoNoOnTop) > 0:
             listOfPo = listOfPoNoOnTop
         else:
@@ -117,11 +119,12 @@ class AbkasaDesignerApparelsPvtLtd:
                 aProductResult["HSN/SAC"] = aHsnNo
                 aProductResult["Qty"] = "1 nos"
                 aProductResult["Rate"] = ratePerPiece
-                aProductResult["Per"] = ""
+                aProductResult["Per"] = "N/A"
                 aProductResult["mrp"] = ratePerPiece
                 aProductResult["Amount"] = amountPerPiece
                 aProductResult["po_cost"] = ""
                 aProductResult["gst_rate"] = gstPercentage
+                aProductResult["tax_applied"] = amountPerPiece * float(gstPercentage.replace("%", ""))/100
                 aProductResult["gst_type"] = gstType
                 products.append(aProductResult)
                 itemCount+=1

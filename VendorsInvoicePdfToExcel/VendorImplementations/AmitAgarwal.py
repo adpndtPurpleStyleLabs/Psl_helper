@@ -1,4 +1,4 @@
-from VendorsInvoicePdfToExcel.helper import indexOfContainsInList
+from VendorsInvoicePdfToExcel.helper import indexOfContainsInList, get_list_containing
 from VendorsInvoicePdfToExcel.helper import convert_amount_to_words
 
 class AmitAgarwal:
@@ -52,16 +52,13 @@ class AmitAgarwal:
         lastPage = pdf[length]
         secondLastPage = pdf[length-1] if length > 1 else lastPage
         typeOfInvoice = "NA"
-        for aTableList in lastPage:
-            indexOfTotalInvoiceAmountInWords = indexOfContainsInList(aTableList, 'Total Invoice Amount in Words:')
-            if indexOfTotalInvoiceAmountInWords != -1:
-                if (indexOfContainsInList(aTableList, 'PO NO') != -1):
-                    typeOfInvoice = "po"
-                    self.poIdsList = aTableList[indexOfContainsInList(aTableList, 'PO NO')].split("\n")[indexOfContainsInList(aTableList[indexOfContainsInList(aTableList, 'PO NO')].split("\n"), "PO NO")].replace("(PO NO. ", "").replace(" )", "").split(",")
-                    break
-                elif  (indexOfContainsInList(aTableList, 'OUTRIGHT') != -1):
-                    typeOfInvoice = "or_po"
-                    break
+        indexOfTotalInvoiceAmountInWords = indexOfContainsInList(lastPage, 'Total Invoice Amount in Words:')
+        if indexOfTotalInvoiceAmountInWords != -1:
+            if (indexOfContainsInList(lastPage, 'PO ON') != -1):
+                self.poIdsList = get_list_containing(get_list_containing(lastPage, "CLIENT ORDER PO").split("\n"), "CLIENT ORDER PO").split(":")[-1].replace(")","").strip().split(",")
+                return "po"
+            elif  (indexOfContainsInList(lastPage, 'OUTRIGHT PCS') != -1):
+                return "or_po"
 
         if typeOfInvoice == "NA":
             for aTableList in secondLastPage:
@@ -118,7 +115,15 @@ class AmitAgarwal:
 
                 or_po_value = ""
                 if self.typeOfInvoice == "or_po":
-                    or_po_value =  aPage[prodIndex][indexOfContainsInList(aPage[indexOfHeader], "Order")] if not isOrderNoOverFlowed else orderNoList[int(aPage[prodIndex][0].replace(".", "").strip())][0]
+                    indexOfOrderNo = indexOfContainsInList(firstPage[indexOfHeader], "ORDER NO")
+                    if indexOfOrderNo != -1:
+                        or_po_value =  (aPage[prodIndex][indexOfContainsInList(aPage[indexOfOrderNo], "Order")]
+                                        .replace("(","")
+                                        .replace(")","")
+                                        .strip())
+
+                    if isOrderNoOverFlowed :
+                        or_po_value = orderNoList[int(aPage[prodIndex][0].replace(".", "").strip())][0]
 
                 aProdInfo = {
                     "index": aPage[prodIndex][0].replace(".", ""),
@@ -130,6 +135,7 @@ class AmitAgarwal:
                     "Amount": aPage[prodIndex][indexOfContainsInList(aPage[indexOfHeader], "Taxable")],
                     "gst_type": gstType,
                     "gst_rate": gstRate,
+                    "Per": aPage[prodIndex][indexOfContainsInList(aPage[indexOfHeader], "PCS")],
                     "tax_applied": gstApplied,
                     "po_cost": aPage[prodIndex][indexOfContainsInList(aPage[indexOfHeader], "TOTAL")+3],
                     "po_no":  self.poIdsList[int(aPage[prodIndex][0].replace(".", "").strip()) -1] if typeOfInvoice == "po"  else "",
@@ -245,8 +251,8 @@ class AmitAgarwal:
             "total_amount_after_tax" : pages[indexOfPateOfTotals][indexOfTotals - 2][indexOfTotalAmount],
             "total_b4_tax" : pages[indexOfPateOfTotals][indexOfTotals - 2][indexOfTaxableAmount],
             "total_tax" : pages[indexOfPateOfTotals][indexOfTotals +4][-1],
-            "tax_rate" : "",
-            "total_tax_percentage" : "",
+            "tax_rate" : "N/A",
+            "total_tax_percentage" : "N/A",
             "tax_amount_in_words" : convert_amount_to_words(pages[indexOfPateOfTotals][indexOfTotals +4][-1]),
             "Chargeable" : "",
             "amount_charged_in_words" : pages[indexOfPateOfTotals][indexOfTotals][0][pages[indexOfPateOfTotals][indexOfTotals][0].find(":")+3: pages[indexOfPateOfTotals][indexOfTotals][0].find("ONLY")+4]

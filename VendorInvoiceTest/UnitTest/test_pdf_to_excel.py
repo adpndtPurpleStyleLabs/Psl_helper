@@ -1,5 +1,6 @@
 import os
 import pytest
+import json
 
 try:
     from VendorsInvoicePdfToExcel.BusinessLogic.VendorInvoiceBl import VendorInvoiceBl
@@ -7,10 +8,15 @@ except ImportError as e:
     print(f"❌ Import Error: {e}")
     exit(1)
 
+# FOLDER_NAME = "amit_agarwal/CUST"
+FOLDER_NAME = "amit_agarwal/OR"
+
 processor = VendorInvoiceBl()
 
+SAVE_JSON_BASE_DIR = os.path.abspath("/Users/administrator/PycharmProjects/PslHelper/VendorInvoiceTest/test_invoice_json/")  # Ensure absolute path for consistency
 BASE_DIR = os.path.abspath("/Users/administrator/PycharmProjects/PslHelper/VendorInvoiceTest/test_invoices/")  # Ensure absolute path for consistency
-BASE_DIR = os.path.join(BASE_DIR, "renee_label")
+BASE_DIR = os.path.join(BASE_DIR, FOLDER_NAME)
+SAVE_JSON_BASE_DIR =  os.path.join(SAVE_JSON_BASE_DIR, FOLDER_NAME)
 if not os.path.isdir(BASE_DIR):
     print(f"❌ Error: The directory '{BASE_DIR}' does not exist.")
     exit(1)
@@ -22,7 +28,8 @@ if not os.path.isdir(BASE_DIR):
 ])
 
 def test_process_pdf(pdf_file, vendor):
-    result = processor.processPdf(pdf_file, vendor)
+    result = processor.processPdf(pdf_file, "amit_agarwal")
+    JSON_PATH = SAVE_JSON_BASE_DIR+"/"+pdf_file.split("/")[-1].replace(".pdf", ".json")
     for aItemInfo in result["items_info"]:
         if is_null_or_empty(aItemInfo["po_no"], "po_no") and is_null_or_empty(aItemInfo["or_po_no"], "or_po_no") :
             raise ValueError(f"po_no or or_po_no cannot be null or empty.")
@@ -57,8 +64,8 @@ def test_process_pdf(pdf_file, vendor):
             and is_null_or_empty(result['total_tax']['SGST'], "CSST")):
         raise ValueError(f"total_tax IGST and CGST  and SGST cannot be null or empty.")
 
-    # print(result)
-    print("   ")
+    validate_previous_json(JSON_PATH, result)
+    # save_json(JSON_PATH, result)
     assert result is not None, f"❌ Failed: {pdf_file} returned None"
     print(f"✅ Success: {pdf_file} processed correctly for vendor '{vendor}'.")
 
@@ -70,3 +77,13 @@ def exception_on_null_or_empty(value, field_name):
     isNullOrEmpty =  value is None or (isinstance(value, (str, list, tuple, dict, set)) and len(value) == 0)
     if isNullOrEmpty:
         raise ValueError(f"{field_name} cannot be null or empty.")
+
+def save_json(JSON_PATH, result):
+    with open(JSON_PATH, 'w', encoding='utf-8') as f:
+        json.dump(result, f, ensure_ascii=False, indent=4)
+
+def validate_previous_json(JSON_PATH, result):
+    with open(JSON_PATH) as f:
+        d = json.load(f)
+        if d != result:
+            raise ValueError(f"OLD JSON IS NOT SAME AS NEW JSON")
