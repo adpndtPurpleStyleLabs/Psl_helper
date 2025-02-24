@@ -112,7 +112,7 @@ class KkarmaAccessories:
                 aProductResult["HSN/SAC"] = item[indexOfHSN]
                 aProductResult["Qty"] = item[indexOfQty]
                 aProductResult["Rate"] =item[indexOfRate].split("\n")[0]
-                aProductResult["Per"] = ""
+                aProductResult["Per"] = "N/A"
                 aProductResult["mrp"] = item[indexOfRate].split("\n")[0]
                 aProductResult["Amount"] = item[indexOfAmt].split("\n")[0]
                 aProductResult["po_cost"] = ""
