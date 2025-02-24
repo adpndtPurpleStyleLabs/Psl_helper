@@ -63,7 +63,7 @@ class AmrtiDawani:
                 raise HTTPException(status_code=400, detail="For Amrti Dawani SGST and CGST is not implemented")
 
             total_tax = {
-                "IGST": lastPage[indexOfContainsInList(lastPage, "Tax Amount")][indexOfContainsInList(lastPage[indexOfContainsInList(lastPage, "Tax Amount")], "Tax Amount")].split("\n")[-1],
+                "IGST": float(lastPage[indexOfContainsInList(lastPage, "Tax Amount")][indexOfContainsInList(lastPage[indexOfContainsInList(lastPage, "Tax Amount")], "Tax Amount")].split("\n")[-1].replace(",","")),
                 "SGST": 0,
                 "CGST": 0,
             }
@@ -72,8 +72,13 @@ class AmrtiDawani:
                 "SGST": 0,
                 "CGST": 0,
             }
-            detected_gst = [gst for gst in gst_types if indexOfContainsInList(gst_section, gst) != -1]
-            gstType = "_".join(detected_gst)
+
+            gstType = ""
+            if total_tax["IGST"] > 0:
+
+                gstType = "IGST"
+            else :
+                gstType = "CGST_SGST"
 
         totaltaxPercentage = self.totalTaxPercentage["IGST"] + self.totalTaxPercentage["CGST"] + \
                              self.totalTaxPercentage["SGST"]
@@ -111,7 +116,7 @@ class AmrtiDawani:
                 aProductResult["debit_note_no"] = ""
                 aProductResult["index"] = item[indexOfSr]
                 aProductResult["vendor_code"] = ""
-                aProductResult["HSN/SAC"] = item[indexOfHsn]
+                aProductResult["HSN/SAC"] = "N/A" if item[indexOfHsn] == "" else item[indexOfHsn]
                 aProductResult["Qty"] = item[indexOfQty]
                 aProductResult["Rate"] = item[indexOfRate]
                 aProductResult["Per"] = item[indexOfPer].split("\n")[0]
@@ -120,6 +125,7 @@ class AmrtiDawani:
                 aProductResult["po_cost"] = ""
                 aProductResult["gst_rate"] = totaltaxPercentage
                 aProductResult["gst_type"] = gstType
+                aProductResult["tax_applied"] = float(item[indexOfAmt].split("\n")[0].replace(",", "")) * totaltaxPercentage/100
                 products.append(aProductResult)
 
         return products, total_tax
