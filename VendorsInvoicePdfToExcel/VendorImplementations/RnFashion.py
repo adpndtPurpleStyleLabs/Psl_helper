@@ -122,6 +122,7 @@ class RnFashion:
                 aProductResult["po_cost"] = ""
                 aProductResult["gst_rate"] = item[indexOfTaxRate].replace("%", "").strip()
                 aProductResult["gst_type"] = gstType
+                aProductResult["tax_applied"] = item[indexOfTaxAmount]
                 products.append(aProductResult)
 
         return products, total_tax

@@ -68,7 +68,7 @@ class Riyaasat:
 
 
         products = []
-        indexOfHeader = indexOfContainsInList(self.tables[1], "Sl")
+        indexOfHeader = indexOfContainsInList(self.tables[1], "HSN/")
         indexOfSr = indexOfContainsInList(firstPage[indexOfHeader], "Sl")
         indexOfItemname = indexOfContainsInList(firstPage[indexOfHeader], "Description")
         indexOfHsn = indexOfContainsInList(firstPage[indexOfHeader], "HSN")
@@ -92,6 +92,7 @@ class Riyaasat:
             else:
                 aProductResult["po_no"] = orPoInfo
 
+            gstPercenatge = item[indexOfItemname][item[indexOfItemname].find("@")+2 : item[indexOfItemname].find("%")]
             aProductResult["debit_note_no"] = ""
             aProductResult["index"] =  item[indexOfSr]
             aProductResult["vendor_code"] = ""
@@ -104,6 +105,7 @@ class Riyaasat:
             aProductResult["po_cost"] = ""
             aProductResult["gst_rate"] = item[indexOfItemname][item[indexOfItemname].find("@")+2 : item[indexOfItemname].find("%")]
             aProductResult["gst_type"] = gstType
+            aProductResult["tax_applied"] = float(item[indexOfAmt].split("\n")[0].replace(",","")) * float(gstPercenatge) * 0.01
             products.append(aProductResult)
 
         return products, total_tax
