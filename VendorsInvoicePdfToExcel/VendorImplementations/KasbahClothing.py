@@ -110,6 +110,7 @@ class KasbahClothing:
             aProductResult["mrp"] = item[indexOfRate]
             aProductResult["Amount"] = item[indexOfAmt].split("\n")[0]
             aProductResult["po_cost"] = ""
+            aProductResult["tax_applied"] = item[indexOfGstAmount]
             aProductResult["gst_rate"] = float(item[indexOfGstRate].replace("%", "").strip())
             aProductResult["gst_type"] = gstType
             products.append(aProductResult)

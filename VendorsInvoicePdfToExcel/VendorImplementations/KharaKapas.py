@@ -108,12 +108,13 @@ class KharaKapas:
             aProductResult["HSN/SAC"] = item[indexOfHsn]
             aProductResult["Qty"] = item[indexOfQty]
             aProductResult["Rate"] =item[indexOfRate].split(" ")[-1]
-            aProductResult["Per"] = ""
+            aProductResult["Per"] = "N/A"
             aProductResult["mrp"] =item[indexOfRate].split(" ")[-1]
             aProductResult["Amount"] = item[indexOfAmt].split(" ")[-1]
             aProductResult["po_cost"] = ""
             aProductResult["gst_rate"] = totalPercentage
             aProductResult["gst_type"] = gstType
+            aProductResult["tax_applied"] = totalPercentage *0.01  * float(item[indexOfAmt].split(" ")[-1].replace(",",""))
             products.append(aProductResult)
             self.count +=1
 
