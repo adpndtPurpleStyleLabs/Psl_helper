@@ -81,6 +81,7 @@ class Fatiz:
         indexOfPer = indexOfContainsInList(firstPage[indexOfHeader], "per")
         indexOfRate = indexOfContainsInList(firstPage[indexOfHeader], "Rate")
         indexOfAmt = indexOfContainsInList(firstPage[indexOfHeader], "Amount")
+        indexOfIGST = indexOfContainsInList(firstPage[indexOfHeader], "IGST")
 
         for itemIndex, item in enumerate(firstPage[indexOfHeader + 2:]):
             if indexOfContainsInList(item, "Total") is not -1:
@@ -97,6 +98,7 @@ class Fatiz:
             else:
                 aProductResult["po_no"] = orPoInfo
 
+            gstPercentage =  item[indexOfContainsInList(item, "%")].replace("%", "")
             aProductResult["debit_note_no"] = ""
             aProductResult["index"] = item[indexOfSr]
             aProductResult["vendor_code"] = ""
@@ -107,7 +109,8 @@ class Fatiz:
             aProductResult["mrp"] = item[indexOfRate]
             aProductResult["Amount"] = item[indexOfAmt+1]
             aProductResult["po_cost"] = ""
-            aProductResult["gst_rate"] = item[indexOfContainsInList(item, "%")].replace("%", "")
+            aProductResult["gst_rate"] =gstPercentage
+            aProductResult["tax_applied"] =item[indexOfIGST+1]
             aProductResult["gst_type"] = gstType
             products.append(aProductResult)
 
@@ -136,7 +139,7 @@ class Fatiz:
                 indexOfContainsInList(lastPage[indexOfContainsInList(lastPage, "In Wo")][0].split("\n"), "GST")].split(
                 " ")[-1].replace(",", ""))
         returnData["amount_charged_in_words"] = lastPage[indexOfContainsInList(lastPage, "In Wo")][0].split("\n")[2]
-        returnData["total_pcs"] = ""
+        returnData["total_pcs"] = "1"
         returnData["total_amount_after_tax"] = totalAmount
         returnData["total_b4_tax"] = float(totalAmount) - float(totalTax)
         returnData["total_tax"] = totalTax
