@@ -70,7 +70,7 @@ class Espana:
             raise HTTPException(status_code=400, detail="For Ruhaan SGST is not implemented")
 
         products = []
-        indexOfHeader = indexOfContainsInList(self.tables[1], "Sl")
+        indexOfHeader = indexOfContainsInList(self.tables[1], "HSN/")
         indexOfSr = indexOfContainsInList(firstPage[indexOfHeader], "Sl")
         indexOfItemname = indexOfContainsInList(firstPage[indexOfHeader], "Description")
         indexOfHsn = indexOfContainsInList(firstPage[indexOfHeader], "HSN")
@@ -94,6 +94,7 @@ class Espana:
             else:
                 aProductResult["po_no"] = orPoInfo
 
+            gstPercentage =  lastPage[indexOfContainsInList(lastPage, "Taxable")+2][2].split("\n")[-1].replace("%", "").strip()
             aProductResult["debit_note_no"] = ""
             aProductResult["index"] =  item[indexOfSr]
             aProductResult["vendor_code"] = ""
@@ -104,7 +105,8 @@ class Espana:
             aProductResult["mrp"] = item[indexOfRate]
             aProductResult["Amount"] = item[indexOfAmt].split("\n")[0]
             aProductResult["po_cost"] = ""
-            aProductResult["gst_rate"] = lastPage[indexOfContainsInList(lastPage, "Taxable")+2][2].split("\n")[-1].replace("%", "").strip()
+            aProductResult["tax_applied"] = float(item[indexOfAmt].split("\n")[0].replace(",","")) * (float(gstPercentage)/100)
+            aProductResult["gst_rate"] = float(gstPercentage)
             aProductResult["gst_type"] = gstType
             products.append(aProductResult)
 
