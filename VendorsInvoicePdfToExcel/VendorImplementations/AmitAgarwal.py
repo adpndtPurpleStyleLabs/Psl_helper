@@ -54,8 +54,11 @@ class AmitAgarwal:
         typeOfInvoice = "NA"
         indexOfTotalInvoiceAmountInWords = indexOfContainsInList(lastPage, 'Total Invoice Amount in Words:')
         if indexOfTotalInvoiceAmountInWords != -1:
-            if (indexOfContainsInList(lastPage, 'PO ON') != -1):
+            if (indexOfContainsInList(lastPage, 'PO ON') != -1) :
                 self.poIdsList = get_list_containing(get_list_containing(lastPage, "CLIENT ORDER PO").split("\n"), "CLIENT ORDER PO").split(":")[-1].replace(")","").strip().split(",")
+                return "po"
+            elif  (indexOfContainsInList(lastPage, 'client name') != -1):
+                self.poIdsList = get_list_containing(get_list_containing(lastPage, "CLIENT name").split("\n"), "CLIENT name").split(":")[-1].replace(")","").strip().split(",")
                 return "po"
             elif  (indexOfContainsInList(lastPage, 'OUTRIGHT PCS') != -1):
                 return "or_po"
@@ -64,7 +67,7 @@ class AmitAgarwal:
             for aTableList in secondLastPage:
                 indexOfTotalInvoiceAmountInWords = indexOfContainsInList(aTableList, 'Total Invoice Amount in Words:')
                 if indexOfTotalInvoiceAmountInWords != -1:
-                    if (indexOfContainsInList(aTableList, 'PO NO') != -1):
+                    if (indexOfContainsInList(aTableList, 'PO NO') != -1 or indexOfContainsInList(aTableList, 'name') != -1):
                         typeOfInvoice = "po"
                         break
                     if (indexOfContainsInList(aTableList, 'OUTRIGHT') != -1):

@@ -31,6 +31,14 @@ class Riyaasat:
 
     def getReceiverInfo(self):
         firstPageText = self.tables[1]
+
+        if indexOfContainsInList(firstPageText, "Ship to") == -1:
+            return {
+                "receiver_name": "N/A",
+                "receiver_address": "N/A",
+                "receiver_gst": "N/A"
+            }
+
         receiverInfo = firstPageText[indexOfContainsInList(firstPageText, "Ship to")][0].split("\n")
         receiverInfo = receiverInfo[indexOfContainsInList(receiverInfo, "Ship") : indexOfContainsInList(receiverInfo, "Bill")]
         return {

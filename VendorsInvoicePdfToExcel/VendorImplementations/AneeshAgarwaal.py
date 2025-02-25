@@ -95,11 +95,13 @@ class AneeshAgarwaal:
             if len(item) <2:
                 break
 
-            if item[0].strip() == "":
+            if item[0].strip() == "" and indexOfContainsInList(item,"PCS"):
                 continue
 
             aProductResult = {}
-            poNoIfo = firstPageText[count+2][indexMap["Description"]]
+            poNoIfo = firstPageText[count + 2][indexMap["Description"]] if firstPageText[count + 2][
+                                                                               indexMap["Description"]] != "" else \
+            firstPageText[count + 1][indexMap["Description"]]
             aProductResult["or_po_no"] = ""
             aProductResult["po_no"] = ""
             if poNoIfo.find("OR") is not -1:
