@@ -21,7 +21,7 @@ class KharaKapas:
             "vendor_name": vendorInfo[2],
             "vendor_address": ", ".join(vendorInfo[4:10]),
             "vendor_mob": "N/A",
-            "vendor_gst": vendorInfo[indexOfContainsInList(vendorInfo, "GST")].split("-")[-1].strip(),
+            "vendor_gst": vendorInfo[indexOfContainsInList(vendorInfo, "GSTIN")].split(":")[-1].strip(),
             "vendor_email": vendorInfo[indexOfContainsInList(vendorInfo, "mail")].split(":")[-1].strip()
         }
 
