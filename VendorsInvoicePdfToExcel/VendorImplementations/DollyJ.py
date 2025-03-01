@@ -1,6 +1,6 @@
 import re
 
-from VendorsInvoicePdfToExcel.helper import indexOfContainsInList, convert_amount_to_words
+from VendorsInvoicePdfToExcel.helper import indexOfContainsInList, convert_amount_to_words, get_list_containing
 from fastapi import HTTPException
 
 class DollyJ:
@@ -13,9 +13,9 @@ class DollyJ:
 
     def getVendorInfo(self):
         firstPageText = self.tables[1]
-        vendorInfo = firstPageText[indexOfContainsInList(firstPageText, "Dolly")][0].split("\n")
+        vendorInfo = firstPageText[indexOfContainsInList(firstPageText, "Dolly J Co")][0].split("\n")
         return {
-            "vendor_name": vendorInfo[0],
+            "vendor_name": get_list_containing(vendorInfo, "Dolly J Co"),
             "vendor_address": ", ".join(vendorInfo),
             "vendor_mob": "N/A",
             "vendor_gst": firstPageText[indexOfContainsInList(firstPageText, "Biller Gst")][0].split("\n")[indexOfContainsInList(firstPageText[indexOfContainsInList(firstPageText, "Biller Gst")][0].split("\n"), "Biller")].split(":")[-1],
