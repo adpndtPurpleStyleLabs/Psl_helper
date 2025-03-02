@@ -38,6 +38,7 @@ from VendorsInvoicePdfToExcel.VendorImplementations.Ruhaan import Ruhaan
 from VendorsInvoicePdfToExcel.VendorImplementations.Riyaasat import Riyaasat
 from VendorsInvoicePdfToExcel.VendorImplementations.MonkAndMei import MonkAndMei
 from VendorsInvoicePdfToExcel.VendorImplementations.Amyra import Amyra
+from VendorsInvoicePdfToExcel.VendorImplementations.Ruhaan_CUST import Ruhaan_CUST
 from fastapi import HTTPException
 
 from VendorsInvoicePdfToExcel.VendorImplementations.SheetalBatra import SheetalBatra
@@ -89,6 +90,7 @@ class ImplementationFactory:
             "kkarma_accessories": KkarmaAccessories,
             "prisho": Prisho,
             "renee_label": ReneeLabel,
+            "ruhaan_cust": Ruhaan_CUST,
         }
 
         implementation = str(implementation).lower().replace(' ', "")

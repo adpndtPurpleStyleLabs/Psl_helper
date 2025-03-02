@@ -29,8 +29,8 @@ class Kalista:
 
     def getReceiverInfo(self):
         firstPageText = self.tables[1]
-        receiverInfo = firstPageText[indexOfContainsInList(firstPageText, "Bill")][0].split("\n")
-        receiverInfo = receiverInfo[indexOfContainsInList(receiverInfo, "Bill"):]
+        receiverInfo = firstPageText[indexOfContainsInList(firstPageText, "Bill to")][0].split("\n")
+        receiverInfo = receiverInfo[indexOfContainsInList(receiverInfo, "Bill to"):]
 
         return {
             "receiver_name": receiverInfo[1],
@@ -40,8 +40,8 @@ class Kalista:
 
     def getBillingInfo(self):
         firstPageText = self.tables[1]
-        billToInfo = firstPageText[indexOfContainsInList(firstPageText, "Bill")][0].split("\n")
-        billToInfo = billToInfo[indexOfContainsInList(billToInfo, "Bill"):]
+        billToInfo = firstPageText[indexOfContainsInList(firstPageText, "Bill to")][0].split("\n")
+        billToInfo = billToInfo[indexOfContainsInList(billToInfo, "Bill to"):]
         return {
             "billto_name": billToInfo[1],
             "billto_address": ", ".join(billToInfo[2:6]),

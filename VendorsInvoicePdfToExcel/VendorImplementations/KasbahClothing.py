@@ -1,6 +1,6 @@
 import re
 
-from VendorsInvoicePdfToExcel.helper import indexOfContainsInList
+from VendorsInvoicePdfToExcel.helper import indexOfContainsInList, get_list_containing
 from fastapi import HTTPException
 from VendorsInvoicePdfToExcel.helper import convert_amount_to_words
 
@@ -94,7 +94,7 @@ class KasbahClothing:
             aProductResult= {}
             aProductResult["po_no"] = ""
             aProductResult["or_po_no"] = ""
-            orPoInfo = firstPage[indexOfContainsInList(firstPage, "PO NO")][indexOfContainsInList(firstPage[indexOfContainsInList(firstPage, "PO NO")], "PO NO")].split("\n")[-2].split(":")[-1]
+            orPoInfo = get_list_containing(get_list_containing( firstPage, "PO NO" ).split("\n"), "PO NO").split(":")[-1].strip()
             if orPoInfo.find("OR") is not -1:
                 aProductResult["or_po_no"] = orPoInfo
             else:
