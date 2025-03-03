@@ -25,8 +25,8 @@ class Fatiz:
         firstPageText = self.tables[1]
         invoiceInfo = firstPageText[indexOfContainsInList(firstPageText, "Invoice Number")][0].split("\n")
         return {
-            "invoice_number": invoiceInfo[0].split(":")[-1],
-            "invoice_date": invoiceInfo[2].split(":")[-1]
+            "invoice_number": invoiceInfo[0].split(":")[-1].strip(),
+            "invoice_date": invoiceInfo[2].split(":")[-1].strip()
         }
 
     def getReceiverInfo(self):
