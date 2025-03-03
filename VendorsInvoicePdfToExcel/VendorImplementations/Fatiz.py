@@ -2,7 +2,7 @@ import re
 
 from VendorsInvoicePdfToExcel.helper import indexOfContainsInList
 from fastapi import HTTPException
-from VendorsInvoicePdfToExcel.helper import convert_amount_to_words
+from VendorsInvoicePdfToExcel.helper import convert_amount_to_words, convert_to_ddmmyy
 
 class Fatiz:
     def __init__(self, tables, text_data, table_by_tabula):
@@ -26,7 +26,7 @@ class Fatiz:
         invoiceInfo = firstPageText[indexOfContainsInList(firstPageText, "Invoice Number")][0].split("\n")
         return {
             "invoice_number": invoiceInfo[0].split(":")[-1].strip(),
-            "invoice_date": invoiceInfo[2].split(":")[-1].strip()
+            "invoice_date":convert_to_ddmmyy(invoiceInfo[2].split(":")[-1].strip())
         }
 
     def getReceiverInfo(self):

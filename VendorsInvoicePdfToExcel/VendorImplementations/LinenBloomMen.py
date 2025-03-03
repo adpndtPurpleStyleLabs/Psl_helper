@@ -161,10 +161,12 @@ class LinenBloomMen:
         returnData = {}
         lastPage = self.tables[len(self.tables)]
         totalCount = lastPage[indexOfContainsInList(lastPage, "Total")][3]
+        indexOfHeader = indexOfContainsInList(lastPage, "Amount Chargeable")+1
+        intexOfTaxableValue = indexOfContainsInList(lastPage[indexOfHeader], "Taxable")
         returnData["total_pcs"] = totalCount if totalCount.strip() != "" else "N/A"
         returnData["total_amount_after_tax"] = lastPage[indexOfContainsInList(lastPage, "Total")][-1].split(" ")[-1]
-        returnData["total_b4_tax"] = lastPage[indexOfContainsInList(lastPage, "OUTPUT")+1][0].split("\n")[0]
-        returnData["total_tax"] = lastPage[indexOfContainsInList(lastPage, "OUTPUT")+1][0].split("\n")[-1]
+        returnData["total_b4_tax"] = float(lastPage[indexOfContainsInList(lastPage, "Tax Amount (in ") - 1][intexOfTaxableValue].strip().replace(",",""))
+        returnData["total_tax"] = float(lastPage[indexOfContainsInList(lastPage, "Tax Amount (in ") - 1][-1].strip().replace(",",""))
         returnData["tax_rate"] = self.gstRate
         returnData["total_tax_percentage"] =  self.gstRate
         returnData["tax_amount_in_words"] = lastPage[indexOfContainsInList(lastPage, "Tax Amount (in")][0].split("\n")[0].split(":")[-1]

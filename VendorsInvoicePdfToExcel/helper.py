@@ -1,5 +1,7 @@
 from num2words import num2words
 import re
+from dateutil import parser
+
 
 def convert_amount_to_words(amount):
     amount = float(amount)
@@ -128,3 +130,10 @@ import re
 
 def split_every_second_space(s):
     return re.split(r'((?:\S+\s+\S+)\s*)', s)[1::2]
+
+def convert_to_ddmmyy(date_str):
+    try:
+        parsed_date = parser.parse(date_str)
+        return parsed_date.strftime('%d-%m-%y')
+    except Exception as e:
+        return f"Invalid date format: {e}"
