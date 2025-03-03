@@ -1,7 +1,7 @@
 from openpyxl.styles.builtins import normal
 import re
 
-from VendorsInvoicePdfToExcel.helper import indexOfContainsInList
+from VendorsInvoicePdfToExcel.helper import indexOfContainsInList, convert_to_ddmmyy
 from VendorsInvoicePdfToExcel.helper import convert_amount_to_words
 from fastapi import HTTPException
 
@@ -24,9 +24,14 @@ class Riyaasat:
 
     def getInvoiceInfo(self):
         firstPageText = self.tables[1]
+        print(convert_to_ddmmyy(self.text_data[1].split("\n")[indexOfContainsInList(self.text_data[1].split("\n"), "Dated") + 1].split(" ")[             -1].strip()))
         return {
-            "invoice_number": firstPageText[indexOfContainsInList(firstPageText, "Invoice")][indexOfContainsInList(firstPageText[indexOfContainsInList(firstPageText, "Invoice")], "Invoice")].split("\n")[-1],
-            "invoice_date": "N/A"
+            "invoice_number": firstPageText[indexOfContainsInList(firstPageText, "Invoice")][
+                indexOfContainsInList(firstPageText[indexOfContainsInList(firstPageText, "Invoice")], "Invoice")].split(
+                "\n")[-1],
+            "invoice_date": convert_to_ddmmyy(
+                self.text_data[1].split("\n")[indexOfContainsInList(self.text_data[1].split("\n"), "Dated") + 1].split(
+                    " ")[-1].strip())
         }
 
     def getReceiverInfo(self):
