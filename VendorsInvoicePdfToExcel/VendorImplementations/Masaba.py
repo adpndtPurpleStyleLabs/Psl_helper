@@ -5,6 +5,7 @@ from VendorsInvoicePdfToExcel.helper import substring_after_second_occurrence
 from VendorsInvoicePdfToExcel.helper import find_nth_occurrence_of
 from VendorsInvoicePdfToExcel.helper import lastIndexOfContainsInList
 from VendorsInvoicePdfToExcel.helper import convert_amount_to_words
+from VendorsInvoicePdfToExcel.helper import clear_or_po_no
 
 class Masaba:
 
@@ -81,7 +82,8 @@ class Masaba:
             aProductResult["po_no"] = ""
             aProductResult["or_po_no"] = ""
             if customerRef.__contains__("OR"):
-                aProductResult["or_po_no"] = customerRef
+                aProductResult["or_po_no"] = clear_or_po_no(customerRef)
+                print(aProductResult["or_po_no"])
             else :
                 aProductResult["po_no"] = customerRef
 
