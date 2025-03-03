@@ -13,7 +13,7 @@ class SaakshaAndKinni:
         firstPageText = self.tables[1]
         vendorInfo = firstPageText[indexOfContainsInList(firstPageText, "SAAK")][0].split("\n")
         return {
-            "vendor_name": ", ".join(vendorInfo[0]),
+            "vendor_name": vendorInfo[0],
             "vendor_address": ", ".join(vendorInfo[:5]),
             "vendor_mob": "N/A",
             "vendor_gst": vendorInfo[indexOfContainsInList(vendorInfo, "GST")].split(":")[-1],
