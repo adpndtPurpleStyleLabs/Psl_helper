@@ -30,7 +30,7 @@ from VendorsInvoicePdfToExcel.VendorImplementations.RnFashion import RnFashion
 from VendorsInvoicePdfToExcel.VendorImplementations.SaakshaAndKinni import SaakshaAndKinni
 from VendorsInvoicePdfToExcel.VendorImplementations.SahilAnejaCouture import SahilAnejaCouture
 from VendorsInvoicePdfToExcel.VendorImplementations.SeemaGujral import SeemaGujral
-from VendorsInvoicePdfToExcel.VendorImplementations.Kalighata import Kalighata
+# from VendorsInvoicePdfToExcel.VendorImplementations.Kalighata import Kalighata
 from VendorsInvoicePdfToExcel.VendorImplementations.LinenBloomMen import LinenBloomMen
 from VendorsInvoicePdfToExcel.VendorImplementations.Samohan import Samohan
 from VendorsInvoicePdfToExcel.VendorImplementations.Masaba import Masaba
@@ -50,7 +50,6 @@ class ImplementationFactory:
         self.implementations = {
             "amit_agarwal": AmitAgarwal,
             "seema_gujral": SeemaGujral,
-            "kalighata": Kalighata,
             "sheetal_batra": SheetalBatra,
             "lashkaraa": Lashkaraa,
             "paulmi_and_harsh": PaulmiAndHarsh,
@@ -90,7 +89,7 @@ class ImplementationFactory:
             "kkarma_accessories": KkarmaAccessories,
             "prisho": Prisho,
             "renee_label": ReneeLabel,
-            "ruhaan_cust": Ruhaan_CUST,
+            "ruhaan_cust": Ruhaan_CUST
         }
 
         implementation = str(implementation).lower().replace(' ', "")
