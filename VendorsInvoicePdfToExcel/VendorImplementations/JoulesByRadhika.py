@@ -98,7 +98,7 @@ class JoulesByRadhika:
             aProductResult["HSN/SAC"] = item[indexOfHsn].split("\n")[0]
             aProductResult["Qty"] = item[indexOfQty]
             aProductResult["Rate"] = item[indexOfRate]
-            aProductResult["Per"] = ""
+            aProductResult["Per"] = "N/A"
             aProductResult["mrp"] = item[indexOfRate]
             aProductResult["Amount"] = amount
             aProductResult["po_cost"] = ""
@@ -130,10 +130,11 @@ class JoulesByRadhika:
         returnData = {}
         grandTotal = float(lastPage[indexOfContainsInList(lastPage, "TOTAL")][-1].replace(",", "").strip())
         returnData["tax_amount_in_words"] = convert_amount_to_words(self.totaltax)
-        returnData["amount_charged_in_words"] =lastPage[indexOfContainsInList(lastPage, "Amount Chargable In (Words)")][0].split("-")[-1]
+        returnData["amount_charged_in_words"] =lastPage[indexOfContainsInList(lastPage, "Amount Chargable In (Words)")][0].split("-")[-1].replace("\n"," ")
         returnData["total_amount_after_tax"] =grandTotal
         returnData["total_b4_tax"] = self.taxableValue
         returnData["total_tax"] =self.totaltax
         returnData["tax_rate"] = self.totalTaxPercentage
         returnData["total_tax_percentage"] = self.totalTaxPercentage
+        returnData["total_pcs"] =lastPage[indexOfContainsInList(lastPage, "Taxable")][2]
         return returnData

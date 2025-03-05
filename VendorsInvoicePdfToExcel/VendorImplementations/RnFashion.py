@@ -1,6 +1,6 @@
 from VendorsInvoicePdfToExcel.helper import indexOfContainsInList
 from VendorsInvoicePdfToExcel.helper import convert_amount_to_words
-from VendorsInvoicePdfToExcel.helper import find_nth_occurrence_of
+from VendorsInvoicePdfToExcel.helper import find_nth_occurrence_of, get_list_containing
 
 class RnFashion:
     def __init__(self, tables, text_data, table_by_tabula):
@@ -57,10 +57,9 @@ class RnFashion:
     def getItemInfo(self):
         pages = self.tables
         firstPage = self.tables[1]
-        lastPage = pages[len(pages)]
 
-        totals_list = self.table_by_tabula[1][indexOfContainsInList(self.table_by_tabula[1], "Taxable")].split("\n")[-6].split("$")
-
+        taxableList = self.text_data[1].split("\n")[indexOfContainsInList(self.text_data[1].split("\n"), "Amount (in"):indexOfContainsInList(self.text_data[1].split("\n"), "total amount (")]
+        totals_list =taxableList[indexOfContainsInList(taxableList, "total")-1].split(" ")
 
         total_tax = {
             "IGST": float(totals_list[find_nth_occurrence_of(totals_list, "%",3) +1].replace(",", "").strip()),
@@ -106,7 +105,7 @@ class RnFashion:
                 aProductResult["po_no"] = ""
                 aProductResult["or_po_no"] = ""
                 if poInfo.find("OR") is not -1:
-                    aProductResult["or_po_no"] = poInfo
+                    aProductResult["or_po_no"] =get_list_containing( poInfo.split(" "), "OR")
                 else :
                     aProductResult["po_no"] = poInfo
 
@@ -122,6 +121,7 @@ class RnFashion:
                 aProductResult["po_cost"] = ""
                 aProductResult["gst_rate"] = item[indexOfTaxRate].replace("%", "").strip()
                 aProductResult["gst_type"] = gstType
+                aProductResult["tax_applied"] = item[indexOfTaxAmount]
                 products.append(aProductResult)
 
         return products, total_tax
@@ -138,15 +138,17 @@ class RnFashion:
 
     def getItemTotalInfo(self):
         lastPage  =self.tables[len(self.text_data)]
-        totals_list = self.table_by_tabula[1][indexOfContainsInList(self.table_by_tabula[1], "Taxable")].split("\n")[-6].split("$")
-        amountBeforeTax = float(totals_list[1].replace(",", "").strip())
-        taxAmount = float(totals_list[-1].replace(",", "").strip())
+        totals_list = self.text_data[1].split("\n")[indexOfContainsInList(self.text_data[1].split("\n"), "Amount (in"):indexOfContainsInList(self.text_data[1].split("\n"), "total amount (")]
+        amountBeforeTax = float(get_list_containing(totals_list, "total").split(" ")[1].replace(",", "").strip())
+        taxAmount = float(get_list_containing(totals_list, "total").split(" ")[-1].replace(",", "").strip())
         totalAmount =  taxAmount+ amountBeforeTax
 
+        gstPercentageList = totals_list[indexOfContainsInList(totals_list, "total") - 1].split(" ")
+
         total_tax = {
-            "IGST": float(totals_list[find_nth_occurrence_of(totals_list, "%", 3) ].replace("%", "").strip()),
-            "SGST": float(totals_list[find_nth_occurrence_of(totals_list, "%", 2) ].replace("%", "").strip()),
-            "CGST": float(totals_list[find_nth_occurrence_of(totals_list, "%", 1) ].replace("%", "").strip())
+            "IGST": float(gstPercentageList[find_nth_occurrence_of(gstPercentageList, "%", 3) ].replace("%", "").strip()),
+            "SGST": float(gstPercentageList[find_nth_occurrence_of(gstPercentageList, "%", 2) ].replace("%", "").strip()),
+            "CGST": float(gstPercentageList[find_nth_occurrence_of(gstPercentageList, "%", 1) ].replace("%", "").strip())
         }
 
         returnData = {}
@@ -156,7 +158,7 @@ class RnFashion:
         else:
             returnData["tax_rate"] = total_tax["SGST"] + total_tax["CGST"]
 
-        returnData["tax_amount_in_words"] = convert_amount_to_words(float(totals_list[-1].replace(",", "").strip()))
+        returnData["tax_amount_in_words"] = convert_amount_to_words(taxAmount)
         returnData["amount_charged_in_words"] = convert_amount_to_words(totalAmount)
         returnData["total_pcs"] = self.totalPcs
         returnData["total_amount_after_tax"] = totalAmount

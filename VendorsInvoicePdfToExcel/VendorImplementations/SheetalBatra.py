@@ -97,7 +97,8 @@ class SheetalBatra:
                 aProductResult["po_no"] = ""
                 aProductResult["or_po_no"] = ""
                 if str(listOfPoOrOrPo[i]).lower().__contains__("or"):
-                    aProductResult["or_po_no"] = listOfPoOrOrPo[i]
+                    tempPoNoInfo = str(listOfPoOrOrPo[i]).lower().replace("or", "").replace("-","").replace(" ", "")
+                    aProductResult["or_po_no"] = "OR-" + tempPoNoInfo
                 else:
                     aProductResult["po_no"] = listOfPoOrOrPo[i]
 
@@ -117,7 +118,7 @@ class SheetalBatra:
                     gstType = gstType + " SGST " + sGstPercentage
                 self.taxRate = gstType
                 aProductResult["gst_type"] = gstType
-                aProductResult["gst_rate"] = sGstPercentage
+                aProductResult["gst_rate"] = float(cGstPercentage.replace("%", "")) + float(sGstPercentage.replace("%", ""))
                 aProductResult["tax_applied"] = productCgstAmount
                 products.append(aProductResult)
             total_tax = {

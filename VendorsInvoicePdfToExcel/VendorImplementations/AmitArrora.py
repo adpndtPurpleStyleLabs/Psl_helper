@@ -125,6 +125,8 @@ class AmitArrora:
                 aProductResult["po_cost"] = ""
                 aProductResult["gst_rate"] = totaltaxPercentage
                 aProductResult["gst_type"] = gstType
+                aProductResult["tax_applied"] = float(item[indexOfAmt].split("\n")[0].replace(",", "")) * (
+                            totaltaxPercentage / 100)
                 products.append(aProductResult)
 
         return products, total_tax

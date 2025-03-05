@@ -96,6 +96,7 @@ class Amyra:
             aProductResult = {}
             aProductResult["po_no"] = ""
             aProductResult["or_po_no"] = ""
+            gstPercentage = float( item[find_nth_occurrence_of(item, "%",2)].split("\n")[-1].replace("%", ""))
 
             if orPoInfo.find("OR") is not -1:
                 aProductResult["or_po_no"] = orPoInfo
@@ -112,7 +113,8 @@ class Amyra:
             aProductResult["mrp"] = item[indexOfRate]
             aProductResult["Amount"] = item[indexOfAmt ]
             aProductResult["po_cost"] = ""
-            aProductResult["gst_rate"] = item[find_nth_occurrence_of(item, "%",2)].split("\n")[-1].replace("%", "")
+            aProductResult["tax_applied"] = float(item[indexOfAmt].replace(",",""))  * (gstPercentage /100)
+            aProductResult["gst_rate"] = gstPercentage
             aProductResult["gst_type"] = gstType
             products.append(aProductResult)
             count+=1
@@ -136,7 +138,7 @@ class Amyra:
         returnData = {}
         returnData["tax_amount_in_words"] = convert_amount_to_words(totalTax)
         returnData["amount_charged_in_words"] = convert_amount_to_words(totalAmount)
-        returnData["total_pcs"] = ""
+        returnData["total_pcs"] = "1"
         returnData["total_amount_after_tax"] = totalAmount
         returnData["total_b4_tax"] = float(totalAmount) - float(totalTax)
         returnData["total_tax"] = totalTax

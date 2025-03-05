@@ -90,8 +90,9 @@ class MrunaliniRao:
                 if find_nth_occurrence_of(pages[index], "Po.No", len(products)+1) is not -1 :
                     poNoInfo = pages[index][find_nth_occurrence_of(pages[index], "Po.No", len(products)+1)][indexOfContainsInList(pages[index][find_nth_occurrence_of(pages[index], "Po.No", len(products)+1)], "Po")].split(":")[-1]
                 else:
-                    poNoInfo = pages[index+1][find_nth_occurrence_of(pages[index+1], "Po.No", len(products))][indexOfContainsInList(pages[index+1][find_nth_occurrence_of(pages[index+1], "Po.No", len(products))], "Po")].split(":")[-1]
+                    poNoInfo = pages[index+1][find_nth_occurrence_of(pages[index+1], "Po.No", 1)][indexOfContainsInList(pages[index+1][find_nth_occurrence_of(pages[index+1], "Po.No", 1)], "Po")].split(":")[-1]
 
+                poNoInfo= poNoInfo.strip().split(" ")[0]
 
                 gstRate = float( lastPage[indexOfContainsInList(lastPage, "Taxable") + 1][0].split("\n")[
                     -1].replace("%", "").strip())

@@ -17,15 +17,20 @@ from VendorsInvoicePdfToExcel.VendorImplementations.Fatiz import Fatiz
 from VendorsInvoicePdfToExcel.VendorImplementations.IkshitaChoudhary import IkshitaChoudhary
 from VendorsInvoicePdfToExcel.VendorImplementations.IshaGuptaTayal import IshaGuptaTayal
 from VendorsInvoicePdfToExcel.VendorImplementations.JoulesByRadhika import JoulesByRadhika
+from VendorsInvoicePdfToExcel.VendorImplementations.Kalista import Kalista
 from VendorsInvoicePdfToExcel.VendorImplementations.KasbahClothing import KasbahClothing
+from VendorsInvoicePdfToExcel.VendorImplementations.KharaKapas import KharaKapas
+from VendorsInvoicePdfToExcel.VendorImplementations.KkarmaAccessories import KkarmaAccessories
 from VendorsInvoicePdfToExcel.VendorImplementations.Lashkaraa import Lashkaraa
 from VendorsInvoicePdfToExcel.VendorImplementations.MrunaliniRao import MrunaliniRao
 from VendorsInvoicePdfToExcel.VendorImplementations.PaulmiAndHarsh import PaulmiAndHarsh
+from VendorsInvoicePdfToExcel.VendorImplementations.Prisho import Prisho
+from VendorsInvoicePdfToExcel.VendorImplementations.ReneeLabel import ReneeLabel
 from VendorsInvoicePdfToExcel.VendorImplementations.RnFashion import RnFashion
 from VendorsInvoicePdfToExcel.VendorImplementations.SaakshaAndKinni import SaakshaAndKinni
 from VendorsInvoicePdfToExcel.VendorImplementations.SahilAnejaCouture import SahilAnejaCouture
 from VendorsInvoicePdfToExcel.VendorImplementations.SeemaGujral import SeemaGujral
-from VendorsInvoicePdfToExcel.VendorImplementations.Kalighata import Kalighata
+# from VendorsInvoicePdfToExcel.VendorImplementations.Kalighata import Kalighata
 from VendorsInvoicePdfToExcel.VendorImplementations.LinenBloomMen import LinenBloomMen
 from VendorsInvoicePdfToExcel.VendorImplementations.Samohan import Samohan
 from VendorsInvoicePdfToExcel.VendorImplementations.Masaba import Masaba
@@ -33,6 +38,7 @@ from VendorsInvoicePdfToExcel.VendorImplementations.Ruhaan import Ruhaan
 from VendorsInvoicePdfToExcel.VendorImplementations.Riyaasat import Riyaasat
 from VendorsInvoicePdfToExcel.VendorImplementations.MonkAndMei import MonkAndMei
 from VendorsInvoicePdfToExcel.VendorImplementations.Amyra import Amyra
+from VendorsInvoicePdfToExcel.VendorImplementations.Ruhaan_CUST import Ruhaan_CUST
 from fastapi import HTTPException
 
 from VendorsInvoicePdfToExcel.VendorImplementations.SheetalBatra import SheetalBatra
@@ -44,7 +50,6 @@ class ImplementationFactory:
         self.implementations = {
             "amit_agarwal": AmitAgarwal,
             "seema_gujral": SeemaGujral,
-            "kalighata": Kalighata,
             "sheetal_batra": SheetalBatra,
             "lashkaraa": Lashkaraa,
             "paulmi_and_harsh": PaulmiAndHarsh,
@@ -79,6 +84,12 @@ class ImplementationFactory:
             "ikshita_choudhary": IkshitaChoudhary,
             "isha_gupta_tayal": IshaGuptaTayal,
             "joules_by_radhika": JoulesByRadhika,
+            "khara_kapas": KharaKapas,
+            "kalista": Kalista,
+            "kkarma_accessories": KkarmaAccessories,
+            "prisho": Prisho,
+            "renee_label": ReneeLabel,
+            "ruhaan_cust": Ruhaan_CUST
         }
 
         implementation = str(implementation).lower().replace(' ', "")

@@ -139,7 +139,7 @@ class IkshitaChoudhary:
             lastPage[indexOfContainsInList(lastPage, "Tax Amount (")][0].split("\n")[0].split(":")[-1]
         returnData["amount_charged_in_words"] = lastPage[indexOfContainsInList(lastPage, "Amount Ch")][0].split("\n")[
             -1]
-        returnData["total_pcs"] = lastPage[indexOfContainsInList(lastPage, "Total")][3]
+        returnData["total_pcs"] =lastPage[indexOfContainsInList(lastPage, "Total")][indexOfContainsInList(lastPage[indexOfContainsInList(lastPage, "Total")], "PCS")]
         returnData["total_amount_after_tax"] = re.sub(r'[^a-zA-Z0-9.]+', '',
                                                       lastPage[indexOfContainsInList(lastPage, "Total")][-1])
         returnData["total_b4_tax"] = lastPage[indexOfContainsInList(lastPage, "Taxable")][

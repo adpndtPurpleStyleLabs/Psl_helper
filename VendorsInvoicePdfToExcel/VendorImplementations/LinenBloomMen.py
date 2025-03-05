@@ -1,4 +1,5 @@
-from VendorsInvoicePdfToExcel.helper import indexOfContainsInList
+from fastapi import HTTPException
+from VendorsInvoicePdfToExcel.helper import indexOfContainsInList, get_list_containing, find_nth_occurrence_of
 import re
 
 class LinenBloomMen:
@@ -14,8 +15,8 @@ class LinenBloomMen:
             "vendor_address": firstPage[0][0].split("\n")[1] + " " + firstPage[0][0].split("\n")[2] + " " +
                               firstPage[0][0].split("\n")[indexOfContainsInList(firstPage[0][0].split("\n"), "State")],
             "vendor_mob": "",
-            "vendor_gst": firstPage[0][0].split("\n")[indexOfContainsInList(firstPage[0][0].split("\n"), "GST")],
-            "vendor_email": firstPage[0][0].split("\n")[indexOfContainsInList(firstPage[0][0].split("\n"), "Mail")]
+            "vendor_gst": firstPage[0][0].split("\n")[indexOfContainsInList(firstPage[0][0].split("\n"), "GST")].split(":")[-1].strip(),
+            "vendor_email": firstPage[0][0].split("\n")[indexOfContainsInList(firstPage[0][0].split("\n"), "Mail")].split(":")[-1].strip()
         }
 
     def getInvoiceInfo(self):
@@ -23,28 +24,30 @@ class LinenBloomMen:
         return {
             "invoice_number": firstPage[0][indexOfContainsInList(firstPage[0], "Invoice")].split("\n")[-1],
             "invoice_date":
-                self.text[1].split("\n")[indexOfContainsInList(self.text[1].split("\n"), "M/o")].split("M/o")[-1],
+                self.text[1].split("\n")[indexOfContainsInList(self.text[1].split("\n"), "Dated") + 1].split(" ")[
+                    -1].strip()
         }
 
     def getReceiverInfo(self):
         firstPage = self.tables[1]
-        receiverInfo = firstPage[0][0].split("\n")
-        receiverInfo = receiverInfo[indexOfContainsInList(receiverInfo, "Ship ")+1: indexOfContainsInList(receiverInfo, "Bill ")]
+        receiverInfo = get_list_containing(firstPage, "ship").split("\n")
+        receiverInfo = receiverInfo[
+                       indexOfContainsInList(receiverInfo, "Ship ") + 1: indexOfContainsInList(receiverInfo, "Bill ")]
         return {
             "receiver_name": receiverInfo[0],
-            "receiver_address": receiverInfo[1] + " " +receiverInfo[2] + " " +  receiverInfo[indexOfContainsInList(receiverInfo, "State")].split(",")[0].split(":")[-1],
-            "receiver_gst":receiverInfo[indexOfContainsInList(receiverInfo, "GSTIN")].split(":")[-1],
+            "receiver_address": ", ".join(receiverInfo[1:2]),
+            "receiver_gst": receiverInfo[indexOfContainsInList(receiverInfo, "GSTIN")].split(":")[-1],
         }
 
     def getBillingInfo(self):
         firstPage = self.tables[1]
-        billInfo = firstPage[0][0].split("\n")
+        billInfo = get_list_containing(firstPage, "bill to").split("\n")
         billInfo = billInfo[
-                       indexOfContainsInList(billInfo, "Bill ") + 1:]
+                   indexOfContainsInList(billInfo, "Bill ") + 1:]
 
         return {
             "billto_name": billInfo[0],
-            "billto_address": billInfo[1] + " " +billInfo[2] ,
+            "billto_address": ", ".join(billInfo[1:2]),
             "billto_gst": billInfo[indexOfContainsInList(billInfo, "GSTIN")].split(":")[-1],
             "place_of_supply": billInfo[indexOfContainsInList(billInfo, "State")].split(",")[0].split(":")[-1]
         }
@@ -61,63 +64,80 @@ class LinenBloomMen:
             "SGST": 0,
             "CGST": 0,
         }
-        for paneNo, aPage in enumerate(self.tables.values()):
-            if len(aPage[indexOfContainsInList(aPage, "Sl")+1]) <5:
-                # check if page contains products
-                continue
 
-            indexOfHeader = indexOfContainsInList(aPage, "Sl")
-            indexOfSrNo = indexOfContainsInList(aPage[indexOfHeader], "Sl")
-            indexOfDescription = indexOfContainsInList(aPage[indexOfHeader], "Descrip")
-            indexOfHsnCode = indexOfContainsInList(aPage[indexOfHeader], "HSN")
-            indexOFQty = indexOfContainsInList(aPage[indexOfHeader], "Quantity")
-            indexRateWithTax = indexOfContainsInList(aPage[indexOfHeader], "Incl. of")
-            indexOfRate = indexOfContainsInList(aPage[indexOfHeader], "Rate") + 1
-            indexOfPer = indexOfContainsInList(aPage[indexOfHeader], "per")
-            indexOfAmount = indexOfContainsInList(aPage[indexOfHeader], "Amount")
-            goodsIndex = indexOfHeader+1
-            noOfGoodInPage = len(aPage[indexOfHeader+1][0].split("\n"))
-            for i in range(noOfGoodInPage):
-                aProductResult = {}
-                aProductResult["vendor_code"] = ""
-                aProductResult["po_no"] = ""
+        total_tax = {"IGST": float(lastPage[indexOfContainsInList(lastPage, "Tax Amount (in")-1][-1].replace(",","")), "SGST": 0,
+                     "CGST": 0, }
 
-                try :
-                    rateWithTax = re.findall(r'\d+',
-                                             aPage[goodsIndex][indexRateWithTax].split("\n")[i].replace(",", ""))
-                    rateWithTax = int(rateWithTax[0]) if rateWithTax else None
-                    rateWithOutTax = re.findall(r'\d+', aPage[goodsIndex][indexOfRate].split("\n")[i].replace(",", ""))
-                    rateWithOutTax = int(rateWithOutTax[0]) if rateWithOutTax else None
-                    aProductResult["vendor_code"] = aPage[goodsIndex][indexOfDescription].split("\n")[(i * 3) + 1]
-                    aProductResult["po_no"] = \
-                    aPage[goodsIndex][indexOfDescription].split("\n")[(i * 3) + 2].split("Po")[-1]
+        gstType = ""
+        if indexOfContainsInList(lastPage[indexOfContainsInList(lastPage, "Amount Charg") + 1], "CGST") != -1:
+            raise HTTPException(status_code=400, detail="For Ruhaan CGST is not implemented")
 
-                except Exception as e:
-                    print(e)
+        if indexOfContainsInList(lastPage[indexOfContainsInList(lastPage, "Amount Charg") + 1], "IGST") != -1:
+            gstType = "IGST"
 
-                aProductResult["index"] = aPage[goodsIndex][indexOfSrNo].split("\n")[i]
-                aProductResult["HSN/SAC"] = aPage[goodsIndex][indexOfHsnCode].split("\n")[i]
-                aProductResult["Qty"] = aPage[goodsIndex][indexOFQty].split("\n")[i]
-                aProductResult["Rate"] = aPage[goodsIndex][indexOfRate].split("\n")[i]
-                aProductResult["Per"] = aPage[goodsIndex][indexOfPer].split("\n")[i]
-                aProductResult["mrp"] = aPage[goodsIndex][indexOfRate].split("\n")[i]
-                aProductResult["Amount"] = rateWithTax
-                aProductResult["gst_type"] = lastPage[indexOfContainsInList(lastPage, "Amount Ch")+1][indexOfContainsInList(lastPage[indexOfContainsInList(lastPage, "Amount Ch")+1], "GST")]
-                aProductResult["gst_rate"] = int(((rateWithTax-rateWithOutTax)/rateWithOutTax)*100)
-                aProductResult["tax_applied"] = rateWithTax-rateWithOutTax
-                aProductResult["po_cost"] = rateWithTax
-                aProductResult["or_po_no"] =""
-                aProductResult["debit_note_no"] = ""
+        if indexOfContainsInList(lastPage[indexOfContainsInList(lastPage, "Amount Charg") + 1], "SGST") != -1:
+            raise HTTPException(status_code=400, detail="For Ruhaan SGST is not implemented")
 
-                if aProductResult["gst_type"] == "IGST":
-                    total_tax["IGST"] = total_tax["IGST"] + rateWithTax-rateWithOutTax
-                elif aProductResult["gst_type"] == "SGST":
-                    total_tax["SGST"] = total_tax["SGST"] + rateWithTax-rateWithOutTax
-                elif aProductResult["gst_type"] == "CGST":
-                    total_tax["CGST"] = total_tax["CGST"] + rateWithTax-rateWithOutTax
 
-                products.append(aProductResult)
-        self.gstRate = products[0]["gst_rate"]
+        indexOfHeader = indexOfContainsInList(firstPage, "HSN/")
+        indexOfSrNo = indexOfContainsInList(firstPage[indexOfHeader], "Sl")
+        indexOfDescription = indexOfContainsInList(firstPage[indexOfHeader], "Descrip")
+        indexOfHsnCode = indexOfContainsInList(firstPage[indexOfHeader], "HSN")
+        indexOFQty = indexOfContainsInList(firstPage[indexOfHeader], "Quantity")
+        indexRateWithTax = indexOfContainsInList(firstPage[indexOfHeader], "Incl. of")
+        indexOfRate = indexOfContainsInList(firstPage[indexOfHeader], "Rate") + 1
+        indexOfPer = indexOfContainsInList(firstPage[indexOfHeader], "per")
+        indexOfAmount = indexOfContainsInList(firstPage[indexOfHeader], "Amount")
+
+
+
+        listOfInfo = firstPage[indexOfHeader+1]
+        listOfIndex =listOfInfo[indexOfSrNo].split("\n")
+        listOfHsn = listOfInfo[indexOfHsnCode].split("\n")
+        listOfQty = listOfInfo[indexOFQty].split("\n")
+        listOfAmt = listOfInfo[indexRateWithTax].split("\n")
+        listOfRate = listOfInfo[indexOfRate].split("\n")
+        listOfPer = listOfInfo[indexOfPer].split("\n")
+
+        listOfPoNos = []
+        for index,aPage in enumerate(self.tables.values()):
+            indexOfHederInDynamicPage =indexOfContainsInList(aPage, "HSN/")
+            indexOfDescriptionInDynamicPage = indexOfContainsInList(firstPage[indexOfHederInDynamicPage], "Descrip")
+            indexOfDynamicInfo =  aPage[indexOfHeader+1]
+            listOfDynamicDescription =  indexOfDynamicInfo[indexOfDescriptionInDynamicPage].split("\n")
+            listOfPoNosOfAPage =  [s.split(" ")[-1] for s in listOfDynamicDescription if "po no" in s.lower()]
+            listOfPoNos+=listOfPoNosOfAPage
+
+        self.gstRate = get_list_containing(lastPage[indexOfContainsInList(lastPage, "Tax Amount (in")-2],"%").split("\n")[-1].replace("%", "").strip()
+
+        count = 0
+        for index in range(len(listOfIndex)):
+            aProductResult = {}
+            aProductResult["vendor_code"] = ""
+            aProductResult["po_no"] = ""
+            aProductResult["or_po_no"] = ""
+            poNo =  listOfPoNos[count]
+            if poNo.__contains__("OR"):
+                aProductResult["or_po_no"] = poNo
+            else:
+                aProductResult["po_no"] = poNo
+
+            aProductResult["debit_note_no"] = ""
+            aProductResult["index"] = listOfIndex[count]
+            aProductResult["HSN/SAC"] = listOfHsn[count]
+            aProductResult["Qty"] = listOfQty[count]
+            aProductResult["Rate"] = listOfRate[count]
+            aProductResult["Per"] = listOfPer[count]
+            aProductResult["mrp"] = listOfRate[count]
+            aProductResult["Amount"] =  listOfAmt[count]
+            aProductResult["gst_type"] = gstType
+            aProductResult["gst_rate"] =  self.gstRate
+            aProductResult["tax_applied"] =  float(listOfAmt[count].replace(",",""))-float(listOfRate[count].replace(",",""))
+            aProductResult["po_cost"] = ""
+
+            products.append(aProductResult)
+            count+=1
+
         return products, total_tax
 
 
@@ -140,10 +160,13 @@ class LinenBloomMen:
     def getItemTotalInfo(self):
         returnData = {}
         lastPage = self.tables[len(self.tables)]
-        returnData["total_pcs"] = lastPage[indexOfContainsInList(lastPage, "Total")][3]
+        totalCount = lastPage[indexOfContainsInList(lastPage, "Total")][3]
+        indexOfHeader = indexOfContainsInList(lastPage, "Amount Chargeable")+1
+        intexOfTaxableValue = indexOfContainsInList(lastPage[indexOfHeader], "Taxable")
+        returnData["total_pcs"] = totalCount if totalCount.strip() != "" else "N/A"
         returnData["total_amount_after_tax"] = lastPage[indexOfContainsInList(lastPage, "Total")][-1].split(" ")[-1]
-        returnData["total_b4_tax"] = lastPage[indexOfContainsInList(lastPage, "OUTPUT")+1][0].split("\n")[0]
-        returnData["total_tax"] = lastPage[indexOfContainsInList(lastPage, "OUTPUT")+1][0].split("\n")[-1]
+        returnData["total_b4_tax"] = float(lastPage[indexOfContainsInList(lastPage, "Tax Amount (in ") - 1][intexOfTaxableValue].strip().replace(",",""))
+        returnData["total_tax"] = float(lastPage[indexOfContainsInList(lastPage, "Tax Amount (in ") - 1][-1].strip().replace(",",""))
         returnData["tax_rate"] = self.gstRate
         returnData["total_tax_percentage"] =  self.gstRate
         returnData["tax_amount_in_words"] = lastPage[indexOfContainsInList(lastPage, "Tax Amount (in")][0].split("\n")[0].split(":")[-1]

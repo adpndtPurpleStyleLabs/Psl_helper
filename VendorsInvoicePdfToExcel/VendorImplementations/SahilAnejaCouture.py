@@ -113,12 +113,13 @@ class SahilAnejaCouture:
             aProductResult["HSN/SAC"] = hsnNoList[int(index.strip())-1]
             aProductResult["Qty"] =  qtyList[int(index.strip())-1]
             aProductResult["Rate"] = rateList[int(index.strip())-1]
-            aProductResult["Per"] = ""
+            aProductResult["Per"] = "N/A"
             aProductResult["mrp"] = rateList[int(index.strip())-1]
             aProductResult["Amount"] = amtList[int(index.strip())-1]
             aProductResult["po_cost"] = ""
             aProductResult["gst_rate"] = CGSTPercentage + SGSTPercentage + IGSTPercentage
             aProductResult["gst_type"] = gstType
+            aProductResult["tax_applied"] = float(amtList[int(index.strip())-1].replace(" ","").replace(",","")) * 0.01 * aProductResult["gst_rate"]
             products.append(aProductResult)
 
         return products, total_tax

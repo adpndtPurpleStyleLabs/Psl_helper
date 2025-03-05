@@ -65,7 +65,7 @@ class Samohan:
                 break
             aProductResult["index"] = firstPage[i][0]
             aProductResult["vendor_code"] = firstPage[i][2]
-            aProductResult["HSN/SAC"] = firstPage[i][3]
+            aProductResult["HSN/SAC"] = "N/A" if firstPage[i][3].strip() == "" else firstPage[i][3].strip()
             aProductResult["Qty"] = firstPage[i][4]
             aProductResult["Rate"] = firstPage[i][6]
             aProductResult["Per"] = firstPage[i][8]

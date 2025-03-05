@@ -95,11 +95,13 @@ class AneeshAgarwaal:
             if len(item) <2:
                 break
 
-            if item[0].strip() == "":
+            if item[0].strip() == "" and indexOfContainsInList(item,"PCS"):
                 continue
 
             aProductResult = {}
-            poNoIfo = firstPageText[count+2][indexMap["Description"]]
+            poNoIfo = firstPageText[count + 2][indexMap["Description"]] if firstPageText[count + 2][
+                                                                               indexMap["Description"]] != "" else \
+            firstPageText[count + 1][indexMap["Description"]]
             aProductResult["or_po_no"] = ""
             aProductResult["po_no"] = ""
             if poNoIfo.find("OR") is not -1:
@@ -116,6 +118,8 @@ class AneeshAgarwaal:
             aProductResult["mrp"] = item[indexMap["Taxable"]]
             aProductResult["Amount"] = item[indexMap["Total\nAmount"]+2]
             aProductResult["po_cost"] = ""
+            aProductResult["tax_applied"] = float(item[indexMap["CGST"] + 1].replace(",", "")) + float(
+                item[indexMap["SGST"] + 2].replace(",", ""))
             aProductResult["gst_rate"] = gstPercentage["SGST"] + gstPercentage["CGST"]
             aProductResult["gst_type"] = gstType
             products.append(aProductResult)
