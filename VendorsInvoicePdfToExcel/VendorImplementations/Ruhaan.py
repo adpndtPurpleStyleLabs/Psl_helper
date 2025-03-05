@@ -88,12 +88,10 @@ class Ruhaan:
 
                 aProductResult= {}
                 aProductResult["po_no"] = ""
-                aProductResult["or_po_no"] = ""
                 orPoInfo = aPage[indexOfHeader+itemIndex+2][1]
                 if indexOfContainsInList(aPage[indexOfHeader+itemIndex+2], "OR") is not -1:
-                    aProductResult["or_po_no"] = orPoInfo[orPoInfo.find("OR"):].replace(")", "").strip()
+                    aProductResult["po_no"] = orPoInfo[orPoInfo.find("OR"):].replace(")", "").strip()
 
-                aProductResult["debit_note_no"] = ""
                 aProductResult["index"] =  item[indexOfSr]
                 aProductResult["vendor_code"] = ""
                 aProductResult["HSN/SAC"] = item[indexOfHsn]

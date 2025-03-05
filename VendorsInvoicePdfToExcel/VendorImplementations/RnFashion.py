@@ -103,14 +103,7 @@ class RnFashion:
                     continue
 
                 aProductResult= {}
-                aProductResult["po_no"] = ""
-                aProductResult["or_po_no"] = ""
-                if poInfo.find("OR") is not -1:
-                    aProductResult["or_po_no"] = poInfo
-                else :
-                    aProductResult["po_no"] = poInfo
-
-                aProductResult["debit_note_no"] = ""
+                aProductResult["po_no"] = poInfo
                 aProductResult["index"] =  item[indexOfSr]
                 aProductResult["vendor_code"] = ""
                 aProductResult["HSN/SAC"] = item[indexOfHsn]

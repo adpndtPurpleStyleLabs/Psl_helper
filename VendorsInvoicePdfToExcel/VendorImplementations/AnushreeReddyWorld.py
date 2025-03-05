@@ -82,14 +82,7 @@ class AnushreeReddyWorld:
         poNoInfo = firstPageText[indexOfContainsInList(firstPageText, "Ref.")].split(":")[2].replace("Date", "").strip().replace("PONO", "")
         aProductResult= {}
 
-        aProductResult["po_no"] = ""
-        aProductResult["or_po_no"] = ""
-        if poNoInfo.find("OR") is not -1:
-            aProductResult["or_po_no"] = poNoInfo
-        else:
-            aProductResult["po_no"] = poNoInfo
-
-        aProductResult["debit_note_no"] = ""
+        aProductResult["po_no"] = poNoInfo
         aProductResult["index"] = "1"
         aProductResult["vendor_code"] = ""
         aProductResult["HSN/SAC"] = productInfoList[indexOfContainsInList(productInfoList, "Pcs")].split(" ")[-5]

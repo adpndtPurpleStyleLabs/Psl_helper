@@ -47,6 +47,7 @@ async def pdf_to_excel(
 async def parse_pdf(
     file: UploadFile = File(...),
     vendor_name: str = Form(...),
+    po_type: str = Form(...),
     file_path: str = Form(None)
 ):
     try:
@@ -55,7 +56,7 @@ async def parse_pdf(
             tmp_pdf_path = tmp_pdf.name
 
         venforBl = VendorInvoiceBl()
-        extractedInformation = venforBl.processPdf(tmp_pdf_path, vendor_name)
+        extractedInformation = venforBl.processPdf(tmp_pdf_path, vendor_name, po_type)
         os.remove(tmp_pdf_path)
         return extractedInformation
 

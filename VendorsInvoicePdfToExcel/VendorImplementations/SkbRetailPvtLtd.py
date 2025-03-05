@@ -89,14 +89,7 @@ class SkbRetailPvtLtd:
                     continue
 
                 aProductResult = {}
-                aProductResult["po_no"] = ""
-                aProductResult["or_po_no"] = ""
-                if orPoInfo.find("OR") is not -1:
-                    aProductResult["or_po_no"] = orPoInfo
-                else:
-                    aProductResult["po_no"] = orPoInfo
-
-                aProductResult["debit_note_no"] = ""
+                aProductResult["po_no"] = orPoInfo
                 aProductResult["index"] = item[indexOfSr]
                 aProductResult["vendor_code"] = ""
                 aProductResult["HSN/SAC"] = item[indexOfHsn]
