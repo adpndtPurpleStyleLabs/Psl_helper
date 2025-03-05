@@ -168,32 +168,22 @@ class SeemaGujral:
 
     def getItemTotalInfo(self):
         returnData = {}
-        indexOfTotalPCS = 0
         lastPage = self.tables[len(self.tables)]
+        gstPercentage = float( get_list_containing(
+            lastPage[indexOfContainsInList(lastPage, "tax amount") + 2], "%").strip().replace("%", ""))
 
         listOfTaxHeader = lastPage[indexOfContainsInList(lastPage, "tax amount")]
         if indexOfContainsInList(listOfTaxHeader,"SGST") is not -1 or  indexOfContainsInList(listOfTaxHeader,"CGST") is not -1:
             raise HTTPException(status_code=400, detail="For Seema gujral CGST and SGST is not implemented")
 
-        for index, atable in enumerate(lastPage):
-            for alist in atable:
-                if str(alist).__contains__('Company’s Bank'):
-                    returnData["tax_amount_in_words"] = alist.split("\n")[
-                        self.indexOfContainsInList(alist.split("\n"), "Tax Amount")].split(":")[-1]
-                if str(alist).__contains__('Amount Chargeable'):
-                    indexOfTotalPCS = index - 1
-                    returnData["amount_charged_in_words"] = alist[alist.find("O.E\n") + 4:]
-
-        if (indexOfTotalPCS != 0):
-            returnData["total_pcs"] = lastPage[indexOfTotalPCS][
-                self.indexOfContainsInList(lastPage[indexOfTotalPCS], "PC")]
-            returnData["total_amount_after_tax"] = lastPage[indexOfTotalPCS][-1]
-            returnData["total_b4_tax"] = lastPage[indexOfTotalPCS - 1][0].split("\n")[0]
-            returnData["total_tax"] = lastPage[indexOfContainsInList(lastPage, "tax amount") + 3][-1]
-            returnData["tax_rate"] = get_list_containing(lastPage[indexOfContainsInList(lastPage, "tax amount") + 2],
-                                                         "%").replace("%", "")
-            returnData["total_tax_percentage"] = get_list_containing(
-                lastPage[indexOfContainsInList(lastPage, "tax amount") + 2], "%").replace("%", "")
+        returnData["amount_charged_in_words"] = get_list_containing(lastPage, "Amount Chargeable (in").split("\n")[-1]
+        returnData["tax_amount_in_words"] = get_list_containing(get_list_containing(lastPage, "Tax Amount (").split("\n"), "Tax Amount (").split(":")[-1].strip()
+        returnData["total_pcs"] = get_list_containing(lastPage[indexOfContainsInList(lastPage, "Amount Chargeable (in")-1], "pcs").strip()
+        returnData["total_amount_after_tax"] = float(lastPage[indexOfContainsInList(lastPage, "Amount Chargeable (in") - 1][-1].split(" ")[-1].strip().replace(",",""))
+        returnData["total_b4_tax"] = float(get_list_containing(lastPage[indexOfContainsInList(lastPage, "Tax Amount (in word")-1], "total").split(" ")[-1].strip().replace(",",""))
+        returnData["total_tax"] = float(lastPage[indexOfContainsInList(lastPage, "tax amount") + 3][-1].strip().replace(",","").strip())
+        returnData["tax_rate"] = gstPercentage
+        returnData["total_tax_percentage"] = gstPercentage
 
         return returnData
 

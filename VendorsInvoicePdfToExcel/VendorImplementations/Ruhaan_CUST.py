@@ -3,7 +3,7 @@ import re
 from VendorsInvoicePdfToExcel.helper import indexOfContainsInList, get_list_containing
 from fastapi import HTTPException
 
-class Ruhaan:
+class Ruhaan_CUST:
     def __init__(self, tables, text_data, table_by_tabula):
         self.tables = tables
         self.text_data = text_data
@@ -79,19 +79,8 @@ class Ruhaan:
 
         products = []
 
-        listOfItem = firstPage[indexOfHeader+1: indexOfContainsInList(firstPage, "Output") ]
-        count = 0
-        listOfOrPoNoInfo = []
-        for aItemList in listOfItem:
-            if aItemList[0].strip() != "":
-                listOfOrPoNoInfo.append("")
-                count += 1
-                if listOfOrPoNoInfo.__len__() > 1 :
-                    listOfOrPoNoInfo[count-2] = re.findall(r'\(([^)]+)\)', listOfOrPoNoInfo[count-2])
+        poInfo = get_list_containing(firstPage, "Buyer's O").split("\n")[-1]
 
-            if listOfOrPoNoInfo.__len__() > 0 and listOfOrPoNoInfo.__len__() == count:
-                listOfOrPoNoInfo[count-1] += aItemList[indexOfItemname]
-        listOfOrPoNoInfo[count - 1] = re.findall(r'\(([^)]+)\)', listOfOrPoNoInfo[count - 1])
         gstPercentage = lastPage[indexOfContainsInList(lastPage, "Taxable") + 1][0].split("\n")[-1].replace("%",
                                                                                                             "").strip()
         for itemIndex, item in enumerate(firstPage[indexOfHeader+1:]):
@@ -103,19 +92,19 @@ class Ruhaan:
             itemCount = int(re.findall(r'\d+', item[indexOfQty])[-1])
             for itemCountIndex in range(itemCount):
                 aProductResult= {}
-                aProductResult["po_no"] = ""
-                aProductResult["or_po_no"] = listOfOrPoNoInfo[int(re.findall(r'\d+', parentItemIndex)[-1]) - 1][itemCountIndex].strip()
+                aProductResult["po_no"] = poInfo
+                aProductResult["or_po_no"] = "NA"
                 aProductResult["debit_note_no"] = ""
                 aProductResult["index"] = parentItemIndex
                 aProductResult["vendor_code"] = ""
                 aProductResult["HSN/SAC"] = item[indexOfHsn]
-                aProductResult["Qty"] = "1 PCS"
+                aProductResult["Qty"] =item[indexOfQty]
                 aProductResult["Rate"] = item[indexOfRate]
                 aProductResult["Per"] = item[indexOfPer]
                 aProductResult["mrp"] = item[indexOfRate]
-                aProductResult["Amount"] = ((float(gstPercentage) * 0.01)+1)*float(item[indexOfRate].replace(",",""))
-                aProductResult["tax_applied"] = ((float(gstPercentage) * 0.01))*float(item[indexOfRate].replace(",",""))
+                aProductResult["Amount"] = ((float(gstPercentage) * 0.01))*float(item[indexOfRate].replace(",",""))
                 aProductResult["po_cost"] = ""
+                aProductResult["tax_applied"] = ((float(gstPercentage) * 0.01))*float(item[indexOfRate].replace(",",""))
                 aProductResult["gst_rate"] = gstPercentage
                 aProductResult["gst_type"] = gstType
                 products.append(aProductResult)

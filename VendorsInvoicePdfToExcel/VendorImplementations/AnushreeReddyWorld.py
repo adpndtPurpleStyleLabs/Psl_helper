@@ -88,10 +88,11 @@ class AnushreeReddyWorld:
         aProductResult["HSN/SAC"] = productInfoList[indexOfContainsInList(productInfoList, "Pcs")].split(" ")[-5]
         aProductResult["Qty"] = " ".join(productInfoList[indexOfContainsInList(productInfoList, "Pcs")].split(" ")[-3:-1])
         aProductResult["Rate"] = productInfoList[indexOfContainsInList(productInfoList, "Pcs")].split(" ")[-1]
-        aProductResult["Per"] = ""
+        aProductResult["Per"] = productInfoList[indexOfContainsInList(productInfoList, "Pcs")].split(" ")[-2]
         aProductResult["mrp"] = aProductResult["Rate"]
         aProductResult["Amount"] = productInfoList[indexOfContainsInList(productInfoList, "Grand")].split(" ")[-1]
         aProductResult["po_cost"] = ""
+        aProductResult["tax_applied"] = float(productInfoList[indexOfContainsInList(productInfoList, "Pcs")].split(" ")[-1].replace(",",""))  *(IGSTPercenatge + CGSTPercenatge + SGSTPercenatge)/100
         aProductResult["gst_rate"] = IGSTPercenatge + CGSTPercenatge + SGSTPercenatge
         self.gstPercentage = aProductResult["gst_rate"]
         aProductResult["gst_type"] = gstType

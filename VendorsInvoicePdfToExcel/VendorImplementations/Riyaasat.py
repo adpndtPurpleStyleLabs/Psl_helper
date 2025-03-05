@@ -1,7 +1,7 @@
 from openpyxl.styles.builtins import normal
 import re
 
-from VendorsInvoicePdfToExcel.helper import indexOfContainsInList
+from VendorsInvoicePdfToExcel.helper import indexOfContainsInList, convert_to_ddmmyy
 from VendorsInvoicePdfToExcel.helper import convert_amount_to_words
 from fastapi import HTTPException
 
@@ -24,13 +24,26 @@ class Riyaasat:
 
     def getInvoiceInfo(self):
         firstPageText = self.tables[1]
+        print(convert_to_ddmmyy(self.text_data[1].split("\n")[indexOfContainsInList(self.text_data[1].split("\n"), "Dated") + 1].split(" ")[             -1].strip()))
         return {
-            "invoice_number": firstPageText[indexOfContainsInList(firstPageText, "Invoice")][indexOfContainsInList(firstPageText[indexOfContainsInList(firstPageText, "Invoice")], "Invoice")].split("\n")[-1],
-            "invoice_date": "N/A"
+            "invoice_number": firstPageText[indexOfContainsInList(firstPageText, "Invoice")][
+                indexOfContainsInList(firstPageText[indexOfContainsInList(firstPageText, "Invoice")], "Invoice")].split(
+                "\n")[-1],
+            "invoice_date": convert_to_ddmmyy(
+                self.text_data[1].split("\n")[indexOfContainsInList(self.text_data[1].split("\n"), "Dated") + 1].split(
+                    " ")[-1].strip())
         }
 
     def getReceiverInfo(self):
         firstPageText = self.tables[1]
+
+        if indexOfContainsInList(firstPageText, "Ship to") == -1:
+            return {
+                "receiver_name": "N/A",
+                "receiver_address": "N/A",
+                "receiver_gst": "N/A"
+            }
+
         receiverInfo = firstPageText[indexOfContainsInList(firstPageText, "Ship to")][0].split("\n")
         receiverInfo = receiverInfo[indexOfContainsInList(receiverInfo, "Ship") : indexOfContainsInList(receiverInfo, "Bill")]
         return {
@@ -68,7 +81,7 @@ class Riyaasat:
 
 
         products = []
-        indexOfHeader = indexOfContainsInList(self.tables[1], "Sl")
+        indexOfHeader = indexOfContainsInList(self.tables[1], "HSN/")
         indexOfSr = indexOfContainsInList(firstPage[indexOfHeader], "Sl")
         indexOfItemname = indexOfContainsInList(firstPage[indexOfHeader], "Description")
         indexOfHsn = indexOfContainsInList(firstPage[indexOfHeader], "HSN")
@@ -92,6 +105,7 @@ class Riyaasat:
             else:
                 aProductResult["po_no"] = orPoInfo
 
+            gstPercenatge = item[indexOfItemname][item[indexOfItemname].find("@")+2 : item[indexOfItemname].find("%")]
             aProductResult["debit_note_no"] = ""
             aProductResult["index"] =  item[indexOfSr]
             aProductResult["vendor_code"] = ""
@@ -104,6 +118,7 @@ class Riyaasat:
             aProductResult["po_cost"] = ""
             aProductResult["gst_rate"] = item[indexOfItemname][item[indexOfItemname].find("@")+2 : item[indexOfItemname].find("%")]
             aProductResult["gst_type"] = gstType
+            aProductResult["tax_applied"] = float(item[indexOfAmt].split("\n")[0].replace(",","")) * float(gstPercenatge) * 0.01
             products.append(aProductResult)
 
         return products, total_tax

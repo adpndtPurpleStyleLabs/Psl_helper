@@ -1,6 +1,6 @@
 import re
 
-from VendorsInvoicePdfToExcel.helper import indexOfContainsInList
+from VendorsInvoicePdfToExcel.helper import indexOfContainsInList, get_list_containing
 from fastapi import HTTPException
 
 class Espana:
@@ -8,6 +8,11 @@ class Espana:
         self.tables = tables
         self.text_data = text_data
         self.table_by_tabula = table_by_tabula
+        self.gstPercentage = ""
+        self.totalb4tax = ""
+        self.totalaftertax = ""
+        self.taxApplied = ""
+
         if self.text_data[len(self.tables)].find("e-Way") is not -1:
             self.text_data.pop(len(self.tables))
             self.tables.pop(len(self.tables))
@@ -57,7 +62,7 @@ class Espana:
         pages = self.tables
         firstPage = self.tables[1]
         lastPage = pages[len(pages)]
-        total_tax = { "IGST": lastPage[indexOfContainsInList(lastPage, "Taxable") + 2][3].split("\n")[-1],  "SGST": 0, "CGST": 0,}
+        total_tax = { "IGST": lastPage[indexOfContainsInList(lastPage, "Tax Amount (in words)") -1][-1].split("\n")[-1].replace(",",""),  "SGST": 0, "CGST": 0,}
 
         gstType = ""
         if indexOfContainsInList(lastPage[indexOfContainsInList(lastPage, "Amount Charg") + 1], "CGST") != -1:
@@ -70,7 +75,7 @@ class Espana:
             raise HTTPException(status_code=400, detail="For Ruhaan SGST is not implemented")
 
         products = []
-        indexOfHeader = indexOfContainsInList(self.tables[1], "Sl")
+        indexOfHeader = indexOfContainsInList(self.tables[1], "HSN/")
         indexOfSr = indexOfContainsInList(firstPage[indexOfHeader], "Sl")
         indexOfItemname = indexOfContainsInList(firstPage[indexOfHeader], "Description")
         indexOfHsn = indexOfContainsInList(firstPage[indexOfHeader], "HSN")
@@ -79,21 +84,28 @@ class Espana:
         indexOfRate = indexOfContainsInList(firstPage[indexOfHeader], "Rate")
         indexOfAmt = indexOfContainsInList(firstPage[indexOfHeader], "Amount")
 
+        listOfTotalTaxs =lastPage[indexOfContainsInList(lastPage, "Amount Chargeable (") : indexOfContainsInList(lastPage, "Tax Amount (in words)")]
+
         for itemIndex, item in enumerate(firstPage[indexOfHeader+1:]):
+
             if indexOfContainsInList(item,"Total") is not -1:
                 break
-            if item[0].strip() == "":
+            if item[0].strip() == "" or item.__len__() <4:
                 continue
 
             aProductResult= {}
             aProductResult["po_no"] = ""
             aProductResult["or_po_no"] = ""
             orPoInfo = firstPage[indexOfContainsInList(firstPage, "Order No")][0].split("\n")[-1].strip()
+            if orPoInfo.find("Buyer") is not -1:
+                orPoInfo = firstPage[indexOfContainsInList(firstPage, "Reference No")][0].split("\n")[-1].strip().split(" ")[0]
             if orPoInfo.find("OR") is not -1:
                 aProductResult["or_po_no"] = orPoInfo
             else:
                 aProductResult["po_no"] = orPoInfo
 
+            gstPercentage =  get_list_containing(listOfTotalTaxs, "%").split("\n")[-1].strip().replace("%","")
+            self.gstPercentage = gstPercentage
             aProductResult["debit_note_no"] = ""
             aProductResult["index"] =  item[indexOfSr]
             aProductResult["vendor_code"] = ""
@@ -103,8 +115,11 @@ class Espana:
             aProductResult["Per"] = item[indexOfPer]
             aProductResult["mrp"] = item[indexOfRate]
             aProductResult["Amount"] = item[indexOfAmt].split("\n")[0]
+            self.totalb4tax =  aProductResult["Amount"]
             aProductResult["po_cost"] = ""
-            aProductResult["gst_rate"] = lastPage[indexOfContainsInList(lastPage, "Taxable")+2][2].split("\n")[-1].replace("%", "").strip()
+            aProductResult["tax_applied"] = float(item[indexOfAmt].split("\n")[0].replace(",","")) * (float(gstPercentage)/100)
+            self.taxApplied = aProductResult["tax_applied"]
+            aProductResult["gst_rate"] = float(gstPercentage)
             aProductResult["gst_type"] = gstType
             products.append(aProductResult)
 
@@ -125,8 +140,9 @@ class Espana:
             -1]
         returnData["total_pcs"] = lastPage[indexOfContainsInList(lastPage, "Total")][3]
         returnData["total_amount_after_tax"] = lastPage[indexOfContainsInList(lastPage, "Total")][-1].split(" ")[-1]
-        returnData["total_b4_tax"] = lastPage[indexOfContainsInList(lastPage, "Taxable")+2][1]
-        returnData["total_tax"] = lastPage[indexOfContainsInList(lastPage, "Taxable")+2][-1]
-        returnData["tax_rate"] = lastPage[indexOfContainsInList(lastPage, "Taxable")+2][2].split("\n")[-1].replace("%", "").strip()
+
+        returnData["total_b4_tax"] = self.totalb4tax
+        returnData["total_tax"] = self.taxApplied
+        returnData["tax_rate"] = self.gstPercentage
         returnData["total_tax_percentage"] =returnData["tax_rate"]
         return returnData

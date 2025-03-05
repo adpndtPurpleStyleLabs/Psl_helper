@@ -119,6 +119,7 @@ class ChaashniByMaansiAndKetan:
                 aProductResult["mrp"] = item[indexOfRate].split("\n")[0]
                 aProductResult["Amount"] = item[indexOfAmt].split("\n")[0]
                 aProductResult["po_cost"] = ""
+                aProductResult["tax_applied"] = float(item[indexOfAmt].split("\n")[0].replace(",","")) * (totaltaxPercentage/100)
                 aProductResult["gst_rate"] = totaltaxPercentage
                 aProductResult["gst_type"] = gstType
                 products.append(aProductResult)

@@ -66,13 +66,16 @@ class MonkAndMei:
 
 
         products = []
-        indexOfHeader = indexOfContainsInList(self.tables[1], "Sl")
+        indexOfHeader = indexOfContainsInList(self.tables[1], "HSN/")
         indexOfSr = indexOfContainsInList(firstPage[indexOfHeader], "Sl")
         indexOfItemname = indexOfContainsInList(firstPage[indexOfHeader], "Description")
         indexOfHsn = indexOfContainsInList(firstPage[indexOfHeader], "HSN")
         indexOfQty = indexOfContainsInList(firstPage[indexOfHeader], "Quantity")
         indexOfRate = indexOfContainsInList(firstPage[indexOfHeader], "Rate")
         indexOfAmt = indexOfContainsInList(firstPage[indexOfHeader], "Amount")
+
+
+        gstPercentage = float(lastPage[indexOfContainsInList(lastPage, "Taxable")+1][0].split("\n")[-1].replace("%", "").strip())
 
         for itemIndex, item in enumerate(firstPage[indexOfHeader+1:]):
             if indexOfContainsInList(item, "OUTPUT") is not -1:
@@ -95,10 +98,11 @@ class MonkAndMei:
             aProductResult["HSN/SAC"] = item[indexOfHsn]
             aProductResult["Qty"] = item[indexOfQty]
             aProductResult["Rate"] = item[indexOfRate]
-            aProductResult["Per"] = ""
+            aProductResult["Per"] = "N/A"
             aProductResult["mrp"] = item[indexOfRate]
             aProductResult["Amount"] = item[indexOfAmt]
             aProductResult["po_cost"] = ""
+            aProductResult["tax_applied"] = float(item[indexOfRate].replace(",","")) * gstPercentage * 0.01
             aProductResult["gst_rate"] =lastPage[indexOfContainsInList(lastPage, "Taxable")+1][0].split("\n")[-1].replace("%", "").strip()
             aProductResult["gst_type"] = gstType
             products.append(aProductResult)
