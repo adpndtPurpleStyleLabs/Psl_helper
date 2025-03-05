@@ -81,7 +81,7 @@ class ImplementationFactory:
             "joules_by_radhika": JoulesByRadhika,
         }
 
-        implementation = str(implementation).strip().lower().replace(' ', "")
+        implementation = str(implementation).strip().lower().replace(' ', "_")
         implementation_class = self.implementations.get(implementation)
 
         if implementation_class:
