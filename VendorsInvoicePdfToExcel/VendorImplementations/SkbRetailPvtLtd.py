@@ -82,6 +82,9 @@ class SkbRetailPvtLtd:
             indexOfRate = indexOfContainsInList(firstPage[indexOfHeader], "Rate")
             indexOfAmt = indexOfContainsInList(firstPage[indexOfHeader], "Amount")
 
+            getPercentage =  float(lastPage[indexOfContainsInList(lastPage, "Amount Charg") + 3][
+                    indexOfContainsInList(lastPage[indexOfContainsInList(lastPage, "Amount Charg") + 3], "%")].replace(
+                    "%", ""))
             for itemIndex, item in enumerate(aPage[indexOfHeader + 1:]):
                 if indexOfContainsInList(item, "Total") is not -1:
                     break
@@ -94,14 +97,13 @@ class SkbRetailPvtLtd:
                 aProductResult["vendor_code"] = ""
                 aProductResult["HSN/SAC"] = item[indexOfHsn]
                 aProductResult["Qty"] = item[indexOfQty]
-                aProductResult["Rate"] = item[indexOfRate]
+                aProductResult["Rate"] = float(item[indexOfRate].replace(",",""))
                 aProductResult["Per"] = item[indexOfPer]
                 aProductResult["mrp"] = item[indexOfRate]
                 aProductResult["Amount"] = item[indexOfAmt].split("\n")[0]
                 aProductResult["po_cost"] = ""
-                aProductResult["gst_rate"] = lastPage[indexOfContainsInList(lastPage, "Amount Charg") + 3][
-                    indexOfContainsInList(lastPage[indexOfContainsInList(lastPage, "Amount Charg") + 3], "%")].replace(
-                    "%", "")
+                aProductResult["tax_applied"] = float(item[indexOfRate].replace(",","")) * (0.01) * getPercentage
+                aProductResult["gst_rate"] = float(item[indexOfRate].replace(",",""))
                 aProductResult["gst_type"] = gstType
                 products.append(aProductResult)
 
