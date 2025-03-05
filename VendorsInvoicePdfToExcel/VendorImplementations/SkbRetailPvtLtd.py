@@ -103,7 +103,7 @@ class SkbRetailPvtLtd:
                 aProductResult["Amount"] = item[indexOfAmt].split("\n")[0]
                 aProductResult["po_cost"] = ""
                 aProductResult["tax_applied"] = float(item[indexOfRate].replace(",","")) * (0.01) * getPercentage
-                aProductResult["gst_rate"] = float(item[indexOfRate].replace(",",""))
+                aProductResult["gst_rate"] = float(getPercentage)
                 aProductResult["gst_type"] = gstType
                 products.append(aProductResult)
 
