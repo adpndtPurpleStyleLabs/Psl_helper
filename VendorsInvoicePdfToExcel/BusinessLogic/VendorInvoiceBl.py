@@ -170,17 +170,6 @@ class VendorInvoiceBl:
             vendor_bank_info = implementation.getVendorBankInfo()
             items_total_info = implementation.getItemTotalInfo()
 
-            for aItems_info in items_info:
-                aItems_info['or_po_no'] = aItems_info['or_po_no'].replace(" ", "")
-                if aItems_info['or_po_no'] != '' and  aItems_info['or_po_no'].find("OR-") == -1 and aItems_info['or_po_no'].find("OR") != -1:
-                    aItems_info['or_po_no'] = aItems_info['or_po_no'].replace("OR", "OR-")
-
-                aItems_info['po_no'] = aItems_info['po_no']
-                if aItems_info["po_no"].startswith(("AD-","CG-", "OW-")):
-                    aItems_info["po_no"] = aItems_info["po_no"].trim()
-                    continue
-                aItems_info["po_no"] = "".join(re.findall(r'\d+', aItems_info["po_no"]))
-
             extractedInformation = {
                "vendor_info" : vendor_info,
                "invoice_info" : invoice_info,
