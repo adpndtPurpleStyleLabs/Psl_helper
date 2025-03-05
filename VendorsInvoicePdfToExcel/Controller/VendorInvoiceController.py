@@ -56,7 +56,7 @@ async def parse_pdf(
             tmp_pdf_path = tmp_pdf.name
 
         venforBl = VendorInvoiceBl()
-        extractedInformation = venforBl.processPdf(tmp_pdf_path, vendor_name, po_type)
+        extractedInformation = venforBl.processPdf(tmp_pdf_path, vendor_name)
         os.remove(tmp_pdf_path)
         return extractedInformation
 
