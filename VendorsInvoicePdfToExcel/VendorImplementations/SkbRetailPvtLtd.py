@@ -99,8 +99,8 @@ class SkbRetailPvtLtd:
                 aProductResult["Qty"] = item[indexOfQty]
                 aProductResult["Rate"] = float(item[indexOfRate].replace(",",""))
                 aProductResult["Per"] = item[indexOfPer]
-                aProductResult["mrp"] = item[indexOfRate]
-                aProductResult["Amount"] = item[indexOfAmt].split("\n")[0]
+                aProductResult["mrp"] =  float(item[indexOfRate].replace(",",""))
+                aProductResult["Amount"] = float(item[indexOfAmt].split("\n")[0].strip().replace(",",""))
                 aProductResult["po_cost"] = ""
                 aProductResult["tax_applied"] = float(item[indexOfRate].replace(",","")) * (0.01) * getPercentage
                 aProductResult["gst_rate"] = float(getPercentage)
@@ -125,9 +125,9 @@ class SkbRetailPvtLtd:
         returnData["tax_amount_in_words"] = lastPage[indexOfContainsInList(lastPage, "Tax Amount (")][0].split("\n")[0].split(":")[-1]
         returnData["amount_charged_in_words"] = lastPage[indexOfContainsInList(lastPage, "Amount Ch")][0].split("\n")[-1]
         returnData["total_pcs"] = lastPage[indexOfContainsInList(lastPage, "Total")][3]
-        returnData["total_amount_after_tax"] = lastPage[indexOfContainsInList(lastPage, "Total")][-1].split(" ")[-1]
-        returnData["total_b4_tax"] = lastPage[indexOfContainsInList(lastPage, "Taxable")+2][1]
-        returnData["total_tax"] =lastPage[indexOfContainsInList(lastPage, "Taxable")+2][-1]
-        returnData["tax_rate"] = lastPage[indexOfContainsInList(lastPage, "Taxable")+2][2].replace("%", "")
+        returnData["total_amount_after_tax"] = float(lastPage[indexOfContainsInList(lastPage, "Total")][-1].split(" ")[-1].strip().replace(",",""))
+        returnData["total_b4_tax"] = float(lastPage[indexOfContainsInList(lastPage, "Taxable")+2][1].strip().replace(",",""))
+        returnData["total_tax"] =float(lastPage[indexOfContainsInList(lastPage, "Taxable")+2][-1].strip().replace(",",""))
+        returnData["tax_rate"] = float(lastPage[indexOfContainsInList(lastPage, "Taxable")+2][2].replace("%", "").strip().replace(",",""))
         returnData["total_tax_percentage"] =returnData["tax_rate"]
         return returnData

@@ -99,13 +99,13 @@ class Ruhaan_CUST:
                 aProductResult["vendor_code"] = ""
                 aProductResult["HSN/SAC"] = item[indexOfHsn]
                 aProductResult["Qty"] =item[indexOfQty]
-                aProductResult["Rate"] = item[indexOfRate]
+                aProductResult["Rate"] = float(item[indexOfRate].strip().replace(",",""))
                 aProductResult["Per"] = item[indexOfPer]
-                aProductResult["mrp"] = item[indexOfRate]
+                aProductResult["mrp"] =  float(item[indexOfRate].strip().replace(",",""))
                 aProductResult["Amount"] = ((float(gstPercentage) * 0.01))*float(item[indexOfRate].replace(",",""))
                 aProductResult["po_cost"] = ""
                 aProductResult["tax_applied"] = ((float(gstPercentage) * 0.01))*float(item[indexOfRate].replace(",",""))
-                aProductResult["gst_rate"] = gstPercentage
+                aProductResult["gst_rate"] = float(gstPercentage)
                 aProductResult["gst_type"] = gstType
                 products.append(aProductResult)
         return products, total_tax
@@ -118,14 +118,14 @@ class Ruhaan_CUST:
         }
 
     def getItemTotalInfo(self):
-        lastPage  =self.tables[len(self.tables)]
+        lastPage = self.tables[len(self.tables)]
         returnData = {}
         returnData["tax_amount_in_words"] = lastPage[indexOfContainsInList(lastPage, "Tax Amount (")][0].split("\n")[0].split(":")[-1]
         returnData["amount_charged_in_words"] = lastPage[indexOfContainsInList(lastPage, "Amount Ch")][0].split("\n")[-1]
         returnData["total_pcs"] = lastPage[indexOfContainsInList(lastPage, "Total")][3]
-        returnData["total_amount_after_tax"] = re.sub(r'[^a-zA-Z0-9.]+', '',lastPage[indexOfContainsInList(lastPage, "Total")][-1])
-        returnData["total_b4_tax"] = lastPage[indexOfContainsInList(lastPage, "Taxable")][indexOfContainsInList(lastPage[indexOfContainsInList(lastPage, "Taxable")], "Taxable")].split("\n")[-1]
-        returnData["total_tax"] =lastPage[indexOfContainsInList(lastPage, "Taxable")][-1].split("\n")[-1]
-        returnData["tax_rate"] = lastPage[indexOfContainsInList(lastPage, "Taxable")+1][0].split("\n")[-1].replace("%", "").strip()
-        returnData["total_tax_percentage"] =lastPage[indexOfContainsInList(lastPage, "Taxable")+1][0].split("\n")[-1].replace("%", "").strip()
+        returnData["total_amount_after_tax"] = float(re.sub(r'[^a-zA-Z0-9.]+', '',lastPage[indexOfContainsInList(lastPage, "Total")][-1]))
+        returnData["total_b4_tax"] =  float(lastPage[indexOfContainsInList(lastPage, "Taxable")][indexOfContainsInList(lastPage[indexOfContainsInList(lastPage, "Taxable")], "Taxable")].split("\n")[-1].strip().replace(",",""))
+        returnData["total_tax"] = float(lastPage[indexOfContainsInList(lastPage, "Taxable")][-1].split("\n")[-1].strip().replace(",",""))
+        returnData["tax_rate"] =  float(lastPage[indexOfContainsInList(lastPage, "Taxable")+1][0].split("\n")[-1].replace("%", "").strip().replace(",",""))
+        returnData["total_tax_percentage"] = float(lastPage[indexOfContainsInList(lastPage, "Taxable")+1][0].split("\n")[-1].replace("%", "").strip().replace(",",""))
         return returnData
