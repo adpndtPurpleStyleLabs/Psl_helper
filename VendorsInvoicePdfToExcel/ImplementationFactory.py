@@ -52,19 +52,19 @@ class ImplementationFactory:
             "sammohan": Samohan,
             "masaba": Masaba,
             "saaksha_and_kinni": SaakshaAndKinni,
-            "ruhaan": Ruhaan,
+            "ruhaan_international_private_limited": Ruhaan,
             "riyaasat": Riyaasat,
             "monk_and_mei": MonkAndMei,
             "espana": Espana,
             "kasbah_clothing": KasbahClothing,
             "fatiz": Fatiz,
             "amyra": Amyra,
-            "skb_retail_pvt_ltd": SkbRetailPvtLtd,
-            "rn_fashion": RnFashion,
+            "skb_retail_india_private_limited": SkbRetailPvtLtd,
+            "r._n._fashion": RnFashion,
             "mrunalini_rao": MrunaliniRao,
             "couture_by_niharika": CoutureByNiharika,
             "dolly_j": DollyJ,
-            "anushree_reddy_world": AnushreeReddyWorld,
+            "anushree_reddy_world_llp": AnushreeReddyWorld,
             "sahil_aneja_couture": SahilAnejaCouture,
             "abkasa_designer_apparels_pvt_ltd": AbkasaDesignerApparelsPvtLtd,
             "aneesh_agarwaal": AneeshAgarwaal,
@@ -81,7 +81,7 @@ class ImplementationFactory:
             "joules_by_radhika": JoulesByRadhika,
         }
 
-        implementation = str(implementation).lower().replace(' ', "")
+        implementation = str(implementation).strip().lower().replace(' ', "")
         implementation_class = self.implementations.get(implementation)
 
         if implementation_class:
