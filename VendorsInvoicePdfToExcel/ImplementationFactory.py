@@ -89,7 +89,7 @@ class ImplementationFactory:
             "kkarma_accessories": KkarmaAccessories,
             "prisho": Prisho,
             "renee_label": ReneeLabel,
-            "ruhaan_cust": Ruhaan_CUST
+            "ruhaan_international_private_limited": Ruhaan_CUST
         }
 
         implementation = str(implementation).strip().lower().replace(' ', "_")
