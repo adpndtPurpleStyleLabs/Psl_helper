@@ -57,7 +57,7 @@ class ImplementationFactory:
             "sammohan": Samohan,
             "masaba": Masaba,
             "saaksha_and_kinni": SaakshaAndKinni,
-            "ruhaan_international_private_limited": Ruhaan,
+            "ruhaan_international_private_limited_OR": Ruhaan,
             "riyaasat": Riyaasat,
             "monk_and_mei": MonkAndMei,
             "espana": Espana,
