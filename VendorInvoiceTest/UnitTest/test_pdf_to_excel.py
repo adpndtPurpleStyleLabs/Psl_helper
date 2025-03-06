@@ -1,6 +1,7 @@
 import os
 import pytest
 import json
+import datetime
 
 try:
     from VendorsInvoicePdfToExcel.BusinessLogic.VendorInvoiceBl import VendorInvoiceBl
@@ -8,9 +9,9 @@ except ImportError as e:
     print(f"❌ Import Error: {e}")
     exit(1)
 
-Designer_name = "ruhaan_international_private_limited"
-FOLDER_NAME = Designer_name+"/CUST"
-# FOLDER_NAME = Designer_name+"/OR"
+Designer_name = "anushree_reddy_world_llp"
+# FOLDER_NAME = Designer_name+"/CUST"
+FOLDER_NAME = Designer_name+"/OR"
 
 processor = VendorInvoiceBl()
 
@@ -129,7 +130,6 @@ def is_less_than(value, lessThanValue, nodeName):
 
 def is_valid_date_format(date_str):
     try:
-        # Try to parse the date with the expected format
         datetime.strptime(date_str, '%d-%b-%y')
         return True
     except ValueError:

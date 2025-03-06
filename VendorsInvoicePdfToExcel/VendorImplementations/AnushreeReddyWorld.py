@@ -19,7 +19,7 @@ class AnushreeReddyWorld:
             "vendor_name": vendorInfo[0][: vendorInfo[0].find("LLP")+3],
             "vendor_address": ", ".join(vendorInfo[1:3]),
             "vendor_mob": "",
-            "vendor_gst": vendorInfo[indexOfContainsInList(vendorInfo, "GST")].split(":")[-1],
+            "vendor_gst": vendorInfo[indexOfContainsInList(vendorInfo, "GSTIN")].split(":")[-1].split("[")[0],
             "vendor_email": ""
         }
 
@@ -88,10 +88,10 @@ class AnushreeReddyWorld:
         aProductResult["vendor_code"] = ""
         aProductResult["HSN/SAC"] = productInfoList[indexOfContainsInList(productInfoList, "Pcs")].split(" ")[-5]
         aProductResult["Qty"] = " ".join(productInfoList[indexOfContainsInList(productInfoList, "Pcs")].split(" ")[-3:-1])
-        aProductResult["Rate"] = productInfoList[indexOfContainsInList(productInfoList, "Pcs")].split(" ")[-1]
+        aProductResult["Rate"] = float(productInfoList[indexOfContainsInList(productInfoList, "Pcs")].split(" ")[-1].strip().replace(",",""))
         aProductResult["Per"] = productInfoList[indexOfContainsInList(productInfoList, "Pcs")].split(" ")[-2]
         aProductResult["mrp"] = aProductResult["Rate"]
-        aProductResult["Amount"] = productInfoList[indexOfContainsInList(productInfoList, "Grand")].split(" ")[-1]
+        aProductResult["Amount"] =float(productInfoList[indexOfContainsInList(productInfoList, "Grand")].split(" ")[-1].strip().replace(",",""))
         aProductResult["po_cost"] = ""
         aProductResult["tax_applied"] = float(productInfoList[indexOfContainsInList(productInfoList, "Pcs")].split(" ")[-1].replace(",",""))  *(IGSTPercenatge + CGSTPercenatge + SGSTPercenatge)/100
         aProductResult["gst_rate"] = IGSTPercenatge + CGSTPercenatge + SGSTPercenatge
