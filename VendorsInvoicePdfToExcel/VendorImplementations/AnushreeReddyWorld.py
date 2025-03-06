@@ -29,7 +29,7 @@ class AnushreeReddyWorld:
         firstPageTable = firstPageText[indexOfContainsInList(firstPageText, "Date")].split(":")
         return {
                 "invoice_number": firstPageTable[indexOfContainsInList(firstPageTable, "Invoice")+1].split(" ")[0],
-                "invoice_date": convert_to_ddmmyy(firstPageTable[indexOfContainsInList(firstPageTable, "Date")+1])
+                "invoice_date": firstPageTable[indexOfContainsInList(firstPageTable, "Date")+1].strip()
             }
 
     def getReceiverInfo(self):
