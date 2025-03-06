@@ -2,7 +2,7 @@ from VendorsInvoicePdfToExcel.helper import indexOfContainsInList
 
 class Kalighata:
 
-    # NOT IN USE MOVED TO rn_fashion.py
+    # NOT IN USE MOVED TO r_n_fashion.py
 
     def __init__(self, tables, text_data, table_by_tabula):
         self.tables = tables

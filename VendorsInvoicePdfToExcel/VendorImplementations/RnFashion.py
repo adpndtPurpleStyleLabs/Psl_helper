@@ -80,42 +80,48 @@ class RnFashion:
         gstType = gstType.lstrip("_")
 
         products = []
-        for index, aPage in enumerate(pages.values()):
-            indexOfHeader =indexOfContainsInList(self.tables[1], "Qty")
-            indexOfSr = indexOfContainsInList(firstPage[indexOfHeader], "S\nL")
-            indexOfItemname = indexOfContainsInList(firstPage[indexOfHeader], "Description")
-            indexOfHsn = indexOfContainsInList(firstPage[indexOfHeader], "HSN")
-            indexOfQty = indexOfContainsInList(firstPage[indexOfHeader], "Qty")
-            indexOfPer = indexOfContainsInList(firstPage[indexOfHeader], "Unit")
-            indexOfPrice = indexOfContainsInList(firstPage[indexOfHeader], "Price")
-            indexOfTaxAmount = indexOfContainsInList(firstPage[indexOfHeader], "Tax\nAmount")
-            indexOfAmt =find_nth_occurrence_of(firstPage[indexOfHeader], "Amount", 2)
-            indexOfTaxRate = indexOfContainsInList(firstPage[indexOfHeader], "Tax\nRate")
+        indexOfHeader =indexOfContainsInList(self.tables[1], "Qty")
+        indexOfSr = indexOfContainsInList(firstPage[indexOfHeader], "S\nL")
+        indexOfItemname = indexOfContainsInList(firstPage[indexOfHeader], "Description")
+        indexOfHsn = indexOfContainsInList(firstPage[indexOfHeader], "HSN")
+        indexOfQty = indexOfContainsInList(firstPage[indexOfHeader], "Qty")
+        indexOfPer = indexOfContainsInList(firstPage[indexOfHeader], "Unit")
+        indexOfPrice = indexOfContainsInList(firstPage[indexOfHeader], "Price")
+        indexOfTaxAmount = indexOfContainsInList(firstPage[indexOfHeader], "Tax\nAmount")
+        indexOfAmt =find_nth_occurrence_of(firstPage[indexOfHeader], "Amount", 2)
+        indexOfTaxRate = indexOfContainsInList(firstPage[indexOfHeader], "Tax\nRate")
+        indexOfMrp = indexOfContainsInList(firstPage[indexOfHeader], "MRP")
+        poInfo = self.text_data[1].split("\n")[indexOfContainsInList(self.text_data[1].split("\n"), "PO No")].split(":")[-1].strip()
 
-            poInfo = self.text_data[1].split("\n")[indexOfContainsInList(self.text_data[1].split("\n"), "PO No")].split(":")[-1].strip()
-
-            for itemIndex, item in enumerate(aPage[indexOfHeader+1:]):
-                if indexOfContainsInList(item, "TOTAL") is not -1:
-                    self.totalPcs =item[indexOfQty]
-                    break
-                if item[0].strip() == "":
-                    continue
-
-                aProductResult= {}
-                aProductResult["po_no"] = poInfo
-                aProductResult["index"] =  item[indexOfSr]
-                aProductResult["vendor_code"] = ""
-                aProductResult["HSN/SAC"] = item[indexOfHsn]
-                aProductResult["Qty"] = item[indexOfQty]
-                aProductResult["Rate"] = item[indexOfPrice]
-                aProductResult["Per"] = item[indexOfPer]
-                aProductResult["mrp"] = item[indexOfPrice]
-                aProductResult["Amount"] = item[indexOfAmt]
-                aProductResult["po_cost"] = ""
-                aProductResult["gst_rate"] = item[indexOfTaxRate].replace("%", "").strip()
-                aProductResult["gst_type"] = gstType
-                aProductResult["tax_applied"] = item[indexOfTaxAmount]
-                products.append(aProductResult)
+        lenOfHeader = len(firstPage[indexOfHeader])
+        reverseIndexOfAmt = indexOfAmt - lenOfHeader
+        reverseindexOfTaxRate = indexOfTaxRate - lenOfHeader
+        reverseindexOfTaxAmount = indexOfTaxAmount - lenOfHeader
+        reverseindexOfPrice = indexOfPrice - lenOfHeader +1
+        reverseindexOfPer = indexOfPer - lenOfHeader+1
+        reverseindexOfHsn = indexOfHsn - lenOfHeader+1
+        reverseIndexOfMrp = indexOfMrp - lenOfHeader+1
+        count =0
+        for itemIndex, item in enumerate(self.text_data [1].split("\n")[indexOfContainsInList(self.text_data [1].split("\n"), "Description")+2:]):
+            itemList = item.split(" ")
+            if indexOfContainsInList(itemList, "total") != -1:
+                break
+            if itemList.__len__() < 3:
+                continue
+            aProductResult = {}
+            aProductResult["po_no"] = poInfo.replace(" ", "").split(",")[count]
+            aProductResult["index"] = itemList[indexOfSr]
+            aProductResult["HSN/SAC"] = itemList[reverseindexOfHsn]
+            aProductResult["Qty"] = itemList[indexOfQty - indexOfAmt]
+            aProductResult["Rate"] =  float(itemList[reverseindexOfPrice].replace(",","").replace(" ",""))
+            aProductResult["mrp"] =  float(itemList[reverseIndexOfMrp].replace(",","").replace(" ",""))
+            aProductResult["Amount"] = float(itemList[reverseIndexOfAmt].replace(",","").replace(" ",""))
+            aProductResult["gst_rate"] = float(itemList[reverseindexOfTaxRate].replace("%","").replace(" ",""))
+            aProductResult["Per"] =  itemList[reverseindexOfPer]
+            aProductResult["gst_type"] = gstType
+            aProductResult["tax_applied"] = float(itemList[reverseindexOfTaxAmount].replace(",",""))
+            products.append(aProductResult)
+            count +=1
 
         return products, total_tax
 
@@ -157,5 +163,5 @@ class RnFashion:
         returnData["total_amount_after_tax"] = totalAmount
         returnData["total_b4_tax"] = amountBeforeTax
         returnData["total_tax"] = taxAmount
-        returnData["total_tax_percentage"] =returnData["tax_rate"]
+        returnData["total_tax_percentage"] = returnData["tax_rate"]
         return returnData

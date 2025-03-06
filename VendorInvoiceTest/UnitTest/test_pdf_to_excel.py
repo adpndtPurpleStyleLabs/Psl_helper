@@ -37,6 +37,9 @@ def test_process_pdf(pdf_file, vendor):
             raise ValueError(f"po_no or or_po_no cannot be null or empty.")
 
         exception_on_null_or_empty(aItemInfo["HSN/SAC"], "HSN/SAC")
+        numeric_check(aItemInfo["HSN/SAC"], "HSN/SAC")
+
+
         exception_on_null_or_empty(aItemInfo["Qty"], "Qty")
         exception_on_null_or_empty(aItemInfo["Per"], "Per")
         exception_on_null_or_empty(aItemInfo["gst_type"], "gst_type")
@@ -134,3 +137,10 @@ def is_valid_date_format(date_str):
         return True
     except ValueError:
         return False
+
+def numeric_check(value, nodename):
+    try:
+        float(value)
+    except ValueError:
+        raise ValueError(nodename + " is not numeric.")
+

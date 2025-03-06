@@ -64,7 +64,7 @@ class ImplementationFactory:
             "fatiz": Fatiz,
             "amyra": Amyra,
             "skb_retail_india_private_limited": SkbRetailPvtLtd,
-            "r._n._fashion": RnFashion,
+            "r_n_fashion": RnFashion,
             "mrunalini_rao": MrunaliniRao,
             "couture_by_niharika": CoutureByNiharika,
             "dolly_j": DollyJ,
@@ -91,7 +91,7 @@ class ImplementationFactory:
             "ruhaan_international_private_limited": Ruhaan_CUST
         }
 
-        implementation = str(implementation).strip().lower().replace(' ', "_")
+        implementation = str(implementation).strip().lower().replace(' ', "_").replace(".","")
         implementation_class = self.implementations.get(implementation)
 
         if implementation_class:
