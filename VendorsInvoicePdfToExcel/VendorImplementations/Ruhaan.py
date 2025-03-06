@@ -19,8 +19,8 @@ class Ruhaan:
             "vendor_name": vendorInfo[0],
             "vendor_address": ", ".join(vendorInfo[:4]),
             "vendor_mob": "N/A",
-            "vendor_gst": vendorInfo[indexOfContainsInList(vendorInfo, "GST")].split(":")[-1],
-            "vendor_email": vendorInfo[indexOfContainsInList(vendorInfo, "Email")].split(":")[-1]
+            "vendor_gst": vendorInfo[indexOfContainsInList(vendorInfo, "GST")].split(":")[-1].replace(" ",""),
+            "vendor_email": vendorInfo[indexOfContainsInList(vendorInfo, "Email")].split(":")[-1].replace(" ","")
         }
 
     def getInvoiceInfo(self):
