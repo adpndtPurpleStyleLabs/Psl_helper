@@ -1,6 +1,4 @@
-import re
-
-from VendorsInvoicePdfToExcel.helper import indexOfContainsInList
+from VendorsInvoicePdfToExcel.helper import indexOfContainsInList, convert_to_ddmmyy
 from fastapi import HTTPException
 
 class SkbRetailPvtLtd:
@@ -25,7 +23,7 @@ class SkbRetailPvtLtd:
         invoiceInfo = firstPageText[indexOfContainsInList(firstPageText, "Invoice N")]
         return {
             "invoice_number": invoiceInfo[indexOfContainsInList(invoiceInfo, "Invoice N")].split(" ")[-2].split("\n")[-1],
-            "invoice_date": self.text_data[1].split("\n")[indexOfContainsInList(self.text_data[1].split("\n"), "Date"):][0].split(":")[-1]
+            "invoice_date":convert_to_ddmmyy( self.text_data[1].split("\n")[indexOfContainsInList(self.text_data[1].split("\n"), "Date"):][0].split(":")[-1])
         }
 
     def getReceiverInfo(self):

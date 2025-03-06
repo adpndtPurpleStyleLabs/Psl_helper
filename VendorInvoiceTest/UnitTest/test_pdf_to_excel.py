@@ -8,7 +8,7 @@ except ImportError as e:
     print(f"❌ Import Error: {e}")
     exit(1)
 
-Designer_name = "skb_retail_india_private_limited"
+Designer_name = "ruhaan_international_private_limited"
 FOLDER_NAME = Designer_name+"/CUST"
 # FOLDER_NAME = Designer_name+"/OR"
 
@@ -79,7 +79,9 @@ def test_process_pdf(pdf_file, vendor):
     is_less_than(result['items_total_info']['total_tax_percentage'], 50, "total_tax_percentage")
 
     exception_on_null_or_empty(result['vendor_info']['vendor_gst'], "vendor_gst")
+    exception_on_null_or_empty(result['vendor_info']['vendor_name'], "vendor_name")
     exception_on_null_or_empty(result['invoice_info']['invoice_number'], 'invoice_number')
+    exception_on_null_or_empty(result['invoice_info']['invoice_date'], 'invoice_date')
     exception_on_null_or_empty(result['receiver_info']['receiver_gst'], 'receiver_gst')
     exception_on_null_or_empty(result['receiver_billing_info']['billto_gst'], 'billto_gst')
 

@@ -1,4 +1,5 @@
-from VendorsInvoicePdfToExcel.helper import indexOfContainsInList, convert_amount_to_words, find_nth_occurrence_of
+from VendorsInvoicePdfToExcel.helper import indexOfContainsInList, convert_amount_to_words, find_nth_occurrence_of, \
+    convert_to_ddmmyy
 from fastapi import HTTPException
 import re
 
@@ -28,7 +29,7 @@ class AnushreeReddyWorld:
         firstPageTable = firstPageText[indexOfContainsInList(firstPageText, "Date")].split(":")
         return {
                 "invoice_number": firstPageTable[indexOfContainsInList(firstPageTable, "Invoice")+1].split(" ")[0],
-                "invoice_date": firstPageTable[indexOfContainsInList(firstPageTable, "Date")+1]
+                "invoice_date": convert_to_ddmmyy(firstPageTable[indexOfContainsInList(firstPageTable, "Date")+1])
             }
 
     def getReceiverInfo(self):

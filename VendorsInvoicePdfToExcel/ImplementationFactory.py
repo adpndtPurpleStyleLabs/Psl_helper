@@ -30,7 +30,6 @@ from VendorsInvoicePdfToExcel.VendorImplementations.RnFashion import RnFashion
 from VendorsInvoicePdfToExcel.VendorImplementations.SaakshaAndKinni import SaakshaAndKinni
 from VendorsInvoicePdfToExcel.VendorImplementations.SahilAnejaCouture import SahilAnejaCouture
 from VendorsInvoicePdfToExcel.VendorImplementations.SeemaGujral import SeemaGujral
-# from VendorsInvoicePdfToExcel.VendorImplementations.Kalighata import Kalighata
 from VendorsInvoicePdfToExcel.VendorImplementations.LinenBloomMen import LinenBloomMen
 from VendorsInvoicePdfToExcel.VendorImplementations.Samohan import Samohan
 from VendorsInvoicePdfToExcel.VendorImplementations.Masaba import Masaba
@@ -96,7 +95,6 @@ class ImplementationFactory:
         implementation_class = self.implementations.get(implementation)
 
         if implementation_class:
-            # Instantiate with required arguments
             return implementation_class(tables, text_data,
                                         table_by_tabula) if "table_by_tabula" in implementation_class.__init__.__code__.co_varnames else implementation_class(
                 tables, text_data)
