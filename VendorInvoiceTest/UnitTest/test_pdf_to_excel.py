@@ -91,7 +91,7 @@ def test_process_pdf(pdf_file, vendor):
         raise ValueError(f"total_tax IGST and CGST  and SGST cannot be null or empty.")
 
     # validate_previous_json(JSON_PATH, result)
-    # save_json(JSON_PATH, result)
+    save_json(JSON_PATH, result)
     assert result is not None, f"❌ Failed: {pdf_file} returned None"
     print(f"✅ Success: {pdf_file} processed correctly for vendor '{vendor}'.")
 
@@ -125,3 +125,12 @@ def is_less_than(value, lessThanValue, nodeName):
     if value >= lessThanValue:
         raise ValueError(nodeName + " is not less than "+ str(lessThanValue))
     return True
+
+
+def is_valid_date_format(date_str):
+    try:
+        # Try to parse the date with the expected format
+        datetime.strptime(date_str, '%d-%b-%y')
+        return True
+    except ValueError:
+        return False
