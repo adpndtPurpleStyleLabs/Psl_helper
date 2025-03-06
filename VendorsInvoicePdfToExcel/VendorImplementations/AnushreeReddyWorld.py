@@ -82,6 +82,9 @@ class AnushreeReddyWorld:
 
         poNoInfo = firstPageText[indexOfContainsInList(firstPageText, "Ref.")].split(":")[2].replace("Date", "").strip().replace("PONO", "")
         aProductResult= {}
+        poNoInfo = poNoInfo.replace(" ","")
+        if poNoInfo.__contains__("OR") and not  poNoInfo.__contains__("-"):
+            poNoInfo=poNoInfo.replace("OR", "OR-")
 
         aProductResult["po_no"] = poNoInfo
         aProductResult["index"] = "1"
