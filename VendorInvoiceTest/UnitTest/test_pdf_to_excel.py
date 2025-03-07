@@ -39,7 +39,6 @@ def test_process_pdf(pdf_file, vendor):
         exception_on_null_or_empty(aItemInfo["HSN/SAC"], "HSN/SAC")
         numeric_check(aItemInfo["HSN/SAC"], "HSN/SAC")
 
-
         exception_on_null_or_empty(aItemInfo["Qty"], "Qty")
         exception_on_null_or_empty(aItemInfo["Per"], "Per")
         exception_on_null_or_empty(aItemInfo["gst_type"], "gst_type")
@@ -89,7 +88,6 @@ def test_process_pdf(pdf_file, vendor):
     exception_on_null_or_empty(result['receiver_info']['receiver_gst'], 'receiver_gst')
     exception_on_null_or_empty(result['receiver_billing_info']['billto_gst'], 'billto_gst')
 
-
     exception_on_null_or_empty(result['total_tax']['IGST'], "IGST")
     numeric_check(result['total_tax']['IGST'], "IGST")
 
@@ -124,9 +122,16 @@ def save_json(JSON_PATH, result):
 
 def validate_previous_json(JSON_PATH, result):
     with open(JSON_PATH) as f:
-        d = json.load(f)
-        if d != result:
-            raise ValueError(f"OLD JSON IS NOT SAME AS NEW JSON")
+        old_json = json.load(f)
+
+    if old_json != result:
+        differences = find_json_differences(old_json, result)
+        if differences:
+            diff_message = "\n".join(
+                [f"Node: {diff['node']}, Old: {diff['old_value']}, New: {diff['new_value']}" for diff in differences]
+            )
+            print(f"OLD JSON IS NOT SAME AS NEW JSON. Changes:\n{diff_message}")
+            raise ValueError(f"OLD JSON IS NOT SAME AS NEW JSON. Changes:\n{diff_message}")
 
 
 def is_greater_than_zero(value, nodeName):
@@ -153,4 +158,25 @@ def numeric_check(value, nodename):
         float(value)
     except ValueError:
         raise ValueError(nodename + " is not numeric.")
+
+
+def find_json_differences(old_json, new_json, path=""):
+    differences = []
+
+    for key in old_json.keys() | new_json.keys():
+        new_path = f"{path}.{key}" if path else key
+
+        old_value = old_json.get(key, "<MISSING>")
+        new_value = new_json.get(key, "<MISSING>")
+
+        if isinstance(old_value, dict) and isinstance(new_value, dict):
+            differences.extend(find_json_differences(old_value, new_value, new_path))
+        elif old_value != new_value:
+            differences.append({
+                "node": new_path,
+                "old_value": old_value,
+                "new_value": new_value
+            })
+
+    return differences
 
