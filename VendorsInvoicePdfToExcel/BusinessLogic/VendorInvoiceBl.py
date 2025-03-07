@@ -160,6 +160,9 @@ class VendorInvoiceBl:
             tables_data = self.extract_tables_from_pdf(pdfPath)
             text_data =  self.extractTextFromPdf(pdfPath)
             tables_data_from_tabula = self.extract_tables_from_pdf_using_tabula(pdfPath)
+            if len(text_data) == 0:
+                raise HTTPException(status_code=400,detail="Input pdf might be an image, cannot parse it.")
+
             implementation_factor =  ImplementationFactory()
             implementation = implementation_factor.getImplementation(vendor, tables_data, text_data, tables_data_from_tabula)
             vendor_info = implementation.getVendorInfo()

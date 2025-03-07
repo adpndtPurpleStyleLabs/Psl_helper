@@ -56,7 +56,11 @@ class Ruhaan_CUST:
         pages = self.tables
         firstPage = self.tables[1]
         lastPage = pages[len(pages)]
-        total_tax = { "IGST": lastPage[indexOfContainsInList(lastPage, "Taxable")+1][1].split("\n")[-1],  "SGST": 0, "CGST": 0,}
+        total_tax = {
+            "IGST": float(lastPage[indexOfContainsInList(lastPage, "Taxable") + 1][1].split("\n")[-1].replace(",","")),
+            "SGST": 0,
+            "CGST": 0
+        }
 
         gstType = ""
         if indexOfContainsInList(lastPage[indexOfContainsInList(lastPage, "Amount Charg") + 1], "CGST") != -1:
@@ -89,25 +93,25 @@ class Ruhaan_CUST:
             if item[0].strip() == "":
                 continue
             parentItemIndex =  item[indexOfSr]
-            itemCount = int(re.findall(r'\d+', item[indexOfQty])[-1])
-            for itemCountIndex in range(itemCount):
-                aProductResult= {}
-                aProductResult["po_no"] = poInfo
-                aProductResult["or_po_no"] = "NA"
-                aProductResult["debit_note_no"] = ""
-                aProductResult["index"] = parentItemIndex
-                aProductResult["vendor_code"] = ""
-                aProductResult["HSN/SAC"] = item[indexOfHsn]
-                aProductResult["Qty"] =item[indexOfQty]
-                aProductResult["Rate"] = float(item[indexOfRate].strip().replace(",",""))
-                aProductResult["Per"] = item[indexOfPer]
-                aProductResult["mrp"] =  float(item[indexOfRate].strip().replace(",",""))
-                aProductResult["Amount"] = ((float(gstPercentage) * 0.01))*float(item[indexOfRate].replace(",",""))
-                aProductResult["po_cost"] = ""
-                aProductResult["tax_applied"] = ((float(gstPercentage) * 0.01))*float(item[indexOfRate].replace(",",""))
-                aProductResult["gst_rate"] = float(gstPercentage)
-                aProductResult["gst_type"] = gstType
-                products.append(aProductResult)
+            aProductResult= {}
+            aProductResult["po_no"] = poInfo.split(" ")[0].strip()
+            aProductResult["or_po_no"] = "NA"
+            aProductResult["debit_note_no"] = ""
+            aProductResult["index"] = parentItemIndex
+            aProductResult["vendor_code"] = ""
+            aProductResult["HSN/SAC"] = item[indexOfHsn]
+            aProductResult["Qty"] =item[indexOfQty]
+            amount = float(item[-1].replace(",",""))
+            tax_applied = (float(gstPercentage) * 0.01 ) * amount
+            aProductResult["Rate"] =  amount  if item[indexOfRate].strip().replace(",","") == '' else  float(item[indexOfRate].strip().replace(",",""))
+            aProductResult["Per"] = item[indexOfPer]
+            aProductResult["mrp"] =  aProductResult["Rate"]
+            aProductResult["Amount"] =tax_applied + amount
+            aProductResult["po_cost"] = ""
+            aProductResult["tax_applied"] = tax_applied
+            aProductResult["gst_rate"] = float(gstPercentage)
+            aProductResult["gst_type"] = gstType
+            products.append(aProductResult)
         return products, total_tax
 
     def getVendorBankInfo(self):

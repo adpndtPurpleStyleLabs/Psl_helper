@@ -63,9 +63,9 @@ class AnushreeReddyWorld:
     def getItemInfo(self):
         firstPageText =self.text_data[1].split("\n")
         total_tax = {
-            "IGST": firstPageText[find_nth_occurrence_of(firstPageText, "Challan",1)-1].split(" ")[-4],
-            "SGST": firstPageText[find_nth_occurrence_of(firstPageText, "Challan",1)-1].split(" ")[-2],
-            "CGST": firstPageText[find_nth_occurrence_of(firstPageText, "Challan",1)-1].split(" ")[-3]
+            "IGST": float(firstPageText[find_nth_occurrence_of(firstPageText, "Challan",1)-1].split(" ")[-4].replace(",","")),
+            "SGST": float(firstPageText[find_nth_occurrence_of(firstPageText, "Challan",1)-1].split(" ")[-2].replace(",","")),
+            "CGST": float(firstPageText[find_nth_occurrence_of(firstPageText, "Challan",1)-1].split(" ")[-3].replace(",",""))
         }
 
         self.totalTax = float(total_tax["IGST"]) + float(total_tax["SGST"]) + float(total_tax["CGST"])
@@ -85,6 +85,9 @@ class AnushreeReddyWorld:
         poNoInfo = poNoInfo.replace(" ","")
         if poNoInfo.__contains__("OR") and not  poNoInfo.__contains__("-"):
             poNoInfo=poNoInfo.replace("OR", "OR-")
+
+        if poNoInfo.__contains__("OW") and not poNoInfo.__contains__("-"):
+            poNoInfo = poNoInfo.replace("OW", "OW-")
 
         aProductResult["po_no"] = poNoInfo
         aProductResult["index"] = "1"

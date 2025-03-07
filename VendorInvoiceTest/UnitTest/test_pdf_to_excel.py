@@ -9,9 +9,9 @@ except ImportError as e:
     print(f"❌ Import Error: {e}")
     exit(1)
 
-Designer_name = "anushree_reddy_world_llp"
-# FOLDER_NAME = Designer_name+"/CUST"
-FOLDER_NAME = Designer_name+"/OR"
+Designer_name = "ruhaan_international_private_limited"
+FOLDER_NAME = Designer_name+"/CUST"
+# FOLDER_NAME = Designer_name+"/OR"
 
 processor = VendorInvoiceBl()
 
@@ -89,13 +89,23 @@ def test_process_pdf(pdf_file, vendor):
     exception_on_null_or_empty(result['receiver_info']['receiver_gst'], 'receiver_gst')
     exception_on_null_or_empty(result['receiver_billing_info']['billto_gst'], 'billto_gst')
 
+
+    exception_on_null_or_empty(result['total_tax']['IGST'], "IGST")
+    numeric_check(result['total_tax']['IGST'], "IGST")
+
+    exception_on_null_or_empty(result['total_tax']['CGST'], "CGST")
+    numeric_check(result['total_tax']['CGST'], "CGST")
+
+    exception_on_null_or_empty(result['total_tax']['SGST'], "SGST")
+    numeric_check(result['total_tax']['SGST'], "SGST")
+
     if (is_null_or_empty(result['total_tax']['IGST'], "IGST")
             and is_null_or_empty(result['total_tax']['CGST'], "CGST")
             and is_null_or_empty(result['total_tax']['SGST'], "CSST")):
         raise ValueError(f"total_tax IGST and CGST  and SGST cannot be null or empty.")
 
-    # validate_previous_json(JSON_PATH, result)
-    save_json(JSON_PATH, result)
+    validate_previous_json(JSON_PATH, result)
+    # save_json(JSON_PATH, result)
     assert result is not None, f"❌ Failed: {pdf_file} returned None"
     print(f"✅ Success: {pdf_file} processed correctly for vendor '{vendor}'.")
 

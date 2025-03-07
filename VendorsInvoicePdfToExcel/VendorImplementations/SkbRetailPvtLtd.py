@@ -62,8 +62,11 @@ class SkbRetailPvtLtd:
         if indexOfContainsInList(lastPage[indexOfContainsInList(lastPage, "Amount Charg") + 1], "SGST") != -1:
             raise HTTPException(status_code=400, detail="For Ruhaan SkbRetailPvtLtd is not implemented")
 
-        total_tax = {"IGST": lastPage[indexOfContainsInList(lastPage, "Taxable") + 2][-1], "SGST": 0,
-                     "CGST": 0, }
+        total_tax = {
+            "IGST": float(lastPage[indexOfContainsInList(lastPage, "Taxable") + 2][-1].replace(",", "")),
+            "SGST": 0,
+             "CGST": 0
+        }
 
         orPoInfo = firstPage[indexOfContainsInList(firstPage, "Buyer")][
             indexOfContainsInList(firstPage[indexOfContainsInList(firstPage, "Buyer")], "Buyer")].split("\n")[
