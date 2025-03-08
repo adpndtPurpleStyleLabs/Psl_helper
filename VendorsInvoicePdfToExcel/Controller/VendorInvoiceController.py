@@ -1,13 +1,15 @@
-from http.client import HTTPException
-
 from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.responses import FileResponse
-from fastapi.middleware.cors import CORSMiddleware
 import os
 import tempfile
 import uvicorn
+import requests
+import json
 
 from VendorsInvoicePdfToExcel.BusinessLogic.VendorInvoiceBl import VendorInvoiceBl
+
+WEBHOOK_URL = "https://chat.googleapis.com/v1/spaces/AAAAJs0u1JQ/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=C-NZB4YfjhxmApsm2css9_m57mEzN6Auu_eZMWcWqjM"
+GCHAT_LOG = os.environ.get("GCHAT_LOG", "true")
 
 app = FastAPI()
 
@@ -58,6 +60,7 @@ async def parse_pdf(
         venforBl = VendorInvoiceBl()
         extractedInformation = venforBl.processPdf(tmp_pdf_path, vendor_name)
         os.remove(tmp_pdf_path)
+        send_log_to_g_chat(vendor_name, file.filename, "PASSED")
         return extractedInformation
 
     except Exception as e:
@@ -67,10 +70,28 @@ async def parse_pdf(
         }
         try:
             error["msg"] = e.detail + " ,Invalid or Wrong invoice pdf format for designer " + vendor_name
-            return error
-        except:
-            return error
 
+        except:
+            print(str(e))
+        send_log_to_g_chat(vendor_name + str(error) , file.filename, "FAILED")
+        return error
+
+def send_log_to_g_chat(vendor_name, pdf_name, status):
+    if GCHAT_LOG != "true":
+        return
+    try:
+        headers = {"Content-Type": "application/json"}
+        emoji = "✅" if status.upper() == "PASSED" else "❌"
+        message = f"{emoji} **Status:** {status}\n📁 **Vendor:** {vendor_name}\n📄 **PDF:** {pdf_name}"
+        data = json.dumps({"text": message})
+        response = requests.post(WEBHOOK_URL, headers=headers, data=data)
+        if response.status_code == 200:
+            print("✅ Log sent successfully!")
+        else:
+            print(f"❌ Error sending log: {response.status_code} - {response.text}")
+
+    except requests.exceptions.RequestException as e:
+        print(f"❌ Network error: {str(e)}")
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8088)
