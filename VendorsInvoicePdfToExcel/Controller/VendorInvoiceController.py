@@ -8,8 +8,8 @@ import json
 
 from VendorsInvoicePdfToExcel.BusinessLogic.VendorInvoiceBl import VendorInvoiceBl
 
-WEBHOOK_URL = "https://chat.googleapis.com/v1/spaces/AAAAJs0u1JQ/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=C-NZB4YfjhxmApsm2css9_m57mEzN6Auu_eZMWcWqjM"
 GCHAT_LOG = os.environ.get("GCHAT_LOG", "true")
+WEBHOOK_URL = os.environ.get("WEBHOOK_URL", "xxxx")
 
 app = FastAPI()
 
