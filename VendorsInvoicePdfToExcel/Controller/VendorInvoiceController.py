@@ -61,11 +61,15 @@ async def parse_pdf(
         return extractedInformation
 
     except Exception as e:
-        return {
+        error = {
             "isSuccess": False,
-            "msg": e.detail + " ,Invalid or Wrong invoice pdf format for designer " + vendor_name,
-            "debugMsg": str(e)
+            "msg": str(e) + " ,Invalid or Wrong invoice pdf format for designer " + vendor_name
         }
+        try:
+            error["msg"] = e.detail + " ,Invalid or Wrong invoice pdf format for designer " + vendor_name
+            return error
+        except:
+            return error
 
 
 if __name__ == "__main__":
