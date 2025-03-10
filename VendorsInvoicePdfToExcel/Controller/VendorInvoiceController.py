@@ -58,7 +58,7 @@ async def parse_pdf(
             tmp_pdf_path = tmp_pdf.name
 
         venforBl = VendorInvoiceBl()
-        extractedInformation = venforBl.processPdf(tmp_pdf_path, vendor_name)
+        extractedInformation = venforBl.processPdf(tmp_pdf_path, vendor_name, po_type)
         os.remove(tmp_pdf_path)
         send_log_to_g_chat(vendor_name, file.filename, "PASSED")
         return extractedInformation

@@ -156,7 +156,7 @@ class VendorInvoiceBl:
         workbook.save(tempPath)
         return tempPath
 
-    def processPdf(self, pdfPath, vendor):
+    def processPdf(self, pdfPath, vendor, poType):
             tables_data = self.extract_tables_from_pdf(pdfPath)
             text_data =  self.extractTextFromPdf(pdfPath)
             tables_data_from_tabula = self.extract_tables_from_pdf_using_tabula(pdfPath)
@@ -172,6 +172,12 @@ class VendorInvoiceBl:
             items_info, total_tax = implementation.getItemInfo()
             vendor_bank_info = implementation.getVendorBankInfo()
             items_total_info = implementation.getItemTotalInfo()
+
+            if str(poType).lower() == "outright":
+                for aItem in items_info:
+                    match = re.search(r'\d+\.?\d*', aItem["po_no"])
+                    aItem["po_no"] = match.group() if match else ""
+                    aItem["po_no"] =  "OR-"+aItem["po_no"]
 
             extractedInformation = {
                "vendor_info" : vendor_info,
