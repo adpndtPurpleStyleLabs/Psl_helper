@@ -58,6 +58,12 @@ class SheetalBatra:
         taxTotals = lastPage[indexOfTaxHeader + 2]
         cGSTIndex = indexOfContainsInList(taxHeader, "Central")
         sGSTIndex = indexOfContainsInList(taxHeader, "State Tax")
+
+        if cGSTIndex is -1:
+            cGSTIndex = indexOfContainsInList(taxHeader, "CGST")
+        if sGSTIndex is -1:
+            sGSTIndex = indexOfContainsInList(taxHeader, "SGST")
+
         cGstPercentage = taxTotals[cGSTIndex]
         sGstPercentage = taxTotals[sGSTIndex + 1]
         for aPage in pages.values():
@@ -91,7 +97,8 @@ class SheetalBatra:
                 aProductResult["po_no"] = ""
                 aProductResult["or_po_no"] = ""
                 if str(listOfPoOrOrPo[i]).lower().__contains__("or"):
-                    aProductResult["or_po_no"] = listOfPoOrOrPo[i]
+                    tempPoNoInfo = str(listOfPoOrOrPo[i]).lower().replace("or", "").replace("-","").replace(" ", "")
+                    aProductResult["or_po_no"] = "OR-" + tempPoNoInfo
                 else:
                     aProductResult["po_no"] = listOfPoOrOrPo[i]
 
@@ -111,7 +118,7 @@ class SheetalBatra:
                     gstType = gstType + " SGST " + sGstPercentage
                 self.taxRate = gstType
                 aProductResult["gst_type"] = gstType
-                aProductResult["gst_rate"] = sGstPercentage
+                aProductResult["gst_rate"] = float(cGstPercentage.replace("%", "")) + float(sGstPercentage.replace("%", ""))
                 aProductResult["tax_applied"] = productCgstAmount
                 products.append(aProductResult)
             total_tax = {

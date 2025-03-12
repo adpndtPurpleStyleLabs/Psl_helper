@@ -156,10 +156,13 @@ class VendorInvoiceBl:
         workbook.save(tempPath)
         return tempPath
 
-    def processPdf(self, pdfPath, vendor):
+    def processPdf(self, pdfPath, vendor, poType):
             tables_data = self.extract_tables_from_pdf(pdfPath)
             text_data =  self.extractTextFromPdf(pdfPath)
             tables_data_from_tabula = self.extract_tables_from_pdf_using_tabula(pdfPath)
+            if len(text_data) == 0:
+                raise HTTPException(status_code=400,detail="Input pdf might be an image, cannot parse it.")
+
             implementation_factor =  ImplementationFactory()
             implementation = implementation_factor.getImplementation(vendor, tables_data, text_data, tables_data_from_tabula)
             vendor_info = implementation.getVendorInfo()
@@ -170,12 +173,11 @@ class VendorInvoiceBl:
             vendor_bank_info = implementation.getVendorBankInfo()
             items_total_info = implementation.getItemTotalInfo()
 
-            for aItems_info in items_info:
-                aItems_info['po_no'] = aItems_info['po_no'].strip()
-                if aItems_info["po_no"].startswith(("AD-","CG-", "OW-")):
-                    aItems_info["po_no"] = aItems_info["po_no"].trim()
-                    continue
-                aItems_info["po_no"] = "".join(re.findall(r'\d+', aItems_info["po_no"]))
+            if str(poType).lower() == "outright":
+                for aItem in items_info:
+                    match = re.search(r'\d+\.?\d*', aItem["po_no"])
+                    aItem["po_no"] = match.group() if match else ""
+                    aItem["po_no"] =  "OR-"+aItem["po_no"]
 
             extractedInformation = {
                "vendor_info" : vendor_info,
