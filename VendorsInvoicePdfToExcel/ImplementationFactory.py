@@ -59,7 +59,7 @@ class ImplementationFactory:
             "ruhaan_international_private_limited_OR": Ruhaan,
             "riyaasat": Riyaasat,
             "monk_and_mei": MonkAndMei,
-            "espana": Espana,
+            "m/s_espana_tex": Espana,
             "kasbah_clothing": KasbahClothing,
             "fatiz": Fatiz,
             "amyra": Amyra,
