@@ -96,9 +96,9 @@ class Espana:
             aProductResult= {}
             aProductResult["po_no"] = ""
             aProductResult["or_po_no"] = ""
-            orPoInfo = firstPage[indexOfContainsInList(firstPage, "Order No")][0].split("\n")[-1].strip()
-            if orPoInfo.find("Buyer") is not -1:
-                orPoInfo = firstPage[indexOfContainsInList(firstPage, "Reference No")][0].split("\n")[-1].strip().split(" ")[0]
+            orPoInfo = self.text_data[1].split("\n")[indexOfContainsInList(self.text_data[1].split("\n"), "Order No")+1].split(" ")[0]
+            if orPoInfo.find("Consignee") is not -1:
+                orPoInfo = self.text_data[1].split("\n")[indexOfContainsInList(self.text_data[1].split("\n"), "Reference No")+2].split(" ")[0]
             if orPoInfo.find("OR") is not -1:
                 aProductResult["or_po_no"] = orPoInfo
             else:
@@ -111,10 +111,10 @@ class Espana:
             aProductResult["vendor_code"] = ""
             aProductResult["HSN/SAC"] = item[indexOfHsn]
             aProductResult["Qty"] = item[indexOfQty]
-            aProductResult["Rate"] = item[indexOfRate]
+            aProductResult["Rate"] = float(item[indexOfRate].strip().replace(",",""))
             aProductResult["Per"] = item[indexOfPer]
-            aProductResult["mrp"] = item[indexOfRate]
-            aProductResult["Amount"] = item[indexOfAmt].split("\n")[0]
+            aProductResult["mrp"] = float(item[indexOfRate].strip().replace(",",""))
+            aProductResult["Amount"] = float(item[indexOfAmt].split("\n")[0].strip().replace(",",""))
             self.totalb4tax =  aProductResult["Amount"]
             aProductResult["po_cost"] = ""
             aProductResult["tax_applied"] = float(item[indexOfAmt].split("\n")[0].replace(",","")) * (float(gstPercentage)/100)
@@ -139,10 +139,9 @@ class Espana:
         returnData["amount_charged_in_words"] = lastPage[indexOfContainsInList(lastPage, "Amount Ch")][0].split("\n")[
             -1]
         returnData["total_pcs"] = lastPage[indexOfContainsInList(lastPage, "Total")][3]
-        returnData["total_amount_after_tax"] = lastPage[indexOfContainsInList(lastPage, "Total")][-1].split(" ")[-1]
-
+        returnData["total_amount_after_tax"] = float(lastPage[indexOfContainsInList(lastPage, "Total")][-1].split(" ")[-1].strip().replace(",",""))
         returnData["total_b4_tax"] = self.totalb4tax
         returnData["total_tax"] = self.taxApplied
-        returnData["tax_rate"] = self.gstPercentage
-        returnData["total_tax_percentage"] =returnData["tax_rate"]
+        returnData["tax_rate"] = float(self.gstPercentage)
+        returnData["total_tax_percentage"] =float(returnData["tax_rate"])
         return returnData
