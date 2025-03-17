@@ -68,8 +68,8 @@ class SkbRetailPvtLtd:
              "CGST": 0
         }
 
-        orPoInfo = firstPage[indexOfContainsInList(firstPage, "Buyer")][
-            indexOfContainsInList(firstPage[indexOfContainsInList(firstPage, "Buyer")], "Buyer")].split("\n")[
+        orPoInfo = firstPage[indexOfContainsInList(firstPage, "Buyer’s Order No.")][
+            indexOfContainsInList(firstPage[indexOfContainsInList(firstPage, "Buyer’s Order No.")], "Buyer’s Order No.")].split("\n")[
             -1].strip()
 
         products = []
