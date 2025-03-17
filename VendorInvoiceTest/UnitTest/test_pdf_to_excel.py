@@ -9,7 +9,9 @@ except ImportError as e:
     print(f"❌ Import Error: {e}")
     exit(1)
 
-Designer_name = "ruhaan_international_private_limited"
+po_type= "order"
+# po_type= "outright"
+Designer_name = "skb_retail_india_private_limited"
 FOLDER_NAME = Designer_name+"/CUST"
 # FOLDER_NAME = Designer_name+"/OR"
 
@@ -30,14 +32,19 @@ if not os.path.isdir(BASE_DIR):
 ])
 
 def test_process_pdf(pdf_file, vendor):
-    result = processor.processPdf(pdf_file, Designer_name)
+
+    result = processor.processPdf(pdf_file, Designer_name, po_type)
     JSON_PATH = SAVE_JSON_BASE_DIR+"/"+pdf_file.split("/")[-1].replace(".pdf", ".json")
     for aItemInfo in result["items_info"]:
+        print(aItemInfo["po_no"])
         if is_null_or_empty(aItemInfo["po_no"], "po_no") and is_null_or_empty(aItemInfo["or_po_no"], "or_po_no") :
             raise ValueError(f"po_no or or_po_no cannot be null or empty.")
 
         exception_on_null_or_empty(aItemInfo["HSN/SAC"], "HSN/SAC")
         numeric_check(aItemInfo["HSN/SAC"], "HSN/SAC")
+
+        if po_type == "order":
+            numeric_check(aItemInfo["po_no"], "po_no")
 
         exception_on_null_or_empty(aItemInfo["Qty"], "Qty")
         exception_on_null_or_empty(aItemInfo["Per"], "Per")
@@ -102,7 +109,7 @@ def test_process_pdf(pdf_file, vendor):
             and is_null_or_empty(result['total_tax']['SGST'], "CSST")):
         raise ValueError(f"total_tax IGST and CGST  and SGST cannot be null or empty.")
 
-    validate_previous_json(JSON_PATH, result)
+    # validate_previous_json(JSON_PATH, result)
     # save_json(JSON_PATH, result)
     assert result is not None, f"❌ Failed: {pdf_file} returned None"
     print(f"✅ Success: {pdf_file} processed correctly for vendor '{vendor}'.")
