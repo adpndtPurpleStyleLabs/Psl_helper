@@ -1,6 +1,7 @@
 from VendorsInvoicePdfToExcel.helper import indexOfContainsInList, convert_to_ddmmyy
 from VendorsInvoicePdfToExcel.helper import convert_amount_to_words
 from VendorsInvoicePdfToExcel.helper import find_nth_occurrence_of, get_list_containing
+from datetime import datetime
 
 class RnFashion:
     def __init__(self, tables, text_data, table_by_tabula):
@@ -21,9 +22,10 @@ class RnFashion:
 
     def getInvoiceInfo(self):
         firstPageText = self.text_data[1].split("\n")
+        invoiceDate = firstPageText[indexOfContainsInList(firstPageText, "Date")].split(" ")[-1]
         return {
             "invoice_number": firstPageText[indexOfContainsInList(firstPageText, "INV N")].split(":")[-2].strip().split(" ")[0],
-            "invoice_date": convert_to_ddmmyy(firstPageText[indexOfContainsInList(firstPageText, "Date")].split(" ")[-1])
+            "invoice_date": datetime.strptime(invoiceDate, "%d-%m-%Y").strftime('%-d-%b-%y')
         }
 
     def getReceiverInfo(self):
