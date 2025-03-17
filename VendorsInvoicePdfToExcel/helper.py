@@ -139,3 +139,10 @@ def convert_to_ddmmyy(input_date):
 def clear_or_po_no(input_str):
     pattern = r'[^0-9OR-]'
     return re.sub(pattern, '', input_str)
+
+def is_numeric(value):
+    try:
+        float(value)
+        return True
+    except ValueError:
+        return False
