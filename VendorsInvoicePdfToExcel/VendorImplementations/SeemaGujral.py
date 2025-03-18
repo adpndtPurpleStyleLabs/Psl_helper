@@ -49,11 +49,6 @@ class SeemaGujral:
 
     def getItemInfo(self):
         products = []
-        total_tax = {
-            "IGST" : 0,
-            "SGST" : 0,
-            "CGST" : 0,
-        }
 
         gstType = []
         lastPage = self.tables[len(self.tables)]
@@ -71,6 +66,12 @@ class SeemaGujral:
             gstType.append("CGST")
 
         gstType = "_".join(gstType)
+
+        total_tax = {
+            "IGST" : self.totalTax if gstType == "IGST" else 0,
+            "SGST" : self.totalTax if gstType.__contains("SGST") else 0,
+            "CGST" : self.totalTax if gstType.__contains("CGST") else 0,
+        }
 
         listOfHeader = self.tables[1][indexOfContainsInList(self.tables[1], "Description")]
         indexOfSrNo = indexOfContainsInList(listOfHeader, "Sl")
