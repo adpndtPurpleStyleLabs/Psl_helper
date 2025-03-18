@@ -68,4 +68,4 @@ async def parse_pdf(
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8088)
+    uvicorn.run(app, host="0.0.0.0", port=8082)
