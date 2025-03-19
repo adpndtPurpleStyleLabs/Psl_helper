@@ -68,6 +68,20 @@ class MrunaliniRao:
 
         products = []
 
+        listOfPoNos = []
+        for paneNo, aPage in enumerate(self.tables.values()):
+            indexOfDescription =indexOfContainsInList( aPage[indexOfContainsInList(aPage, "Description")], "Description")
+            tempListOfDescription = []
+            if indexOfContainsInList(aPage, "continued to page") != -1:
+                tempListOfDescription.extend(aPage[indexOfContainsInList(aPage, "Description")+1 : indexOfContainsInList(aPage, "continued to page")])
+            else:
+                tempListOfDescription.extend(aPage[indexOfContainsInList(aPage, "Description")+1 : indexOfContainsInList(aPage, "Amount Chargeable (in words) ")])
+            for index, aDesc in enumerate(tempListOfDescription):
+                if len(aDesc) > 2:
+                    aDesctemp = aDesc[indexOfDescription]
+                    if str(aDesctemp).lower().replace(" ","").find( "po.no") is not -1 or  str(aDesctemp).lower().replace(" ","").find( "or-") is not -1:
+                        listOfPoNos.append(str(aDesctemp).upper())
+
         for index in range(1, len(pages) + 1):
             page = pages[index]
 
@@ -87,13 +101,7 @@ class MrunaliniRao:
                     continue
 
                 aProductResult= {}
-                if find_nth_occurrence_of(pages[index], "Po.No", len(products)+1) is not -1 :
-                    poNoInfo = pages[index][find_nth_occurrence_of(pages[index], "Po.No", len(products)+1)][indexOfContainsInList(pages[index][find_nth_occurrence_of(pages[index], "Po.No", len(products)+1)], "Po")].split(":")[-1]
-                else:
-                    poNoInfo = pages[index+1][find_nth_occurrence_of(pages[index+1], "Po.No", 1)][indexOfContainsInList(pages[index+1][find_nth_occurrence_of(pages[index+1], "Po.No", 1)], "Po")].split(":")[-1]
-
-                poNoInfo= poNoInfo.strip().split(" ")[-1]
-
+                poNoInfo = listOfPoNos[len(products)]
                 gstRate = float( lastPage[indexOfContainsInList(lastPage, "Taxable") + 1][0].split("\n")[
                     -1].replace("%", "").strip())
 
