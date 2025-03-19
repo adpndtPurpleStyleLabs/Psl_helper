@@ -1,5 +1,3 @@
-import re
-
 from VendorsInvoicePdfToExcel.helper import indexOfContainsInList, get_list_containing
 from fastapi import HTTPException
 
@@ -32,7 +30,7 @@ class Espana:
         firstPageText = self.tables[1]
         invoiceInfo = firstPageText[indexOfContainsInList(firstPageText, "Invoice No")]
         return {
-            "invoice_number":invoiceInfo[indexOfContainsInList(invoiceInfo, "Invoice N")].split("\n")[-1],
+            "invoice_number": get_list_containing(firstPageText,"Invoice No").split('\n')[indexOfContainsInList(get_list_containing(firstPageText,"Invoice No").split('\n'), "Invoice No")+1],
             "invoice_date": self.text_data[1][self.text_data[1].find("Dated"):].split("\n")[7].split(" ")[-1]
         }
 
