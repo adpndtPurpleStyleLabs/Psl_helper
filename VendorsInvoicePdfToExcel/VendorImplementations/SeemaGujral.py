@@ -69,8 +69,8 @@ class SeemaGujral:
 
         total_tax = {
             "IGST" : self.totalTax if gstType == "IGST" else 0,
-            "SGST" : self.totalTax if gstType.__contains("SGST") else 0,
-            "CGST" : self.totalTax if gstType.__contains("CGST") else 0,
+            "SGST" : self.totalTax if gstType.__contains__("SGST") else 0,
+            "CGST" : self.totalTax if gstType.__contains__("CGST") else 0,
         }
 
         listOfHeader = self.tables[1][indexOfContainsInList(self.tables[1], "Description")]
