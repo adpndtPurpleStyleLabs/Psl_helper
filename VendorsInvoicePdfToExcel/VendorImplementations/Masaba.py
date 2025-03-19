@@ -93,12 +93,12 @@ class Masaba:
             aProductResult["vendor_code"] = ""
             aProductResult["HSN/SAC"] = firstPage[i][indexOfHSN]
             aProductResult["Qty"] = firstPage[i][indexOfQty]
-            aProductResult["Rate"] = firstPage[i][indexOfTotalAfterDiscount]
+            aProductResult["Rate"] = float(firstPage[i][indexOfTotalAfterDiscount].replace(",", ""))
             aProductResult["Per"] = "Per Item"
-            aProductResult["Amount"] =  firstPage[i][indexOfTotalAfterDiscount]
-            aProductResult["mrp"] =  firstPage[i][indexOfTotal]
+            aProductResult["Amount"] = float(firstPage[i][indexOfTotalAfterDiscount].replace(",", ""))
+            aProductResult["mrp"] = float(firstPage[i][indexOfTotal].replace(",", ""))
 
-            for gstIndex in range(i+1, i+3):
+            for gstIndex in range(i + 1, i + 3):
                 if "CGST" in firstPage[gstIndex][indexOfTaxComponent]:
                     totalCgst = totalCgst + float(firstPage[gstIndex][indexOfTotalTaxAmount].replace(",", ""))
                     gstComponent = gstComponent + "CGST "
@@ -108,7 +108,7 @@ class Masaba:
                     gstComponent = gstComponent + "SGST "
                     gstRate = gstRate + float(firstPage[gstIndex][indexOfRateOfTax].replace("%", ""))
 
-            aProductResult["gst_rate"] = str(gstRate) + "%"
+            aProductResult["gst_rate"] = gstRate
             aProductResult["gst_type"] = gstComponent
             aProductResult["tax_applied"] = float(
                 firstPage[i][indexOfTotalAfterDiscount].replace(",", "")) * 0.01 * gstRate
@@ -139,9 +139,9 @@ class Masaba:
         returnData["tax_amount_in_words"] =convert_amount_to_words(self.totaltax.replace(",", ""))
         returnData["amount_charged_in_words"] =convert_amount_to_words(self.totalAfterTax.replace(",", ""))
         returnData["total_pcs"] = self.totalItems
-        returnData["total_amount_after_tax"] =self.totalAfterTax
-        returnData["total_b4_tax"] = self.totalmountBeforetax
-        returnData["total_tax"] = self.totaltax
-        returnData["tax_rate"] = str((float(self.totaltax.replace(",", ""))/float(self.totalAfterTax.replace(",", "")))*100) + "%"
-        returnData["total_tax_percentage"] =str((float(self.totaltax.replace(",", ""))/float(self.totalAfterTax.replace(",", "")))*100) + "%"
+        returnData["total_amount_after_tax"] =float(self.totalAfterTax.replace(",",""))
+        returnData["total_b4_tax"] = float(self.totalmountBeforetax.replace(",",""))
+        returnData["total_tax"] = float( self.totaltax.replace(",",""))
+        returnData["tax_rate"] =(float(self.totaltax.replace(",", ""))/float(self.totalAfterTax.replace(",", "")))*100
+        returnData["total_tax_percentage"] =returnData["tax_rate"]
         return returnData
