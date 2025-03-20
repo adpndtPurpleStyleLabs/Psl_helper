@@ -3,7 +3,6 @@ from VendorsInvoicePdfToExcel.VendorImplementations.AmitAgarwal import AmitAgarw
 from VendorsInvoicePdfToExcel.VendorImplementations.AmitArrora import AmitArrora
 from VendorsInvoicePdfToExcel.VendorImplementations.AmrtiDawani import AmrtiDawani
 from VendorsInvoicePdfToExcel.VendorImplementations.AneeshAgarwaal import AneeshAgarwaal
-from VendorsInvoicePdfToExcel.VendorImplementations.AnushreeReddyWorld import AnushreeReddyWorld
 from VendorsInvoicePdfToExcel.VendorImplementations.Artimen import Artimen
 from VendorsInvoicePdfToExcel.VendorImplementations.BasilLeaf import BasilLeaf
 from VendorsInvoicePdfToExcel.VendorImplementations.ChaashniByMaansiAndKetan import ChaashniByMaansiAndKetan
@@ -12,13 +11,11 @@ from VendorsInvoicePdfToExcel.VendorImplementations.CosaNostraa import CosaNostr
 from VendorsInvoicePdfToExcel.VendorImplementations.CoutureByNiharika import CoutureByNiharika
 from VendorsInvoicePdfToExcel.VendorImplementations.Crimzon import Crimzon
 from VendorsInvoicePdfToExcel.VendorImplementations.DollyJ import DollyJ
-from VendorsInvoicePdfToExcel.VendorImplementations.Espana import Espana
 from VendorsInvoicePdfToExcel.VendorImplementations.Fatiz import Fatiz
 from VendorsInvoicePdfToExcel.VendorImplementations.IkshitaChoudhary import IkshitaChoudhary
 from VendorsInvoicePdfToExcel.VendorImplementations.IshaGuptaTayal import IshaGuptaTayal
 from VendorsInvoicePdfToExcel.VendorImplementations.JoulesByRadhika import JoulesByRadhika
 from VendorsInvoicePdfToExcel.VendorImplementations.Kalista import Kalista
-from VendorsInvoicePdfToExcel.VendorImplementations.KasbahClothing import KasbahClothing
 from VendorsInvoicePdfToExcel.VendorImplementations.KharaKapas import KharaKapas
 from VendorsInvoicePdfToExcel.VendorImplementations.KkarmaAccessories import KkarmaAccessories
 from VendorsInvoicePdfToExcel.VendorImplementations.Lashkaraa import Lashkaraa
@@ -26,7 +23,6 @@ from VendorsInvoicePdfToExcel.VendorImplementations.MrunaliniRao import Mrunalin
 from VendorsInvoicePdfToExcel.VendorImplementations.PaulmiAndHarsh import PaulmiAndHarsh
 from VendorsInvoicePdfToExcel.VendorImplementations.Prisho import Prisho
 from VendorsInvoicePdfToExcel.VendorImplementations.ReneeLabel import ReneeLabel
-from VendorsInvoicePdfToExcel.VendorImplementations.RnFashion import RnFashion
 from VendorsInvoicePdfToExcel.VendorImplementations.SaakshaAndKinni import SaakshaAndKinni
 from VendorsInvoicePdfToExcel.VendorImplementations.SahilAnejaCouture import SahilAnejaCouture
 from VendorsInvoicePdfToExcel.VendorImplementations.SeemaGujral import SeemaGujral
@@ -37,38 +33,41 @@ from VendorsInvoicePdfToExcel.VendorImplementations.Ruhaan import Ruhaan
 from VendorsInvoicePdfToExcel.VendorImplementations.Riyaasat import Riyaasat
 from VendorsInvoicePdfToExcel.VendorImplementations.MonkAndMei import MonkAndMei
 from VendorsInvoicePdfToExcel.VendorImplementations.Amyra import Amyra
-from VendorsInvoicePdfToExcel.VendorImplementations.Ruhaan_CUST import Ruhaan_CUST
+from VendorsInvoicePdfToExcel.VendorImplementations.Order.RnFashion import RnFashion as OrderRnFashion
+from VendorsInvoicePdfToExcel.VendorImplementations.Outright.RnFashion import RnFashion as OutrightRnFashion
+from VendorsInvoicePdfToExcel.VendorImplementations.Order.Ruhaan import Ruhaan as OrderRuhaan
+from VendorsInvoicePdfToExcel.VendorImplementations.Order.SkbRetailPvtLtd import SkbRetailPvtLtd as OrderSkbRetailPvtLtd
+from VendorsInvoicePdfToExcel.VendorImplementations.Outright.AnushreeReddyWorld import AnushreeReddyWorld as OutrightAnushreeReddyWorld
+from VendorsInvoicePdfToExcel.VendorImplementations.Outright.SeemaGujral import SeemaGujral as OutrightSeemaGujral
+from VendorsInvoicePdfToExcel.VendorImplementations.Order.Espana import Espana as OrderEspana
+from VendorsInvoicePdfToExcel.VendorImplementations.Order.KasbahClothing import KasbahClothing as OrderKasbahClothing
+from VendorsInvoicePdfToExcel.VendorImplementations.Outright.MrunaliniRao import MrunaliniRao as OutrightMrunaliniRao
+from VendorsInvoicePdfToExcel.VendorImplementations.Order.Masaba import Masaba as OrderMasaba
 from fastapi import HTTPException
 
 from VendorsInvoicePdfToExcel.VendorImplementations.SheetalBatra import SheetalBatra
-from VendorsInvoicePdfToExcel.VendorImplementations.SkbRetailPvtLtd import SkbRetailPvtLtd
 
 
 class ImplementationFactory:
-    def getImplementation(self, implementation, tables, text_data, table_by_tabula):
+    def getImplementation(self, implementation, tables, text_data, table_by_tabula, poType):
         self.implementations = {
             "amit_agarwal": AmitAgarwal,
-            "seema_gujral_creations_llp": SeemaGujral,
+            # "seema_gujral_creations_llp": SeemaGujral,
             "sheetal_batra": SheetalBatra,
-            "lashkaraa": Lashkaraa,
+            # "lashkaraa": Lashkaraa,
             "paulmi_and_harsh": PaulmiAndHarsh,
             "linen_bloom_men": LinenBloomMen,
             "sammohan": Samohan,
-            "masaba": Masaba,
             "saaksha_and_kinni": SaakshaAndKinni,
             "ruhaan_international_private_limited_OR": Ruhaan,
             "riyaasat": Riyaasat,
             "monk_and_mei": MonkAndMei,
-            "m/s_espana_tex": Espana,
-            "kasbah_clothing": KasbahClothing,
             "fatiz": Fatiz,
             "amyra": Amyra,
-            "skb_retail_india_private_limited": SkbRetailPvtLtd,
-            "r_n_fashion": RnFashion,
+            # "r_n_fashion": RnFashion,
             "mrunalini_rao_arts_and_design": MrunaliniRao,
             "couture_by_niharika": CoutureByNiharika,
             "dolly_j": DollyJ,
-            "anushree_reddy_world_llp": AnushreeReddyWorld,
             "sahil_aneja_couture": SahilAnejaCouture,
             "abkasa_designer_apparels_pvt_ltd": AbkasaDesignerApparelsPvtLtd,
             "aneesh_agarwaal": AneeshAgarwaal,
@@ -88,10 +87,24 @@ class ImplementationFactory:
             "kkarma_accessories": KkarmaAccessories,
             "prisho": Prisho,
             "renee_label": ReneeLabel,
-            "ruhaan_international_private_limited": Ruhaan_CUST
-        }
 
-        implementation = str(implementation).strip().lower().replace(' ', "_").replace(".","")
+            # New Keys
+            "anushree_reddy_world_llp_outright": OutrightAnushreeReddyWorld,
+            "r_n_fashion_outright": OutrightRnFashion,
+            "seema_gujral_creations_llp_outright": OutrightSeemaGujral,
+            "mrunalini_rao_arts_and_design_outright": OutrightMrunaliniRao,
+
+            "ruhaan_international_private_limited_order": OrderRuhaan,
+            "r_n_fashion_order": OrderRnFashion,
+            "skb_retail_india_private_limited_order": OrderSkbRetailPvtLtd,
+            "ms_espana_tex_order": OrderEspana,
+            "kasbah_clothing_order": OrderKasbahClothing,
+            "ms_house_of_masaba_lifestyle_private_limited_order": OrderMasaba,
+        }
+        implementation = (str(implementation).strip().lower()
+                          .replace(' ', "_")
+                          .replace(".","")
+                          .replace("/","")) +"_"+ poType.strip().lower()
         implementation_class = self.implementations.get(implementation)
 
         if implementation_class:
