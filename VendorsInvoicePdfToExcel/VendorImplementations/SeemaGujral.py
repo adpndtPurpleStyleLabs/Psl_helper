@@ -1,159 +1,129 @@
-from VendorsInvoicePdfToExcel.helper import get_state_using_gst_id, get_list_containing
-from fastapi import HTTPException
+from VendorsInvoicePdfToExcel.helper import get_list_containing,is_numeric
 from VendorsInvoicePdfToExcel.helper import indexOfContainsInList
 
 class SeemaGujral:
     def __init__(self, tables, text):
         self.tables = tables
         self.text = text
+        self.taxableValue = 0
+        self.totalTax = 0
+        self.taxRate = 0
 
     def getVendorInfo(self):
         firstPage = self.tables[1]
-        for atable in firstPage:
-            for alist in atable:
-                if str(alist).__contains__('MOB') and str(alist).__contains__('SEEMA') and str(alist).__contains__(
-                        'E-Mail') and str(alist).__contains__('GST'):
-                    return {
-                        "vendor_name": str(alist).split("\n")[0],
-                        "vendor_address": alist[:alist.find("MOB")],
-                        "vendor_mob": str(alist).split("\n")[3],
-                        "vendor_gst": str(alist).split("\n")[4],
-                        "vendor_email": str(alist).split("\n")[6]
-                    }
-        raise HTTPException(status_code=400, detail="Error while getting Vendor Information")
+        vendorInfo = get_list_containing(firstPage, "SEEMA GUJRAL CREATIONS LLP").split("\n")
+        return {
+            "vendor_name": vendorInfo[0],
+            "vendor_address": ", ".join(vendorInfo[:indexOfContainsInList(vendorInfo,"MOB")]),
+            "vendor_mob": get_list_containing(vendorInfo, "MOB").split("-")[-1].strip(),
+            "vendor_gst":  get_list_containing(vendorInfo, "GSTIN").split(":")[-1].strip(),
+            "vendor_email":  get_list_containing(vendorInfo, "Mail").split(":")[-1].strip()
+        }
 
     def getInvoiceInfo(self):
-        firstPage = self.tables[1]
-        for atable in firstPage:
-            for alist in atable:
-                if str(alist).__contains__('Invoice No'):
-                    alist.split("\n")
-                    return {
-                        "invoice_number": alist.split("\n")[indexOfContainsInList( alist.split("\n"), "Invoice")+1].split(" ")[0],
-                        "invoice_date": self.text[1].split("\n")[
-                                            self.indexOfContainsInList(self.text[1].split("\n"), "Date")][
-                                        self.text[1].split("\n")[
-                                            self.indexOfContainsInList(self.text[1].split("\n"), "Date")].find(
-                                            ":") + 1:],
-                    }
-        raise HTTPException(status_code=400, detail="Error while getting Invoice Information")
+        firstPage = self.text[1].split("\n")
+        return {
+            "invoice_number": get_list_containing(self.tables[1], "Invoice no").split("\n")[-1].strip(),
+            "invoice_date": firstPage[indexOfContainsInList(firstPage, "Dated") + 1].split(" ")[-1]
+        }
 
     def getReceiverInfo(self):
         firstPage = self.tables[1]
-        for atable in firstPage:
-            for alist in atable:
-                if str(alist).__contains__('Consignee (Ship to)') and str(alist).__contains__('PSL'):
-                    return {
-                        "receiver_name": str(alist.split("\n")[self.indexOfContainsInList(alist.split("\n"),
-                                                                                          "to)") + 1: self.indexOfContainsInList(
-                            alist.split("\n"), "to)") + 2][0]),
-                        "receiver_address": alist[alist.find("to)") + 3: alist.find("GST")].replace("\n", " "),
-                        "receiver_gst": alist.split("\n")[self.indexOfContainsInList(alist.split("\n"), "GST")],
-                    }
-        raise HTTPException(status_code=400, detail="Error while getting Receiver Information")
+        receiverInfo = get_list_containing(firstPage, "Consignee (Ship to)").split("\n")
+        return {
+            "receiver_name": receiverInfo[indexOfContainsInList(receiverInfo, "PSL")],
+            "receiver_address": ",".join(receiverInfo[indexOfContainsInList(receiverInfo, "PSL"):indexOfContainsInList(receiverInfo, "GSTIN")]),
+            "receiver_gst": get_list_containing(receiverInfo, "GSTIN").split(":")[-1].strip(),
+        }
 
     def getBillingInfo(self):
         firstPage = self.tables[1]
-        for atable in firstPage:
-            for alist in atable:
-                if str(alist).__contains__('Buyer (Bill to)') and str(alist).__contains__('PSL'):
-                    return {
-                        "billto_name": alist.split("\n")[self.indexOfContainsInList(alist.split("\n"),"to)") + 1: self.indexOfContainsInList(alist.split("\n"), "to)") + 2][0],
-                        "billto_address": alist[alist.find("to)") + 3: alist.find("GST")].replace("\n", " "),
-                        "billto_gst": alist.split("\n")[self.indexOfContainsInList(alist.split("\n"), "GST")],
-                        "place_of_supply": get_state_using_gst_id(float(alist.split("\n")[self.indexOfContainsInList(alist.split("\n"), "GST")].split(":")[1][:2]))
-                    }
+        billingInfo = get_list_containing(firstPage, "Buyer (Bill to)").split("\n")
+        return {
+            "billto_name": billingInfo[indexOfContainsInList(billingInfo, "PSL")],
+            "billto_address": ",".join(billingInfo[indexOfContainsInList(billingInfo, "PSL"):indexOfContainsInList(billingInfo, "GST")]),
+            "billto_gst":  get_list_containing(billingInfo, "GSTIN").split(":")[-1].strip(),
+            "place_of_supply": get_list_containing(billingInfo, "Place of supply").split(":")[-1].strip(),
+        }
+
 
     def getItemInfo(self):
         products = []
+
+        gstType = []
+        lastPage = self.tables[len(self.tables)]
+        listOfTaxInfo = lastPage[indexOfContainsInList(lastPage, "Amount Chargeable (in")+1:indexOfContainsInList(lastPage, "Tax Amount (")]
+        listOfTaxInfoHeader  =listOfTaxInfo[indexOfContainsInList(listOfTaxInfo, "Taxable")]
+        self.taxableValue = float(listOfTaxInfo[-1][indexOfContainsInList(listOfTaxInfoHeader, "taxable")].split(" ")[-1].replace(",",""))
+        self.totalTax = float(listOfTaxInfo[-1][-1].replace(",",""))
+        self.taxRate = float(get_list_containing(listOfTaxInfo, "%").replace("%", ""))
+
+        if indexOfContainsInList(listOfTaxInfoHeader, "IGST") != -1:
+            gstType.append("IGST")
+        elif indexOfContainsInList(listOfTaxInfoHeader, "SGST") != -1:
+            gstType.append("SGST")
+        elif indexOfContainsInList(listOfTaxInfoHeader, "CGST") != -1:
+            gstType.append("CGST")
+
+        gstType = "_".join(gstType)
+
         total_tax = {
-            "IGST" : 0,
-            "SGST" : 0,
-            "CGST" : 0,
+            "IGST" : self.totalTax if gstType == "IGST" else 0,
+            "SGST" : self.totalTax if gstType.__contains__("SGST") else 0,
+            "CGST" : self.totalTax if gstType.__contains__("CGST") else 0,
         }
-        for paneNo, aPage in enumerate(self.tables.values()):
-            indexOfProducts = 0
-            for index, atable in enumerate(aPage):
-                if indexOfProducts != 0:
-                    break
-                for alist in atable:
-                    if str(alist).__contains__('Description of Goods'):
-                        indexOfProducts = index + 1
+
+        listOfHeader = self.tables[1][indexOfContainsInList(self.tables[1], "Description")]
+        indexOfSrNo = indexOfContainsInList(listOfHeader, "Sl")
+        indexOfDescription = indexOfContainsInList(listOfHeader, "Description")
+        indexOfHsn = indexOfContainsInList(listOfHeader, "Hsn")
+        indexOfMrp = indexOfContainsInList(listOfHeader, "Mrp")
+        indexOfQuantity = indexOfContainsInList(listOfHeader, "Quantity")
+        indexOfRate = indexOfContainsInList(listOfHeader, "Rate")
+        indexOfPer = indexOfContainsInList(listOfHeader, "Per")
+        indexOfAmount = indexOfContainsInList(listOfHeader, "Amount")
+
+        listOfProducts = []
+        for paneNo, aPage in enumerate(self.text.values()):
+           aPage = aPage.split("\n")
+           if paneNo < len(self.tables)-1:
+               listOfProducts.extend(aPage[indexOfContainsInList(aPage, "Description of Goods")+2 : indexOfContainsInList(aPage, "continued to page")])
+           else:
+               listOfProducts.extend(aPage[indexOfContainsInList(aPage, "Description of Goods")+2 : indexOfContainsInList(aPage, "GST charged @")])
+
+        for index, aProductItem in enumerate(listOfProducts):
+            listOfParticulars = aProductItem.split(" ")
+            if len(listOfParticulars) < 4:
+                continue
+
+            if is_numeric(listOfParticulars[0]):
+                aProductResult = {}
+                aProductResult["index"] = listOfParticulars[0]
+                aProductResult["HSN/SAC"] = listOfParticulars[indexOfHsn-len(listOfHeader)-1]
+                aProductResult["Qty"] = " ".join(listOfParticulars[indexOfQuantity - len(listOfHeader) -1: indexOfQuantity - len(listOfHeader)+1])
+                aProductResult["Rate"] = float(listOfParticulars[indexOfRate - len(listOfHeader)].strip().replace(",",""))
+                aProductResult["Per"] = listOfParticulars[indexOfPer - len(listOfHeader)]
+                aProductResult["mrp"] = aProductResult["Rate"]
+                if indexOfMrp != -1:
+                    aProductResult["mrp"] = float(listOfParticulars[indexOfMrp+1][:listOfParticulars[indexOfMrp+1].find("/")].replace(",",""))
+                aProductResult["Amount"] = float(listOfParticulars[indexOfAmount - len(listOfHeader)].replace(",", "").strip())
+                aProductResult["gst_type"] = gstType
+                aProductResult["gst_rate"] =self.taxRate
+                aProductResult["tax_applied"] = (self.taxRate * 0.01 * aProductResult["Rate"])
+                poNo = ""
+                for i in range(0, 3):
+                    if poNo != "":
                         break
+                    aItem = listOfProducts[index + i]
 
-            taxInfo = self.getGstInformation()
-            listOfProducts = aPage[indexOfProducts:]
-            productsInfo = listOfProducts[0]
-            for index, aProduct in enumerate(productsInfo[0].split("\n")):
-                if aProduct == "" :
-                    continue
-
-                tax_applied = (float(productsInfo[4].split("\n")[index].replace(",", "")) * float(
-                    taxInfo["gst_rate"].replace("%", ""))) / 100
-                itemDesc = self.makeItemDescriptionData(productsInfo[1])
-
-                aProductResult= {}
-                aProductResult["index"] = aProduct
-                aProductResult["vendor_code"] = " ".join(itemDesc[index].split("\n")[0].split(" ")[:-1])
-                aProductResult["HSN/SAC"] = itemDesc[index].split("\n")[0].split(" ")[-1]
-                aProductResult["Qty"] = productsInfo[3].split("\n")[index]
-                aProductResult["Rate"] = productsInfo[4].split("\n")[index]
-                aProductResult["Per"] = productsInfo[5].split("\n")[index]
-                aProductResult["mrp"] = productsInfo[2].split("\n")[index]
-                aProductResult["Amount"] = productsInfo[6].split("\n")[index]
-                aProductResult["gst_type"] = taxInfo["gst_type"]
-                aProductResult["gst_rate"] = taxInfo["gst_rate"]
-                aProductResult["tax_applied"] = tax_applied
-                aProductResult["po_cost"] = float(productsInfo[4].split("\n")[index].replace(",", "")) + tax_applied
-                if aProductResult["gst_type"] == "IGST":
-                    total_tax["IGST"] = total_tax["IGST"] + tax_applied
-                elif aProductResult["gst_type"] == "SGST":
-                    total_tax["SGST"] = total_tax["SGST"] + tax_applied
-                elif aProductResult["gst_type"] == "CGST":
-                    total_tax["CGST"] = total_tax["CGST"] + tax_applied
-
-
-                if productsInfo[1].__contains__('MARK DOWN') and productsInfo[1].__contains__(
-                        'AGAINTS'):
-                    debitNote = itemDesc[index][itemDesc[index].find("DEBIT"): itemDesc[index].find("MARK")]
-                    aProductResult["po_no"] = ""
-                    aProductResult["or_po_no"] =""
-                    aProductResult["debit_note_no"] =debitNote[debitNote.find("NO.")+3 :]
-
-                elif productsInfo[1].__contains__('MARK DOWN'):
-                    po = ""
-                    or_po = ""
-                    id_2 = itemDesc[index].split("\n")[
-                        self.indexOfContainsInList(itemDesc[index].split("\n"), "MARK") - 1]
-                    if id_2.__contains__('OR') or id_2.__contains__('AD') or id_2.__contains__('CG'):
-                        or_po = id_2
-                    else:
-                        po = id_2
-                    aProductResult["po_no"] = po
-                    aProductResult["or_po_no"] = or_po
-                    aProductResult["debit_note_no"] = ""
-
-                else:
-                    aProductResult["vendor_code"] = productsInfo[1].split("\n")[(index) * 2]
-                    aProductResult["po_no"] = productsInfo[1].split("\n")[(index * 2) + 1]
-                    aProductResult["or_po_no"] = ""
-                    aProductResult["debit_note_no"] = ""
-                    aProductResult["HSN/SAC"] = productsInfo[2].split("\n")[index]
-                    aProductResult["mrp"] = productsInfo[4].split("\n")[index]
-
+                    if aItem.find("ORDER NO") != -1:
+                        poNo = aItem.replace(" ", "").split(".")[-1]
+                        aProductResult["po_no"] = "OR-"+poNo
+                    elif aItem.find("OR") != -1:
+                        poNo = aItem.replace(" ", "")
+                        aProductResult["po_no"] = poNo
                 products.append(aProductResult)
         return products, total_tax
-
-
-    def getGstInformation(self):
-        lengthOfPdf = len(self.tables)
-        listOfTableOfGst = self.tables[lengthOfPdf][self.indexOfContainsInList(self.tables[lengthOfPdf], " @")]
-        gstInfoList = listOfTableOfGst[self.indexOfContainsInList(listOfTableOfGst, " @")].split("\n")
-        getInfoStr = gstInfoList[self.indexOfContainsInList(gstInfoList, " @")]
-        return {
-            "gst_type": str(getInfoStr.split(" ")[0]).upper(),
-            "gst_rate": getInfoStr[getInfoStr.find("@") + 1: getInfoStr.find("%") + 1]
-        }
 
     def getVendorBankInfo(self):
         lastPage = self.tables[len(self.tables)]
@@ -161,55 +131,22 @@ class SeemaGujral:
             for alist in atable:
                 if str(alist).__contains__('Company’s Bank'):
                     return {
-                        "bank_name": alist.split("\n")[self.indexOfContainsInList(alist.split("\n"), "Bank Name")],
-                        "account_number": alist.split("\n")[self.indexOfContainsInList(alist.split("\n"), "A/c")],
-                        "ifs_code": alist.split("\n")[self.indexOfContainsInList(alist.split("\n"), "IFS")],
+                        "bank_name": alist.split("\n")[indexOfContainsInList(alist.split("\n"), "Bank Name")],
+                        "account_number": alist.split("\n")[indexOfContainsInList(alist.split("\n"), "A/c")],
+                        "ifs_code": alist.split("\n")[indexOfContainsInList(alist.split("\n"), "IFS")],
                     }
 
     def getItemTotalInfo(self):
         returnData = {}
         lastPage = self.tables[len(self.tables)]
-        gstPercentage = float( get_list_containing(
-            lastPage[indexOfContainsInList(lastPage, "tax amount") + 2], "%").strip().replace("%", ""))
-
-        listOfTaxHeader = lastPage[indexOfContainsInList(lastPage, "tax amount")]
-        if indexOfContainsInList(listOfTaxHeader,"SGST") is not -1 or  indexOfContainsInList(listOfTaxHeader,"CGST") is not -1:
-            raise HTTPException(status_code=400, detail="For Seema gujral CGST and SGST is not implemented")
 
         returnData["amount_charged_in_words"] = get_list_containing(lastPage, "Amount Chargeable (in").split("\n")[-1]
         returnData["tax_amount_in_words"] = get_list_containing(get_list_containing(lastPage, "Tax Amount (").split("\n"), "Tax Amount (").split(":")[-1].strip()
         returnData["total_pcs"] = get_list_containing(lastPage[indexOfContainsInList(lastPage, "Amount Chargeable (in")-1], "pcs").strip()
         returnData["total_amount_after_tax"] = float(lastPage[indexOfContainsInList(lastPage, "Amount Chargeable (in") - 1][-1].split(" ")[-1].strip().replace(",",""))
-        returnData["total_b4_tax"] = float(get_list_containing(lastPage[indexOfContainsInList(lastPage, "Tax Amount (in word")-1], "total").split(" ")[-1].strip().replace(",",""))
-        returnData["total_tax"] = float(lastPage[indexOfContainsInList(lastPage, "tax amount") + 3][-1].strip().replace(",","").strip())
-        returnData["tax_rate"] = gstPercentage
-        returnData["total_tax_percentage"] = gstPercentage
+        returnData["total_b4_tax"] = self.taxableValue
+        returnData["total_tax"] = self.totalTax
+        returnData["tax_rate"] = self.taxRate
+        returnData["total_tax_percentage"] = self.taxRate
 
         return returnData
-
-    def indexOfContainsInList(self, list, word):
-        count = 0
-        for alist in list:
-            if str(alist).__contains__(word):
-                return count
-            count += 1
-        return 0
-
-    def makeItemDescriptionData(self, inputData):
-        productDescriptionData = []
-        listOfWords = inputData.split("\n")
-        length = len(listOfWords)
-        i = 0
-        while (i < length - 1):
-            prodInfo = str(listOfWords[i])
-            while (i < length - 1):
-                if listOfWords[i + 1].__contains__("MARK") or listOfWords[i + 1].__contains__("AGAINTS") or listOfWords[
-                    i + 1].__contains__("OR") or listOfWords[
-                    i + 1].__contains__("PCS"):
-                    prodInfo = prodInfo + "\n " + str(listOfWords[i + 1])
-                    i += 1
-                else:
-                    i += 1
-                    break
-            productDescriptionData.append(prodInfo)
-        return productDescriptionData

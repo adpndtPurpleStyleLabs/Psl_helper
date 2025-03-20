@@ -77,16 +77,16 @@ class Lashkaraa:
             "\n")[-1]
         aProductResult["HSN/SAC"] = firstPage[indexOfHeader + 1][indexOfHsnCode]
         aProductResult["Qty"] = firstPage[indexOfHeader + 1][indexOfQty]
-        aProductResult["Rate"] = firstPage[indexOfHeader + 1][indexOfRate]
+        aProductResult["Rate"] = float(firstPage[indexOfHeader + 1][indexOfRate].replace(",",""))
         aProductResult["Per"] = firstPage[indexOfHeader + 1][indexOfUnit]
-        aProductResult["mrp"] = firstPage[indexOfHeader + 1][indexOfAmount].split("\n")[0]
-        aProductResult["Amount"] = firstPage[indexOfHeader + 1][indexOfAmount].split("\n")[0]
+        aProductResult["mrp"] = float(firstPage[indexOfHeader + 1][indexOfAmount].split("\n")[0].replace(",",""))
+        aProductResult["Amount"] = float(firstPage[indexOfHeader + 1][indexOfAmount].split("\n")[0].replace(",",""))
         appliedTax = float(iGSTPercentage.replace("%", "").strip()) * float(
             firstPage[indexOfHeader + 1][indexOfAmount].split("\n")[0].replace(",", "").strip()) / 100
         aProductResult["po_cost"] = appliedTax + float(
             firstPage[indexOfHeader + 1][indexOfAmount].split("\n")[0].replace(",", "").strip())
         aProductResult["gst_type"] = "IGST"
-        aProductResult["gst_rate"] = iGSTPercentage
+        aProductResult["gst_rate"] = float(iGSTPercentage.replace("%","").strip())
         aProductResult["tax_applied"] = appliedTax
         products.append(aProductResult)
         total_tax = {
@@ -119,13 +119,12 @@ class Lashkaraa:
         returnData["amount_charged_in_words"] = \
         firstPage[indexOfContainsInList(firstPage, "Amount Char")][0].split("\n")[-1]
         returnData["total_pcs"] = totalList[indexOfContainsInList(totalList, "PCS")]
-        returnData["total_amount_after_tax"] = totalList[-1].split(" ")[-1]
-        returnData["total_b4_tax"] = firstPage[indexOfContainsInList(firstPage, "Amount Char") + 3][
-            indexOfContainsInList(listOfTaxheader, "Taxab")]
-        returnData["total_tax"] = firstPage[indexOfContainsInList(firstPage, "Amount Char") + 3][
-            indexOfContainsInList(listOfTaxheader, "IGST") + 1]
-        returnData["tax_rate"] = firstPage[indexOfContainsInList(firstPage, "Amount Char") + 3][
-            indexOfContainsInList(listOfTaxheader, "IGST")]
-        returnData["total_tax_percentage"] = firstPage[indexOfContainsInList(firstPage, "Amount Char") + 3][
-            indexOfContainsInList(listOfTaxheader, "IGST")]
+        returnData["total_amount_after_tax"] = float(totalList[-1].split(" ")[-1].replace(",",""))
+        returnData["total_b4_tax"] = float(firstPage[indexOfContainsInList(firstPage, "Amount Char") + 3][
+            indexOfContainsInList(listOfTaxheader, "Taxab")].replace(",","").strip())
+        returnData["total_tax"] = float(firstPage[indexOfContainsInList(firstPage, "Amount Char") + 3][
+            indexOfContainsInList(listOfTaxheader, "IGST") + 1].replace(",","").strip())
+        returnData["tax_rate"] =  float(firstPage[indexOfContainsInList(firstPage, "Amount Char") + 3][
+            indexOfContainsInList(listOfTaxheader, "IGST")].replace("%","").strip())
+        returnData["total_tax_percentage"] = returnData["tax_rate"]
         return returnData

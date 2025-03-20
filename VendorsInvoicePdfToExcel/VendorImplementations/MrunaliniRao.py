@@ -53,7 +53,7 @@ class MrunaliniRao:
         pages = self.tables
         lastPage = pages[len(pages)]
 
-        total_tax = { "IGST": lastPage[indexOfContainsInList(lastPage, "Taxable")+1][1].split("\n")[-1],  "SGST": 0, "CGST": 0,}
+        total_tax = { "IGST": float(lastPage[indexOfContainsInList(lastPage, "Taxable")+1][1].split("\n")[-1].replace(",","")),  "SGST": 0, "CGST": 0,}
 
         gstType = ""
         if indexOfContainsInList(lastPage[indexOfContainsInList(lastPage, "Amount Charg") + 1], "CGST") != -1:
@@ -67,6 +67,20 @@ class MrunaliniRao:
 
 
         products = []
+
+        listOfPoNos = []
+        for paneNo, aPage in enumerate(self.tables.values()):
+            indexOfDescription =indexOfContainsInList( aPage[indexOfContainsInList(aPage, "Description")], "Description")
+            tempListOfDescription = []
+            if indexOfContainsInList(aPage, "continued to page") != -1:
+                tempListOfDescription.extend(aPage[indexOfContainsInList(aPage, "Description")+1 : indexOfContainsInList(aPage, "continued to page")])
+            else:
+                tempListOfDescription.extend(aPage[indexOfContainsInList(aPage, "Description")+1 : indexOfContainsInList(aPage, "Amount Chargeable (in words) ")])
+            for index, aDesc in enumerate(tempListOfDescription):
+                if len(aDesc) > 2:
+                    aDesctemp = aDesc[indexOfDescription]
+                    if str(aDesctemp).lower().replace(" ","").find( "po.no") is not -1 or  str(aDesctemp).lower().replace(" ","").find( "or-") is not -1:
+                        listOfPoNos.append(str(aDesctemp).upper())
 
         for index in range(1, len(pages) + 1):
             page = pages[index]
@@ -87,39 +101,26 @@ class MrunaliniRao:
                     continue
 
                 aProductResult= {}
-                if find_nth_occurrence_of(pages[index], "Po.No", len(products)+1) is not -1 :
-                    poNoInfo = pages[index][find_nth_occurrence_of(pages[index], "Po.No", len(products)+1)][indexOfContainsInList(pages[index][find_nth_occurrence_of(pages[index], "Po.No", len(products)+1)], "Po")].split(":")[-1]
-                else:
-                    poNoInfo = pages[index+1][find_nth_occurrence_of(pages[index+1], "Po.No", 1)][indexOfContainsInList(pages[index+1][find_nth_occurrence_of(pages[index+1], "Po.No", 1)], "Po")].split(":")[-1]
-
-                poNoInfo= poNoInfo.strip().split(" ")[0]
-
+                poNoInfo = listOfPoNos[len(products)]
                 gstRate = float( lastPage[indexOfContainsInList(lastPage, "Taxable") + 1][0].split("\n")[
                     -1].replace("%", "").strip())
 
                 amount = float(item[indexOfAmt].replace(",",""))
 
-                pages[index][find_nth_occurrence_of(pages[index], "Po.No", len(products))]
                 aProductResult["debit_note_no"] = ""
                 aProductResult["index"] = item[indexOfSr]
                 aProductResult["vendor_code"] = ""
                 aProductResult["HSN/SAC"] = item[indexOfHsn]
                 aProductResult["Qty"] = item[indexOfQty]
-                aProductResult["Rate"] = item[indexOfRate]
+                aProductResult["Rate"] = float(item[indexOfRate].replace(",","").strip())
                 aProductResult["Per"] = item[indexOfUnit]
-                aProductResult["mrp"] = item[indexOfRate]
+                aProductResult["mrp"] = float(item[indexOfRate].replace(",","").strip())
                 aProductResult["Amount"] = amount
                 aProductResult["po_cost"] = ""
                 aProductResult["gst_rate"] = gstRate
                 aProductResult["gst_type"] = gstType
                 aProductResult["tax_applied"] = (amount * gstRate)/100
-
-                aProductResult["po_no"] = ""
-                aProductResult["or_po_no"] = ""
-                if poNoInfo.find("OR") is not -1:
-                    aProductResult["or_po_no"] = poNoInfo
-                else:
-                    aProductResult["po_no"] = poNoInfo
+                aProductResult["po_no"] = poNoInfo
                 products.append(aProductResult)
 
         return products, total_tax
@@ -140,9 +141,9 @@ class MrunaliniRao:
         returnData["tax_amount_in_words"] = lastPage[indexOfContainsInList(lastPage, "Tax Amount (")][0].split("\n")[0].split(":")[-1]
         returnData["amount_charged_in_words"] = lastPage[indexOfContainsInList(lastPage, "Amount Ch")][0].split("\n")[-1]
         returnData["total_pcs"] = lastPage[indexOfContainsInList(lastPage, "Total")][3]
-        returnData["total_amount_after_tax"] = re.sub(r'[^a-zA-Z0-9.]+', '',lastPage[indexOfContainsInList(lastPage, "Total")][-1])
-        returnData["total_b4_tax"] = lastPage[indexOfContainsInList(lastPage, "Taxable")][indexOfContainsInList(lastPage[indexOfContainsInList(lastPage, "Taxable")], "Taxable")].split("\n")[-1]
-        returnData["total_tax"] =lastPage[indexOfContainsInList(lastPage, "Taxable")][-1].split("\n")[-1]
-        returnData["tax_rate"] = lastPage[indexOfContainsInList(lastPage, "Taxable")+1][0].split("\n")[-1].replace("%", "").strip()
-        returnData["total_tax_percentage"] =lastPage[indexOfContainsInList(lastPage, "Taxable")+1][0].split("\n")[-1].replace("%", "").strip()
+        returnData["total_amount_after_tax"] = float(re.sub(r'[^a-zA-Z0-9.]+', '',lastPage[indexOfContainsInList(lastPage, "Total")][-1]))
+        returnData["total_b4_tax"] = float(lastPage[indexOfContainsInList(lastPage, "Taxable")][indexOfContainsInList(lastPage[indexOfContainsInList(lastPage, "Taxable")], "Taxable")].split("\n")[-1].replace(",",""))
+        returnData["total_tax"] =float(lastPage[indexOfContainsInList(lastPage, "Taxable")][-1].split("\n")[-1].replace(",",""))
+        returnData["tax_rate"] = float(lastPage[indexOfContainsInList(lastPage, "Taxable")+1][0].split("\n")[-1].replace("%", "").strip())
+        returnData["total_tax_percentage"] =  returnData["tax_rate"]
         return returnData

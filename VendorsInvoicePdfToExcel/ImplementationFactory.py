@@ -48,7 +48,7 @@ class ImplementationFactory:
     def getImplementation(self, implementation, tables, text_data, table_by_tabula):
         self.implementations = {
             "amit_agarwal": AmitAgarwal,
-            "seema_gujral": SeemaGujral,
+            "seema_gujral_creations_llp": SeemaGujral,
             "sheetal_batra": SheetalBatra,
             "lashkaraa": Lashkaraa,
             "paulmi_and_harsh": PaulmiAndHarsh,
@@ -65,7 +65,7 @@ class ImplementationFactory:
             "amyra": Amyra,
             "skb_retail_india_private_limited": SkbRetailPvtLtd,
             "r_n_fashion": RnFashion,
-            "mrunalini_rao": MrunaliniRao,
+            "mrunalini_rao_arts_and_design": MrunaliniRao,
             "couture_by_niharika": CoutureByNiharika,
             "dolly_j": DollyJ,
             "anushree_reddy_world_llp": AnushreeReddyWorld,
