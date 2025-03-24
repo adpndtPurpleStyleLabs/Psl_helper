@@ -43,6 +43,10 @@ from VendorsInvoicePdfToExcel.VendorImplementations.Order.Espana import Espana a
 from VendorsInvoicePdfToExcel.VendorImplementations.Order.KasbahClothing import KasbahClothing as OrderKasbahClothing
 from VendorsInvoicePdfToExcel.VendorImplementations.Outright.MrunaliniRao import MrunaliniRao as OutrightMrunaliniRao
 from VendorsInvoicePdfToExcel.VendorImplementations.Order.Masaba import Masaba as OrderMasaba
+from VendorsInvoicePdfToExcel.VendorImplementations.Order.AnushreeReddyWorld import AnushreeReddyWorld as OrderAnushreeReddyWorld
+from VendorsInvoicePdfToExcel.VendorImplementations.Outright.SkbRetailPvtLtd import SkbRetailPvtLtd as OutrightSkbRetailPvtLtd
+from VendorsInvoicePdfToExcel.VendorImplementations.Outright.Ruhaan import Ruhaan as OutrightRuhaan
+
 from fastapi import HTTPException
 
 from VendorsInvoicePdfToExcel.VendorImplementations.SheetalBatra import SheetalBatra
@@ -93,6 +97,7 @@ class ImplementationFactory:
             "r_n_fashion_outright": OutrightRnFashion,
             "seema_gujral_creations_llp_outright": OutrightSeemaGujral,
             "mrunalini_rao_arts_and_design_outright": OutrightMrunaliniRao,
+            "ruhaan_international_private_limited_outright" : OutrightRuhaan,
 
             "ruhaan_international_private_limited_order": OrderRuhaan,
             "r_n_fashion_order": OrderRnFashion,
@@ -100,6 +105,7 @@ class ImplementationFactory:
             "ms_espana_tex_order": OrderEspana,
             "kasbah_clothing_order": OrderKasbahClothing,
             "ms_house_of_masaba_lifestyle_private_limited_order": OrderMasaba,
+            "anushree_reddy_world_llp_order" : OrderAnushreeReddyWorld
         }
         implementation = (str(implementation).strip().lower()
                           .replace(' ', "_")
