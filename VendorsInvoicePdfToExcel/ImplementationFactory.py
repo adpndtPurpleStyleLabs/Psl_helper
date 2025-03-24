@@ -44,7 +44,6 @@ from VendorsInvoicePdfToExcel.VendorImplementations.Order.KasbahClothing import 
 from VendorsInvoicePdfToExcel.VendorImplementations.Outright.MrunaliniRao import MrunaliniRao as OutrightMrunaliniRao
 from VendorsInvoicePdfToExcel.VendorImplementations.Order.Masaba import Masaba as OrderMasaba
 from VendorsInvoicePdfToExcel.VendorImplementations.Order.AnushreeReddyWorld import AnushreeReddyWorld as OrderAnushreeReddyWorld
-from VendorsInvoicePdfToExcel.VendorImplementations.Outright.SkbRetailPvtLtd import SkbRetailPvtLtd as OutrightSkbRetailPvtLtd
 from VendorsInvoicePdfToExcel.VendorImplementations.Outright.Ruhaan import Ruhaan as OutrightRuhaan
 
 from fastapi import HTTPException
