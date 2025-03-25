@@ -108,7 +108,7 @@ class RnFashion:
             itemList = item.split(" ")
             if indexOfContainsInList(itemList, "total") != -1:
                 break
-            if itemList.__len__() < 3:
+            if itemList.__len__() < lenOfHeader:
                 continue
             aProductResult = {}
             aProductResult["po_no"] = poInfo.replace(" ", "").split(",")[count]
