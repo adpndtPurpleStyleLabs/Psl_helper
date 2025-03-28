@@ -96,14 +96,14 @@ class ImplementationFactory:
             "r_n_fashion_outright": OutrightRnFashion,
             "seema_gujral_creations_llp_outright": OutrightSeemaGujral,
             "mrunalini_rao_arts_and_design_outright": OutrightMrunaliniRao,
-            "ruhaan_international_private_limited_outright" : OutrightRuhaan,
+            # "ruhaan_international_private_limited_outright" : OutrightRuhaan,
 
             "ruhaan_international_private_limited_order": OrderRuhaan,
             "r_n_fashion_order": OrderRnFashion,
             "skb_retail_india_private_limited_order": OrderSkbRetailPvtLtd,
             "ms_espana_tex_order": OrderEspana,
             "kasbah_clothing_order": OrderKasbahClothing,
-            "ms_house_of_masaba_lifestyle_private_limited_order": OrderMasaba,
+            # "ms_house_of_masaba_lifestyle_private_limited_order": OrderMasaba,
             "anushree_reddy_world_llp_order" : OrderAnushreeReddyWorld
         }
         implementation = (str(implementation).strip().lower()
