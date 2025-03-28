@@ -164,7 +164,7 @@ class VendorInvoiceBl:
                 raise HTTPException(status_code=400,detail="Input pdf might be an image, cannot parse it.")
 
             implementation_factor =  ImplementationFactory()
-            implementation = implementation_factor.getImplementation(vendor, tables_data, text_data, tables_data_from_tabula)
+            implementation = implementation_factor.getImplementation(vendor, tables_data, text_data, tables_data_from_tabula, poType)
             vendor_info = implementation.getVendorInfo()
             invoice_info = implementation.getInvoiceInfo()
             receiver_info = implementation.getReceiverInfo()
