@@ -41,7 +41,7 @@ class SeemaGujral:
     def getBillingInfo(self):
         firstPage = self.tables[1]
         billingInfo = get_list_containing(firstPage, "Buyer (Bill to)").split("\n")
-        billingInfo = billingInfo[indexOfContainsInList(billingInfo, "Consignee (Ship to)"): ]
+        billingInfo = billingInfo[indexOfContainsInList(billingInfo, "Buyer (Bill to)"): ]
 
         return {
             "billto_name": billingInfo[indexOfContainsInList(billingInfo, "PSL")],
