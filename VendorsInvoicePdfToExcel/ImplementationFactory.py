@@ -45,6 +45,7 @@ from VendorsInvoicePdfToExcel.VendorImplementations.Outright.MrunaliniRao import
 from VendorsInvoicePdfToExcel.VendorImplementations.Order.Masaba import Masaba as OrderMasaba
 from VendorsInvoicePdfToExcel.VendorImplementations.Order.AnushreeReddyWorld import AnushreeReddyWorld as OrderAnushreeReddyWorld
 from VendorsInvoicePdfToExcel.VendorImplementations.Outright.Ruhaan import Ruhaan as OutrightRuhaan
+from VendorsInvoicePdfToExcel.VendorImplementations.Outright.Espana import Espana as OutrightEspana
 
 from fastapi import HTTPException
 
@@ -97,6 +98,7 @@ class ImplementationFactory:
             "seema_gujral_creations_llp_outright": OutrightSeemaGujral,
             "mrunalini_rao_arts_and_design_outright": OutrightMrunaliniRao,
             "ruhaan_international_private_limited_outright" : OutrightRuhaan,
+            "ms_espana_tex_outright": OutrightEspana,
 
             "ruhaan_international_private_limited_order": OrderRuhaan,
             "r_n_fashion_order": OrderRnFashion,
