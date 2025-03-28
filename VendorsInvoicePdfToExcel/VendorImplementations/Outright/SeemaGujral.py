@@ -30,6 +30,8 @@ class SeemaGujral:
     def getReceiverInfo(self):
         firstPage = self.tables[1]
         receiverInfo = get_list_containing(firstPage, "Consignee (Ship to)").split("\n")
+        receiverInfo = receiverInfo[indexOfContainsInList(receiverInfo, "Consignee (Ship to)"): ]
+
         return {
             "receiver_name": receiverInfo[indexOfContainsInList(receiverInfo, "PSL")],
             "receiver_address": ",".join(receiverInfo[indexOfContainsInList(receiverInfo, "PSL"):indexOfContainsInList(receiverInfo, "GSTIN")]),
@@ -39,6 +41,8 @@ class SeemaGujral:
     def getBillingInfo(self):
         firstPage = self.tables[1]
         billingInfo = get_list_containing(firstPage, "Buyer (Bill to)").split("\n")
+        billingInfo = billingInfo[indexOfContainsInList(billingInfo, "Consignee (Ship to)"): ]
+
         return {
             "billto_name": billingInfo[indexOfContainsInList(billingInfo, "PSL")],
             "billto_address": ",".join(billingInfo[indexOfContainsInList(billingInfo, "PSL"):indexOfContainsInList(billingInfo, "GST")]),
