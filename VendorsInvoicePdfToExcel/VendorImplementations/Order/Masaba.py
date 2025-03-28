@@ -121,9 +121,9 @@ class Masaba:
         }
 
         totals = lastIndexOfContainsInList(firstPage, "Total")
-        self.totalmountBeforetax = firstPage[totals-1][indexOfTotal]
+        self.totalmountBeforetax =firstPage[totals - 1][indexOfTotalAfterDiscount]
         self.totaltax = firstPage[totals-1][indexOfTotalTaxAmount]
-        self.totalAfterTax = firstPage[totals-1][indexOfTotalAfterDiscount]
+        self.totalAfterTax = self.text_data[1].split("\n")[indexOfContainsInList(self.text_data[1].split("\n"), "Grand total")].split(" ")[-1]
         self.totalItems = firstPage[totals-1][indexOfQty]
         return products, total_tax
 
