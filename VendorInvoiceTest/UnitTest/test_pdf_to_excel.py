@@ -11,7 +11,7 @@ except ImportError as e:
 
 po_type= "order"
 # po_type= "outright"
-Designer_name = "skb_retail_india_private_limited"
+Designer_name = "seema_gujral_creations_llp"
 FOLDER_NAME = Designer_name+"/CUST"
 # FOLDER_NAME = Designer_name+"/OR"
 
@@ -35,6 +35,9 @@ def test_process_pdf(pdf_file, vendor):
 
     result = processor.processPdf(pdf_file, Designer_name, po_type)
     JSON_PATH = SAVE_JSON_BASE_DIR+"/"+pdf_file.split("/")[-1].replace(".pdf", ".json")
+    if len(result["items_info"]) <=0:
+        raise ValueError("list of items in items_info  is 0")
+
     for aItemInfo in result["items_info"]:
         print(aItemInfo["po_no"])
         if is_null_or_empty(aItemInfo["po_no"], "po_no") and is_null_or_empty(aItemInfo["or_po_no"], "or_po_no") :
