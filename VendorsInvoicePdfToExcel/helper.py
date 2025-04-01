@@ -146,3 +146,11 @@ def is_numeric(value):
         return True
     except ValueError:
         return False
+
+def indexOfWordInListExactMatch(list, word):
+    count = 0
+    for alist in list:
+        if (str(alist)).lower().strip() == (word.lower()):
+            return count
+        count += 1
+    return -1

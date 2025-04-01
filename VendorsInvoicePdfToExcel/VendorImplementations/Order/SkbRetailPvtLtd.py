@@ -1,4 +1,4 @@
-from VendorsInvoicePdfToExcel.helper import indexOfContainsInList, convert_to_ddmmyy
+from VendorsInvoicePdfToExcel.helper import indexOfContainsInList, convert_to_ddmmyy,indexOfWordInListExactMatch
 from fastapi import HTTPException
 
 class SkbRetailPvtLtd:
@@ -80,7 +80,7 @@ class SkbRetailPvtLtd:
             indexOfHsn = indexOfContainsInList(firstPage[indexOfHeader], "HSN")
             indexOfQty = indexOfContainsInList(firstPage[indexOfHeader], "Quantity")
             indexOfPer = indexOfContainsInList(firstPage[indexOfHeader], "per")
-            indexOfRate = indexOfContainsInList(firstPage[indexOfHeader], "Rate")
+            indexOfRate = indexOfWordInListExactMatch(firstPage[indexOfHeader], "Rate")
             indexOfAmt = indexOfContainsInList(firstPage[indexOfHeader], "Amount")
 
             getPercentage =  float(lastPage[indexOfContainsInList(lastPage, "Amount Charg") + 3][
@@ -125,7 +125,7 @@ class SkbRetailPvtLtd:
         returnData = {}
         returnData["tax_amount_in_words"] = lastPage[indexOfContainsInList(lastPage, "Tax Amount (")][0].split("\n")[0].split(":")[-1]
         returnData["amount_charged_in_words"] = lastPage[indexOfContainsInList(lastPage, "Amount Ch")][0].split("\n")[-1]
-        returnData["total_pcs"] = lastPage[indexOfContainsInList(lastPage, "Total")][3]
+        returnData["total_pcs"] = lastPage[indexOfContainsInList(lastPage, "Total")][indexOfContainsInList(lastPage[indexOfContainsInList(lastPage, "Total")],"PCS")]
         returnData["total_amount_after_tax"] = float(lastPage[indexOfContainsInList(lastPage, "Total")][-1].split(" ")[-1].strip().replace(",",""))
         returnData["total_b4_tax"] = float(lastPage[indexOfContainsInList(lastPage, "Taxable")+2][1].strip().replace(",",""))
         returnData["total_tax"] =float(lastPage[indexOfContainsInList(lastPage, "Taxable")+2][-1].strip().replace(",",""))
