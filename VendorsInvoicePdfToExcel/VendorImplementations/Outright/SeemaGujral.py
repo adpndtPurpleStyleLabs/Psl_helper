@@ -22,8 +22,10 @@ class SeemaGujral:
 
     def getInvoiceInfo(self):
         firstPage = self.text[1].split("\n")
+        invoiceInfoTable = get_list_containing(self.tables[1], "Invoice no").split("\n")
         return {
-            "invoice_number": get_list_containing(self.tables[1], "Invoice no").split("\n")[-1].strip(),
+            "invoice_number":
+                invoiceInfoTable[indexOfContainsInList(invoiceInfoTable, "Invoice no") + 1].strip().split(" ")[0],
             "invoice_date": firstPage[indexOfContainsInList(firstPage, "Dated") + 1].split(" ")[-1]
         }
 
