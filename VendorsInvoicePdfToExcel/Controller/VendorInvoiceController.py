@@ -5,6 +5,8 @@ import tempfile
 import uvicorn
 import requests
 import json
+from concurrent.futures import ThreadPoolExecutor
+from typing import List
 
 from VendorsInvoicePdfToExcel.BusinessLogic.VendorInvoiceBl import VendorInvoiceBl
 
@@ -45,16 +47,10 @@ async def pdf_to_excel(
     except Exception as e:
         raise e
 
-@app.post("/parse-pdf/")
-async def parse_pdf(
-    file: UploadFile = File(...),
-    vendor_name: str = Form(...),
-    po_type: str = Form(...),
-    file_path: str = Form(None)
-):
+def process_single_pdf(file: UploadFile, vendor_name: str, po_type: str):
     try:
         with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_pdf:
-            tmp_pdf.write(await file.read())
+            tmp_pdf.write(file.file.read())
             tmp_pdf_path = tmp_pdf.name
 
         venforBl = VendorInvoiceBl()
@@ -66,15 +62,39 @@ async def parse_pdf(
     except Exception as e:
         error = {
             "isSuccess": False,
+            "fileName": file.filename,
             "msg": str(e) + " ,Invalid or Wrong invoice pdf format for designer " + vendor_name
         }
         try:
+            error["fileName"] = file.filename,
             error["msg"] = e.detail + " ,Invalid or Wrong invoice pdf format for designer " + vendor_name
 
         except:
             print(str(e))
         send_log_to_g_chat(vendor_name + str(error) , file.filename, "FAILED")
         return error
+
+@app.post("/parse-pdf/")
+async def parse_pdf(
+    file: UploadFile = File(...),
+    vendor_name: str = Form(...),
+    po_type: str = Form(...),
+    file_path: str = Form(None)
+):
+    return process_single_pdf(file, vendor_name, po_type)
+
+
+executor = ThreadPoolExecutor(max_workers=10)
+
+@app.post("/parse-pdfs/")
+async def parse_pdf(
+    files: List[UploadFile] = File(...),
+    vendor_name: str = Form(...),
+    po_type: str = Form(...),
+    file_path: str = Form(None)
+):
+    futures = [executor.submit(process_single_pdf, file, vendor_name, po_type) for file in files]
+    return [future.result() for future in futures]
 
 def send_log_to_g_chat(vendor_name, pdf_name, status):
     if GCHAT_LOG != "true":
