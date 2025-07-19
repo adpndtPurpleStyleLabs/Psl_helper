@@ -55,6 +55,7 @@ def process_single_pdf(file: UploadFile, vendor_name: str, po_type: str):
 
         venforBl = VendorInvoiceBl()
         extractedInformation = venforBl.processPdf(tmp_pdf_path, vendor_name, po_type)
+        extractedInformation["fileName"] = file.filename
         os.remove(tmp_pdf_path)
         send_log_to_g_chat(vendor_name, file.filename, "PASSED")
         return extractedInformation
