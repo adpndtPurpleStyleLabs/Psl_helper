@@ -67,7 +67,7 @@ def process_single_pdf(file: UploadFile, vendor_name: str, po_type: str):
             "msg": str(e) + " ,Invalid or Wrong invoice pdf format for designer " + vendor_name
         }
         try:
-            error["fileName"] = file.filename,
+            error["fileName"] = file.filename
             error["msg"] = e.detail + " ,Invalid or Wrong invoice pdf format for designer " + vendor_name
 
         except:
